@@ -69,7 +69,6 @@ public class Master_Frame extends JFrame {
          * This snippet arranges the buttons vertically, centered,
          * and sizes them evenly
          */
-        // GridLayout space buttons new GridLayout(rows, cols, hgap, vgap)
         JPanel buttonPanel = new JPanel(new GridLayout(7, 1,20,20));
         JPanel leftNavBar = new JPanel(new GridBagLayout());
         
@@ -103,6 +102,7 @@ public class Master_Frame extends JFrame {
     
     //Here start the action handlers for the buttons
     private static void homeButtonActionPerformed (ActionEvent evt) {
+        masterFrame.remove(rightBodyPanel);
         rightBodyPanel = new Home_Panel();
         rightBodyPanel.setPreferredSize(rightBodySize);
         masterFrame.getContentPane().add(rightBodyPanel);
@@ -110,6 +110,7 @@ public class Master_Frame extends JFrame {
     }
     
     private static void scheduleButtonActionPerformed (ActionEvent evt) {
+        masterFrame.remove(rightBodyPanel);
         rightBodyPanel = new Schedule_Panel();
         rightBodyPanel.setPreferredSize(rightBodySize);
         masterFrame.getContentPane().add(rightBodyPanel);
@@ -117,6 +118,7 @@ public class Master_Frame extends JFrame {
     }
     
     private static void reportsButtonActionPerformed (ActionEvent evt) {
+        masterFrame.remove(rightBodyPanel);
         rightBodyPanel = new Reports_Panel();
         rightBodyPanel.setPreferredSize(rightBodySize);
         masterFrame.getContentPane().add(rightBodyPanel);
@@ -124,6 +126,7 @@ public class Master_Frame extends JFrame {
     }
     
     private static void coursesButtonActionPerformed (ActionEvent evt) {
+        masterFrame.remove(rightBodyPanel);
         rightBodyPanel = new Courses_Panel();
         rightBodyPanel.setPreferredSize(rightBodySize);
         masterFrame.getContentPane().add(rightBodyPanel);
@@ -131,6 +134,7 @@ public class Master_Frame extends JFrame {
     }
     
     private static void studentsButtonActionPerformed (ActionEvent evt) {
+        masterFrame.remove(rightBodyPanel);
         rightBodyPanel = new Students_Panel();
         rightBodyPanel.setPreferredSize(rightBodySize);
         masterFrame.getContentPane().add(rightBodyPanel);
@@ -138,6 +142,7 @@ public class Master_Frame extends JFrame {
     }
     
     private static void facultyButtonActionPerformed (ActionEvent evt) {
+        masterFrame.remove(rightBodyPanel);
         rightBodyPanel = new Faculty_Panel();
         rightBodyPanel.setPreferredSize(rightBodySize);
         masterFrame.getContentPane().add(rightBodyPanel);
@@ -145,6 +150,7 @@ public class Master_Frame extends JFrame {
     }
     
     private static void settingsButtonActionPerformed (ActionEvent evt) {
+        masterFrame.remove(rightBodyPanel);
         rightBodyPanel = new Settings_Panel();
         rightBodyPanel.setPreferredSize(rightBodySize);
         masterFrame.getContentPane().add(rightBodyPanel);
