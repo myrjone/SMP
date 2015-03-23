@@ -19,7 +19,7 @@ import javax.swing.*;
  *
  * @author alex
  */
-public class Master_Frame<T> extends JFrame { 
+public class Master_Frame extends JFrame { 
     //here are the sizes used for the different panels
     private static final Dimension frameSize = new Dimension(700, 700);
     private static final Dimension leftNavSize = new Dimension(150, 700);
@@ -39,11 +39,26 @@ public class Master_Frame<T> extends JFrame {
         JButton coursesButton = new JButton("Courses");
         JButton studentsButton = new JButton("Students");
         JButton facultyButton = new JButton("Faculty");
-        JButton adminButton = new JButton("Admin");
+        JButton settingsButton = new JButton("Settings");
         
         //Action Listeners go here
         scheduleButton.addActionListener((ActionEvent e) -> {
             scheduleButtonActionPerformed(e);
+        });
+        reportsButton.addActionListener((ActionEvent e) -> {
+            reportsButtonActionPerformed(e);
+        });
+        coursesButton.addActionListener((ActionEvent e) -> {
+            coursesButtonActionPerformed(e);
+        });
+        studentsButton.addActionListener((ActionEvent e) -> {
+            studentsButtonActionPerformed(e);
+        });
+        facultyButton.addActionListener((ActionEvent e) -> {
+            facultyButtonActionPerformed(e);
+        });
+        settingsButton.addActionListener((ActionEvent e) -> {
+            settingsButtonActionPerformed(e);
         });
         //End action Listeners
         
@@ -62,7 +77,7 @@ public class Master_Frame<T> extends JFrame {
         buttonPanel.add(coursesButton, gbc);
         buttonPanel.add(studentsButton, gbc);
         buttonPanel.add(facultyButton, gbc);
-        buttonPanel.add(adminButton, gbc);
+        buttonPanel.add(settingsButton, gbc);
         leftNavBar.add(buttonPanel, gbc);
         
         masterFrame.add(leftNavBar, BorderLayout.WEST);
@@ -73,6 +88,41 @@ public class Master_Frame<T> extends JFrame {
     
     private static void scheduleButtonActionPerformed (ActionEvent evt) {
         rightBodyPanel = new Schedule_Panel();
+        rightBodyPanel.setPreferredSize(rightBodySize);
+        masterFrame.getContentPane().add(rightBodyPanel);
+        masterFrame.pack();
+    }
+    
+    private static void reportsButtonActionPerformed (ActionEvent evt) {
+        rightBodyPanel = new Reports_Panel();
+        rightBodyPanel.setPreferredSize(rightBodySize);
+        masterFrame.getContentPane().add(rightBodyPanel);
+        masterFrame.pack();
+    }
+    
+    private static void coursesButtonActionPerformed (ActionEvent evt) {
+        rightBodyPanel = new Courses_Panel();
+        rightBodyPanel.setPreferredSize(rightBodySize);
+        masterFrame.getContentPane().add(rightBodyPanel);
+        masterFrame.pack();
+    }
+    
+    private static void studentsButtonActionPerformed (ActionEvent evt) {
+        rightBodyPanel = new Students_Panel();
+        rightBodyPanel.setPreferredSize(rightBodySize);
+        masterFrame.getContentPane().add(rightBodyPanel);
+        masterFrame.pack();
+    }
+    
+    private static void facultyButtonActionPerformed (ActionEvent evt) {
+        rightBodyPanel = new Faculty_Panel();
+        rightBodyPanel.setPreferredSize(rightBodySize);
+        masterFrame.getContentPane().add(rightBodyPanel);
+        masterFrame.pack();
+    }
+    
+    private static void settingsButtonActionPerformed (ActionEvent evt) {
+        rightBodyPanel = new Settings_Panel();
         rightBodyPanel.setPreferredSize(rightBodySize);
         masterFrame.getContentPane().add(rightBodyPanel);
         masterFrame.pack();
