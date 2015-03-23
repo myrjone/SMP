@@ -69,27 +69,24 @@ public class Master_Frame extends JFrame {
          * This snippet arranges the buttons vertically, centered,
          * and sizes them evenly
          */
-        JPanel buttonPanel = new JPanel(new GridLayout(7, 1));
+        // GridLayout space buttons new GridLayout(rows, cols, hgap, vgap)
+        JPanel buttonPanel = new JPanel(new GridLayout(7, 1,20,20));
         JPanel leftNavBar = new JPanel(new GridBagLayout());
         
-        /**
-         * TODO: Make this work
-         * gbc is supposed to add padding to the buttons
-         */
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
+       
         
         leftNavBar.setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0)));
         leftNavBar.setPreferredSize(leftNavSize);
         
-        buttonPanel.add(homeButton,gbc);
-        buttonPanel.add(scheduleButton, gbc);
-        buttonPanel.add(reportsButton, gbc);
-        buttonPanel.add(coursesButton, gbc);
-        buttonPanel.add(studentsButton, gbc);
-        buttonPanel.add(facultyButton, gbc);
-        buttonPanel.add(settingsButton, gbc);
-        leftNavBar.add(buttonPanel, gbc);
+        
+        buttonPanel.add(homeButton);
+        buttonPanel.add(scheduleButton);
+        buttonPanel.add(reportsButton);
+        buttonPanel.add(coursesButton);
+        buttonPanel.add(studentsButton);
+        buttonPanel.add(facultyButton);
+        buttonPanel.add(settingsButton);
+        leftNavBar.add(buttonPanel);
         
         rightBodyPanel = new Home_Panel();
         rightBodyPanel.setPreferredSize(rightBodySize);
