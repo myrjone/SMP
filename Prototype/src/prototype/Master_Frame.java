@@ -42,6 +42,9 @@ public class Master_Frame extends JFrame {
         JButton settingsButton = new JButton("Settings");
         
         //Action Listeners go here
+        homeButton.addActionListener((ActionEvent e) -> {
+            homeButtonActionPerformed(e);
+        });
         scheduleButton.addActionListener((ActionEvent e) -> {
             scheduleButtonActionPerformed(e);
         });
@@ -62,9 +65,17 @@ public class Master_Frame extends JFrame {
         });
         //End action Listeners
         
-        
+        /**
+         * This snippet arranges the buttons vertically, centered,
+         * and sizes them evenly
+         */
         JPanel buttonPanel = new JPanel(new GridLayout(7, 1));
         JPanel leftNavBar = new JPanel(new GridBagLayout());
+        
+        /**
+         * TODO: Make this work
+         * gbc is supposed to add padding to the buttons
+         */
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         
@@ -80,11 +91,26 @@ public class Master_Frame extends JFrame {
         buttonPanel.add(settingsButton, gbc);
         leftNavBar.add(buttonPanel, gbc);
         
+        rightBodyPanel = new Home_Panel();
+        rightBodyPanel.setPreferredSize(rightBodySize);
+        
+        
         masterFrame.add(leftNavBar, BorderLayout.WEST);
-        masterFrame.setSize(frameSize);
+        masterFrame.getContentPane().add(rightBodyPanel);
+        masterFrame.pack();
+        //masterFrame.setSize(frameSize);
         masterFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         masterFrame.setVisible(true);
     }    
+    
+    
+    //Here start the action handlers for the buttons
+    private static void homeButtonActionPerformed (ActionEvent evt) {
+        rightBodyPanel = new Home_Panel();
+        rightBodyPanel.setPreferredSize(rightBodySize);
+        masterFrame.getContentPane().add(rightBodyPanel);
+        masterFrame.pack();
+    }
     
     private static void scheduleButtonActionPerformed (ActionEvent evt) {
         rightBodyPanel = new Schedule_Panel();
@@ -127,6 +153,7 @@ public class Master_Frame extends JFrame {
         masterFrame.getContentPane().add(rightBodyPanel);
         masterFrame.pack();
     }
+    //End action handlers
     
     private static void setSystemLookAndFeel() { 
         try { 
