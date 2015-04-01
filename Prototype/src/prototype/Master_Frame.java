@@ -8,10 +8,8 @@ package prototype;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import javax.swing.*;
 
@@ -21,9 +19,9 @@ import javax.swing.*;
  */
 public class Master_Frame extends JFrame { 
     //here are the sizes used for the different panels
-    private static final Dimension frameSize = new Dimension(700, 700);
+    private static final Dimension frameSize = new Dimension(900, 700);
     private static final Dimension leftNavSize = new Dimension(150, 700);
-    private static final Dimension rightBodySize = new Dimension(500, 700);
+    private static final Dimension rightBodySize = new Dimension(750, 700);
     
     private static JPanel rightBodyPanel;
     private static JFrame masterFrame;
