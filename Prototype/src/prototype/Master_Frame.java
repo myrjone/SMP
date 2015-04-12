@@ -35,7 +35,7 @@ public class Master_Frame extends JFrame {
         JButton scheduleButton = new JButton("Schedule");
         JButton reportsButton = new JButton("Reports");
         JButton coursesButton = new JButton("Courses");
-        JButton studentsButton = new JButton("Students");
+        JButton studentsButton = new JButton("Assistants");
         JButton facultyButton = new JButton("Faculty");
         JButton settingsButton = new JButton("Settings");
         
