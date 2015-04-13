@@ -5,13 +5,17 @@
  */
 package prototype;
 
+import java.io.File;
+import javax.swing.JFileChooser;
 import javax.swing.JPanel;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
  * @author alex
  */
 public class Students_Panel extends javax.swing.JPanel {
+private static File importFile;
 
     /**
      * Creates new form Students_Panel
@@ -32,7 +36,7 @@ public class Students_Panel extends javax.swing.JPanel {
 
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
+        ImportTA = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTableTA = new javax.swing.JTable();
         AddButton = new javax.swing.JButton();
@@ -40,7 +44,12 @@ public class Students_Panel extends javax.swing.JPanel {
         RemoveButton = new javax.swing.JButton();
         ViewButton = new javax.swing.JButton();
 
-        jButton1.setText("Import TA List");
+        ImportTA.setText("Import TA List");
+        ImportTA.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ImportTAActionPerformed(evt);
+            }
+        });
 
         jTableTA.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -99,7 +108,7 @@ public class Students_Panel extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton1)
+                .addComponent(ImportTA)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 650, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -115,7 +124,7 @@ public class Students_Panel extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton1)
+                .addComponent(ImportTA)
                 .addGap(11, 11, 11)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
@@ -153,17 +162,29 @@ public class Students_Panel extends javax.swing.JPanel {
     }//GEN-LAST:event_ViewButtonActionPerformed
 
     private void AddButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddButtonActionPerformed
-  
+       
+        
     
     }//GEN-LAST:event_AddButtonActionPerformed
+
+    private void ImportTAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ImportTAActionPerformed
+        JFileChooser chooser = new JFileChooser();
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                "Comma-Separated Value (CSV) file", "csv");
+        chooser.setFileFilter(filter);
+        int returnVal = chooser.showOpenDialog(this);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            importFile = chooser.getSelectedFile();
+        }
+    }//GEN-LAST:event_ImportTAActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton AddButton;
     private javax.swing.JButton EditButton;
+    private javax.swing.JButton ImportTA;
     private javax.swing.JButton RemoveButton;
     private javax.swing.JButton ViewButton;
-    private javax.swing.JButton jButton1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
