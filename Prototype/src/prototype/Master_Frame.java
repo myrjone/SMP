@@ -5,6 +5,7 @@
  */
 package prototype;
 
+import prototype.Faculty.Faculty_Panel;
 import prototype.Courses.Courses_Panel;
 import java.awt.BorderLayout;
 import java.awt.Color;
