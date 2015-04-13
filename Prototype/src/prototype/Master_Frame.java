@@ -24,7 +24,7 @@ public class Master_Frame extends JFrame {
     private static final Dimension rightBodySize = new Dimension(750, 700);
     
     private static JPanel rightBodyPanel;
-    private static JFrame masterFrame;
+    public static JFrame masterFrame;
     private static JPanel TA_Edit;
     
     private static void initComponents() {

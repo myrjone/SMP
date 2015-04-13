@@ -6,16 +6,16 @@
 package prototype;
 
 import java.io.File;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import prototype.Master_Frame;
 
-/**
- *
- * @author alex
- */
+
 public class Students_Panel extends javax.swing.JPanel {
-private static File importFile;
+public static File importFile;
 
     /**
      * Creates new form Students_Panel
@@ -87,6 +87,11 @@ private static File importFile;
         });
 
         EditButton.setText("Edit");
+        EditButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                EditButtonActionPerformed(evt);
+            }
+        });
 
         RemoveButton.setText("Remove");
         RemoveButton.addActionListener(new java.awt.event.ActionListener() {
@@ -154,7 +159,8 @@ private static File importFile;
     }// </editor-fold>//GEN-END:initComponents
 
     private void RemoveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RemoveButtonActionPerformed
-        // TODO add your handling code here:
+         JOptionPane.showConfirmDialog(null, "Are you sure you want to remove?", "Confirm",
+         JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
     }//GEN-LAST:event_RemoveButtonActionPerformed
 
     private void ViewButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ViewButtonActionPerformed
@@ -162,9 +168,12 @@ private static File importFile;
     }//GEN-LAST:event_ViewButtonActionPerformed
 
     private void AddButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddButtonActionPerformed
-       
+        JDialog box = new JDialog(Master_Frame.masterFrame, true);
+        box.add(new TA_Edit());
+        box.setResizable(false);
+        box.pack();
+        box.setVisible(true);
         
-    
     }//GEN-LAST:event_AddButtonActionPerformed
 
     private void ImportTAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ImportTAActionPerformed
@@ -177,6 +186,14 @@ private static File importFile;
             importFile = chooser.getSelectedFile();
         }
     }//GEN-LAST:event_ImportTAActionPerformed
+
+    private void EditButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EditButtonActionPerformed
+       JDialog box = new JDialog(Master_Frame.masterFrame, true);
+        box.add(new TA_Edit());
+        box.setResizable(false);
+        box.pack();
+        box.setVisible(true);
+    }//GEN-LAST:event_EditButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
