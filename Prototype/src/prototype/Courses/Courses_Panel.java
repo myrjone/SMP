@@ -3,13 +3,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package prototype;
+package prototype.Courses;
 
 import java.awt.Font;
 import java.io.File;
+import javafx.scene.control.ListView;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.table.JTableHeader;
+import prototype.Master_Frame;
 /**
  *
  * @author alex
@@ -38,6 +44,9 @@ public class Courses_Panel extends javax.swing.JPanel {
         importCoursesButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         courseTable = new javax.swing.JTable();
+        addButton = new javax.swing.JButton();
+        editButton = new javax.swing.JButton();
+        removeButton = new javax.swing.JButton();
 
         importCoursesButton.setText("Import Courses");
         importCoursesButton.addActionListener(new java.awt.event.ActionListener() {
@@ -69,6 +78,11 @@ public class Courses_Panel extends javax.swing.JPanel {
         courseTable.setRowHeight(20);
         courseTable.setRowMargin(2);
         courseTable.getTableHeader().setReorderingAllowed(false);
+        courseTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                courseTableMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(courseTable);
         if (courseTable.getColumnModel().getColumnCount() > 0) {
             courseTable.getColumnModel().getColumn(0).setResizable(false);
@@ -77,6 +91,27 @@ public class Courses_Panel extends javax.swing.JPanel {
             courseTable.getColumnModel().getColumn(3).setResizable(false);
         }
 
+        addButton.setText("Add");
+        addButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addButtonActionPerformed(evt);
+            }
+        });
+
+        editButton.setText("Edit");
+        editButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editButtonActionPerformed(evt);
+            }
+        });
+
+        removeButton.setText("Remove");
+        removeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -84,7 +119,13 @@ public class Courses_Panel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 741, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 649, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(addButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(removeButton, javax.swing.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE)
+                            .addComponent(editButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(importCoursesButton, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE)))
@@ -95,9 +136,19 @@ public class Courses_Panel extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(importCoursesButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 470, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 470, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(131, 131, 131)
+                        .addComponent(addButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(editButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(removeButton)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -111,6 +162,46 @@ public class Courses_Panel extends javax.swing.JPanel {
             importFile = chooser.getSelectedFile();
         }
     }//GEN-LAST:event_importCoursesButtonActionPerformed
+
+    private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
+        JDialog box = new JDialog(Master_Frame.masterFrame, true);
+        box.add(new Courses_AddOrEditPanel());
+        box.setResizable(false);
+        box.pack();
+        box.setVisible(true);
+    }//GEN-LAST:event_addButtonActionPerformed
+
+    private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
+        JDialog box = new JDialog(Master_Frame.masterFrame, true);
+//        int rowSelected = courseTable.getSelectedRow();
+//        Object[] params = {
+//            courseTable.getValueAt(rowSelected, 0),
+//            courseTable.getValueAt(rowSelected, 1),
+//            courseTable.getValueAt(rowSelected, 2),
+//            courseTable.getValueAt(rowSelected, 3)
+//        };
+        
+        box.add(new Courses_AddOrEditPanel());
+        box.setResizable(false);
+        box.pack();
+        box.setVisible(true);
+    }//GEN-LAST:event_editButtonActionPerformed
+
+    private void courseTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_courseTableMouseClicked
+        if (courseTable.getSelectedRow() != -1) {
+            editButton.setEnabled(true);
+            removeButton.setEnabled(true);
+        }
+        else {
+            editButton.setEnabled(false);
+            removeButton.setEnabled(false);
+        }
+    }//GEN-LAST:event_courseTableMouseClicked
+
+    private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
+        int response = JOptionPane.showConfirmDialog(null, "Are you sure you want to remove?", "Confirm",
+            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+    }//GEN-LAST:event_removeButtonActionPerformed
 
     private void fillTable() {
         courseTable.setValueAt("Chem 103", 0, 0);
@@ -132,8 +223,11 @@ public class Courses_Panel extends javax.swing.JPanel {
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton addButton;
     private javax.swing.JTable courseTable;
+    private javax.swing.JButton editButton;
     private javax.swing.JButton importCoursesButton;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton removeButton;
     // End of variables declaration//GEN-END:variables
 }
