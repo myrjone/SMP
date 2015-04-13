@@ -25,17 +25,19 @@ public class Master_Frame extends JFrame {
     
     private static JPanel rightBodyPanel;
     private static JFrame masterFrame;
+    private static JPanel TA_Edit;
     
     private static void initComponents() {
         setSystemLookAndFeel();
         masterFrame = new JFrame();
+        TA_Edit = new JPanel();
         
         //Button instantiation
         JButton homeButton = new JButton("Home");
         JButton scheduleButton = new JButton("Schedule");
         JButton reportsButton = new JButton("Reports");
         JButton coursesButton = new JButton("Courses");
-        JButton studentsButton = new JButton("Students");
+        JButton studentsButton = new JButton("Assistants");
         JButton facultyButton = new JButton("Faculty");
         JButton settingsButton = new JButton("Settings");
         
