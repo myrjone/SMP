@@ -5,6 +5,11 @@
  */
 package prototype;
 
+import prototype.Home.Home_Panel;
+import prototype.Settings.Settings_Panel;
+import prototype.Reports.Reports_Panel;
+import prototype.Schedule.Schedule_Panel;
+import prototype.Assistant.Assistants_Panel;
 import prototype.Faculty.Faculty_Panel;
 import prototype.Courses.Courses_Panel;
 import java.awt.BorderLayout;
@@ -135,7 +140,7 @@ public class Master_Frame extends JFrame {
     
     private static void studentsButtonActionPerformed (ActionEvent evt) {
         masterFrame.remove(rightBodyPanel);
-        rightBodyPanel = new Students_Panel();
+        rightBodyPanel = new Assistants_Panel();
         rightBodyPanel.setPreferredSize(rightBodySize);
         masterFrame.getContentPane().add(rightBodyPanel);
         masterFrame.pack();
