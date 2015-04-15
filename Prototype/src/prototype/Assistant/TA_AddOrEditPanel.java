@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package prototype;
+package prototype.Assistant;
 
 import java.awt.Window;
 import javax.swing.JPanel;
@@ -14,12 +14,12 @@ import javax.swing.WindowConstants;
  *
  * @author Luke
  */
-public class TA_Edit extends javax.swing.JPanel {
+public class TA_AddOrEditPanel extends javax.swing.JPanel {
 
     /**
      * Creates new form TA_Edit
      */
-    public TA_Edit() {
+    public TA_AddOrEditPanel() {
         initComponents();
     }
 

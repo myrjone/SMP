@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package prototype;
+package prototype.Assistant;
 
 import java.io.File;
 import javax.swing.JDialog;
@@ -12,15 +12,16 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import prototype.Master_Frame;
+import prototype.Master_Frame;
 
 
-public class Students_Panel extends javax.swing.JPanel {
+public class Assistants_Panel extends javax.swing.JPanel {
 public static File importFile;
 
     /**
      * Creates new form Students_Panel
      */
-    public Students_Panel() {
+    public Assistants_Panel() {
         initComponents();
        
     }
@@ -169,7 +170,7 @@ public static File importFile;
 
     private void AddButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddButtonActionPerformed
         JDialog box = new JDialog(Master_Frame.masterFrame, true);
-        box.add(new TA_Edit());
+        box.add(new TA_AddOrEditPanel());
         box.setResizable(false);
         box.pack();
         box.setVisible(true);
@@ -189,7 +190,7 @@ public static File importFile;
 
     private void EditButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EditButtonActionPerformed
        JDialog box = new JDialog(Master_Frame.masterFrame, true);
-        box.add(new TA_Edit());
+        box.add(new TA_AddOrEditPanel());
         box.setResizable(false);
         box.pack();
         box.setVisible(true);
