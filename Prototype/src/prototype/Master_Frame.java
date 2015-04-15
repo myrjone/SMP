@@ -5,6 +5,8 @@
  */
 package prototype;
 
+import prototype.Faculty.Faculty_Panel;
+import prototype.Courses.Courses_Panel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -25,12 +27,10 @@ public class Master_Frame extends JFrame {
     
     private static JPanel rightBodyPanel;
     public static JFrame masterFrame;
-    private static JPanel TA_Edit;
     
     private static void initComponents() {
         setSystemLookAndFeel();
         masterFrame = new JFrame();
-        TA_Edit = new JPanel();
         
         //Button instantiation
         JButton homeButton = new JButton("Home");
