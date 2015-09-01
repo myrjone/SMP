@@ -77,8 +77,4 @@ public class TA {
     public void setTimeAvailable(HashMap<Integer, Boolean> timeAvailable) {
         this.timeAvailable = timeAvailable;
     }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
 }
