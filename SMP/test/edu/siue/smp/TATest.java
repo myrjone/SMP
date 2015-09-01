@@ -50,8 +50,6 @@ public class TATest {
         String expResult = "";
         String result = instance.getFirstName();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("Test case failed with expResult" + expResult + " and result " + result);
     }
 
     /**
@@ -64,8 +62,6 @@ public class TATest {
         String expResult = "";
         String result = instance.getLastName();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -78,8 +74,6 @@ public class TATest {
         String expResult = "";
         String result = instance.getEmail();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -89,11 +83,9 @@ public class TATest {
     public void testGetCoursePreferences() {
         System.out.println("getCoursePreferences");
         TA instance = new TA();
-        ArrayList<String> expResult = null;
+        ArrayList<String> expResult = new ArrayList<String>();
         ArrayList<String> result = instance.getCoursePreferences();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -103,11 +95,9 @@ public class TATest {
     public void testGetTimeAvailable() {
         System.out.println("getTimeAvailable");
         TA instance = new TA();
-        HashMap<Integer, Boolean> expResult = null;
+        HashMap<Integer, Boolean> expResult = new HashMap<Integer, Boolean>();
         HashMap<Integer, Boolean> result = instance.getTimeAvailable();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -119,8 +109,9 @@ public class TATest {
         String firstName = "";
         TA instance = new TA();
         instance.setFirstName(firstName);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        String expResult = "";
+        String result = instance.getFirstName();
+        assertEquals(expResult, result);
     }
 
     /**
@@ -132,8 +123,9 @@ public class TATest {
         String lastName = "";
         TA instance = new TA();
         instance.setLastName(lastName);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        String expResult = "";
+        String result = instance.getLastName();
+        assertEquals(expResult, result);
     }
 
     /**
@@ -145,8 +137,9 @@ public class TATest {
         String email = "";
         TA instance = new TA();
         instance.setEmail(email);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        String expResult = "";
+        String result = instance.getFirstName();
+        assertEquals(expResult, result);
     }
 
     /**
@@ -158,8 +151,9 @@ public class TATest {
         ArrayList<String> coursePreferences = null;
         TA instance = new TA();
         instance.setCoursePreferences(coursePreferences);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        ArrayList<String> expResult = null;
+        ArrayList<String> result = instance.getCoursePreferences();
+        assertEquals(expResult, result);
     }
 
     /**
@@ -171,8 +165,9 @@ public class TATest {
         HashMap<Integer, Boolean> timeAvailable = null;
         TA instance = new TA();
         instance.setTimeAvailable(timeAvailable);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        HashMap<Integer, Boolean> expResult = null;
+        HashMap<Integer, Boolean> result = instance.getTimeAvailable();
+        assertEquals(expResult, result);
     }
     
 }
