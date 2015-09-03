@@ -5,13 +5,13 @@ import java.util.ArrayList;
 
 public class Schedule {
     private String name;
-    private LocalDateTime created;
+    private final LocalDateTime created;
     private ArrayList<Event> events;
     
     public Schedule (String name) {
         this.name = name;
         this.created = LocalDateTime.now();
-        this.events = new ArrayList<Event>();
+        this.events = new ArrayList<>();
     }
 
     public String getName() {

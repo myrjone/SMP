@@ -6,7 +6,7 @@ public class Coordinator {
     private String firstName;
     private String lastName;
     private String email;
-    private UUID id;
+    private final UUID id;
     
     public Coordinator () {
         this.firstName = "";

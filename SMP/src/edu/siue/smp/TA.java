@@ -10,14 +10,14 @@ public class TA {
     private String email;
     private ArrayList<String> coursePreferences;
     private HashMap<Integer,Boolean> timeAvailable;
-    private UUID id;
+    private final UUID id;
     
     public TA () {
         this.firstName = "";
         this.lastName = "";
         this.email = "";
-        this.coursePreferences = new ArrayList<String>();
-        this.timeAvailable = new HashMap<Integer,Boolean>();
+        this.coursePreferences = new ArrayList<>();
+        this.timeAvailable = new HashMap<>();
         this.id = UUID.randomUUID();
     }
     

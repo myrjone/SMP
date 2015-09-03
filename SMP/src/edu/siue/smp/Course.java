@@ -27,8 +27,8 @@ public class Course extends Event {
         this.start = start;
         this.end = end;
         this.bldg = "";
-        this.instructorPreference = new ArrayList<String>();
-        this.assignedTA = new ArrayList<TA>();
+        this.instructorPreference = new ArrayList<>();
+        this.assignedTA = new ArrayList<>();
         this.coordinator = coordinator;
     }
 
@@ -40,7 +40,7 @@ public class Course extends Event {
             int start,
             int end,
             String bldg,
-            ArrayList<String> instructorPreferencec,
+            ArrayList<String> instructorPreference,
             ArrayList<TA> assignedTA,
             Coordinator coordinator) {
         this.crn = crn;
@@ -130,6 +130,14 @@ public class Course extends Event {
 
     public Coordinator getCoordinator() {
         return coordinator;
+    }
+
+    public String getBldg() {
+        return bldg;
+    }
+
+    public void setBldg(String bldg) {
+        this.bldg = bldg;
     }
 
 }
