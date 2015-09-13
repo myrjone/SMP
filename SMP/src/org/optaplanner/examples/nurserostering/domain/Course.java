@@ -14,27 +14,19 @@
  * limitations under the License.
  */
 
-package org.optaplanner.examples.nurserostering.domain.request;
+package org.optaplanner.examples.nurserostering.domain;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.optaplanner.examples.common.domain.AbstractPersistable;
-import org.optaplanner.examples.nurserostering.domain.Ta;
-import org.optaplanner.examples.nurserostering.domain.CourseDate;
 
-@XStreamAlias("DayOffRequest")
-public class DayOffRequest extends AbstractPersistable {
+@XStreamAlias("Course")
+public class Course extends AbstractPersistable {
 
-    private Ta ta;
     private CourseDate courseDate;
-    private int weight;
+    private CourseType courseType;
+    private int index;
 
-    public Ta getTa() {
-        return ta;
-    }
-
-    public void setTa(Ta ta) {
-        this.ta = ta;
-    }
+    private int requiredTaSize;
 
     public CourseDate getCourseDate() {
         return courseDate;
@@ -44,17 +36,37 @@ public class DayOffRequest extends AbstractPersistable {
         this.courseDate = courseDate;
     }
 
-    public int getWeight() {
-        return weight;
+    public CourseType getCourseType() {
+        return courseType;
     }
 
-    public void setWeight(int weight) {
-        this.weight = weight;
+    public void setCourseType(CourseType courseType) {
+        this.courseType = courseType;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
+    public int getRequiredTaSize() {
+        return requiredTaSize;
+    }
+
+    public void setRequiredTaSize(int requiredTaSize) {
+        this.requiredTaSize = requiredTaSize;
+    }
+
+    public String getLabel() {
+        return courseType.getLabel() + " of " + courseDate.getLabel() ;
     }
 
     @Override
     public String toString() {
-        return courseDate + "_OFF_" + ta;
+        return courseDate + "_" + courseType;
     }
 
 }

@@ -35,7 +35,7 @@
 
     <solver>
       <solutionClass>org.optaplanner.examples.nurserostering.domain.NurseRoster</solutionClass>
-      <entityClass>org.optaplanner.examples.nurserostering.domain.ShiftAssignment</entityClass>
+      <entityClass>org.optaplanner.examples.nurserostering.domain.CourseAssignment</entityClass>
       <scoreDirectorFactory>
         <scoreDefinitionType>HARD_SOFT</scoreDefinitionType>
         <scoreDrl>org/optaplanner/examples/nurserostering/solver/nurseRosteringScoreRules.drl</scoreDrl>
@@ -61,15 +61,15 @@
         <unionMoveSelector>
           <moveListFactory>
             <cacheType>PHASE</cacheType>
-            <moveListFactoryClass>org.optaplanner.examples.nurserostering.solver.move.factory.EmployeeChangeMoveFactory</moveListFactoryClass>
+            <moveListFactoryClass>org.optaplanner.examples.nurserostering.solver.move.factory.TaChangeMoveFactory</moveListFactoryClass>
           </moveListFactory>
           <moveListFactory>
             <cacheType>PHASE</cacheType>
-            <moveListFactoryClass>org.optaplanner.examples.nurserostering.solver.move.factory.ShiftAssignmentSwapMoveFactory</moveListFactoryClass>
+            <moveListFactoryClass>org.optaplanner.examples.nurserostering.solver.move.factory.CourseAssignmentSwapMoveFactory</moveListFactoryClass>
           </moveListFactory>
           <moveListFactory>
             <cacheType>STEP</cacheType>
-            <moveListFactoryClass>org.optaplanner.examples.nurserostering.solver.move.factory.ShiftAssignmentPillarPartSwapMoveFactory</moveListFactoryClass>
+            <moveListFactoryClass>org.optaplanner.examples.nurserostering.solver.move.factory.CourseAssignmentPillarPartSwapMoveFactory</moveListFactoryClass>
           </moveListFactory>
         </unionMoveSelector>
         <acceptor>
@@ -91,15 +91,15 @@
         <unionMoveSelector>
           <moveListFactory>
             <cacheType>PHASE</cacheType>
-            <moveListFactoryClass>org.optaplanner.examples.nurserostering.solver.move.factory.EmployeeChangeMoveFactory</moveListFactoryClass>
+            <moveListFactoryClass>org.optaplanner.examples.nurserostering.solver.move.factory.TaChangeMoveFactory</moveListFactoryClass>
           </moveListFactory>
           <moveListFactory>
             <cacheType>PHASE</cacheType>
-            <moveListFactoryClass>org.optaplanner.examples.nurserostering.solver.move.factory.ShiftAssignmentSwapMoveFactory</moveListFactoryClass>
+            <moveListFactoryClass>org.optaplanner.examples.nurserostering.solver.move.factory.CourseAssignmentSwapMoveFactory</moveListFactoryClass>
           </moveListFactory>
           <moveListFactory>
             <cacheType>STEP</cacheType>
-            <moveListFactoryClass>org.optaplanner.examples.nurserostering.solver.move.factory.ShiftAssignmentPillarPartSwapMoveFactory</moveListFactoryClass>
+            <moveListFactoryClass>org.optaplanner.examples.nurserostering.solver.move.factory.CourseAssignmentPillarPartSwapMoveFactory</moveListFactoryClass>
           </moveListFactory>
         </unionMoveSelector>
         <acceptor>
@@ -118,15 +118,15 @@
         <unionMoveSelector>
           <moveListFactory>
             <cacheType>PHASE</cacheType>
-            <moveListFactoryClass>org.optaplanner.examples.nurserostering.solver.move.factory.EmployeeChangeMoveFactory</moveListFactoryClass>
+            <moveListFactoryClass>org.optaplanner.examples.nurserostering.solver.move.factory.TaChangeMoveFactory</moveListFactoryClass>
           </moveListFactory>
           <moveListFactory>
             <cacheType>PHASE</cacheType>
-            <moveListFactoryClass>org.optaplanner.examples.nurserostering.solver.move.factory.ShiftAssignmentSwapMoveFactory</moveListFactoryClass>
+            <moveListFactoryClass>org.optaplanner.examples.nurserostering.solver.move.factory.CourseAssignmentSwapMoveFactory</moveListFactoryClass>
           </moveListFactory>
           <moveListFactory>
             <cacheType>STEP</cacheType>
-            <moveListFactoryClass>org.optaplanner.examples.nurserostering.solver.move.factory.ShiftAssignmentPillarPartSwapMoveFactory</moveListFactoryClass>
+            <moveListFactoryClass>org.optaplanner.examples.nurserostering.solver.move.factory.CourseAssignmentPillarPartSwapMoveFactory</moveListFactoryClass>
           </moveListFactory>
         </unionMoveSelector>
         <acceptor>

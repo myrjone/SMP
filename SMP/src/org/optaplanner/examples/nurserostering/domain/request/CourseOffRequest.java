@@ -19,13 +19,13 @@ package org.optaplanner.examples.nurserostering.domain.request;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.optaplanner.examples.common.domain.AbstractPersistable;
 import org.optaplanner.examples.nurserostering.domain.Ta;
-import org.optaplanner.examples.nurserostering.domain.CourseDate;
+import org.optaplanner.examples.nurserostering.domain.Course;
 
-@XStreamAlias("DayOffRequest")
-public class DayOffRequest extends AbstractPersistable {
+@XStreamAlias("CourseOffRequest")
+public class CourseOffRequest extends AbstractPersistable {
 
     private Ta ta;
-    private CourseDate courseDate;
+    private Course course;
     private int weight;
 
     public Ta getTa() {
@@ -36,12 +36,12 @@ public class DayOffRequest extends AbstractPersistable {
         this.ta = ta;
     }
 
-    public CourseDate getCourseDate() {
-        return courseDate;
+    public Course getCourse() {
+        return course;
     }
 
-    public void setCourseDate(CourseDate courseDate) {
-        this.courseDate = courseDate;
+    public void setCourse(Course course) {
+        this.course = course;
     }
 
     public int getWeight() {
@@ -54,7 +54,7 @@ public class DayOffRequest extends AbstractPersistable {
 
     @Override
     public String toString() {
-        return courseDate + "_OFF_" + ta;
+        return course + "_OFF_" + ta;
     }
 
 }

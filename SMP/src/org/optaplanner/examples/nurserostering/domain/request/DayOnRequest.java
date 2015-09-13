@@ -18,30 +18,30 @@ package org.optaplanner.examples.nurserostering.domain.request;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.optaplanner.examples.common.domain.AbstractPersistable;
-import org.optaplanner.examples.nurserostering.domain.Employee;
-import org.optaplanner.examples.nurserostering.domain.ShiftDate;
+import org.optaplanner.examples.nurserostering.domain.Ta;
+import org.optaplanner.examples.nurserostering.domain.CourseDate;
 
 @XStreamAlias("DayOnRequest")
 public class DayOnRequest extends AbstractPersistable {
 
-    private Employee employee;
-    private ShiftDate shiftDate;
+    private Ta ta;
+    private CourseDate courseDate;
     private int weight;
 
-    public Employee getEmployee() {
-        return employee;
+    public Ta getTa() {
+        return ta;
     }
 
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
+    public void setTa(Ta ta) {
+        this.ta = ta;
     }
 
-    public ShiftDate getShiftDate() {
-        return shiftDate;
+    public CourseDate getCourseDate() {
+        return courseDate;
     }
 
-    public void setShiftDate(ShiftDate shiftDate) {
-        this.shiftDate = shiftDate;
+    public void setCourseDate(CourseDate courseDate) {
+        this.courseDate = courseDate;
     }
 
     public int getWeight() {
@@ -54,7 +54,7 @@ public class DayOnRequest extends AbstractPersistable {
 
     @Override
     public String toString() {
-        return shiftDate + "_ON_" + employee;
+        return courseDate + "_ON_" + ta;
     }
 
 }

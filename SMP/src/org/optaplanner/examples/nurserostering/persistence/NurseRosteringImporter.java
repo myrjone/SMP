@@ -37,14 +37,14 @@ import org.jdom2.JDOMException;
 import org.optaplanner.core.api.domain.solution.Solution;
 import org.optaplanner.examples.common.persistence.AbstractXmlSolutionImporter;
 import org.optaplanner.examples.nurserostering.domain.DayOfWeek;
-import org.optaplanner.examples.nurserostering.domain.Employee;
+import org.optaplanner.examples.nurserostering.domain.Ta;
 import org.optaplanner.examples.nurserostering.domain.NurseRoster;
 import org.optaplanner.examples.nurserostering.domain.NurseRosterParametrization;
-import org.optaplanner.examples.nurserostering.domain.Shift;
-import org.optaplanner.examples.nurserostering.domain.ShiftAssignment;
-import org.optaplanner.examples.nurserostering.domain.ShiftDate;
-import org.optaplanner.examples.nurserostering.domain.ShiftType;
-import org.optaplanner.examples.nurserostering.domain.ShiftTypeSkillRequirement;
+import org.optaplanner.examples.nurserostering.domain.Course;
+import org.optaplanner.examples.nurserostering.domain.CourseAssignment;
+import org.optaplanner.examples.nurserostering.domain.CourseDate;
+import org.optaplanner.examples.nurserostering.domain.CourseType;
+import org.optaplanner.examples.nurserostering.domain.CourseTypeSkillRequirement;
 import org.optaplanner.examples.nurserostering.domain.Skill;
 import org.optaplanner.examples.nurserostering.domain.SkillProficiency;
 import org.optaplanner.examples.nurserostering.domain.WeekendDefinition;
@@ -56,13 +56,13 @@ import org.optaplanner.examples.nurserostering.domain.contract.MinMaxContractLin
 import org.optaplanner.examples.nurserostering.domain.contract.PatternContractLine;
 import org.optaplanner.examples.nurserostering.domain.pattern.FreeBefore2DaysWithAWorkDayPattern;
 import org.optaplanner.examples.nurserostering.domain.pattern.Pattern;
-import org.optaplanner.examples.nurserostering.domain.pattern.ShiftType2DaysPattern;
-import org.optaplanner.examples.nurserostering.domain.pattern.ShiftType3DaysPattern;
+import org.optaplanner.examples.nurserostering.domain.pattern.CourseType2DaysPattern;
+import org.optaplanner.examples.nurserostering.domain.pattern.CourseType3DaysPattern;
 import org.optaplanner.examples.nurserostering.domain.pattern.WorkBeforeFreeSequencePattern;
 import org.optaplanner.examples.nurserostering.domain.request.DayOffRequest;
 import org.optaplanner.examples.nurserostering.domain.request.DayOnRequest;
-import org.optaplanner.examples.nurserostering.domain.request.ShiftOffRequest;
-import org.optaplanner.examples.nurserostering.domain.request.ShiftOnRequest;
+import org.optaplanner.examples.nurserostering.domain.request.CourseOffRequest;
+import org.optaplanner.examples.nurserostering.domain.request.CourseOnRequest;
 
 public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
 
@@ -80,14 +80,14 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
 
     public static class NurseRosteringInputBuilder extends XmlInputBuilder {
 
-        protected Map<String, ShiftDate> shiftDateMap;
+        protected Map<String, CourseDate> courseDateMap;
         protected Map<String, Skill> skillMap;
-        protected Map<String, ShiftType> shiftTypeMap;
-        protected Map<List<String>, Shift> dateAndShiftTypeToShiftMap;
-        protected Map<List<Object>, List<Shift>> dayOfWeekAndShiftTypeToShiftListMap;
+        protected Map<String, CourseType> courseTypeMap;
+        protected Map<List<String>, Course> dateAndCourseTypeToCourseMap;
+        protected Map<List<Object>, List<Course>> dayOfWeekAndCourseTypeToCourseListMap;
         protected Map<String, Pattern> patternMap;
         protected Map<String, Contract> contractMap;
-        protected Map<String, Employee> employeeMap;
+        protected Map<String, Ta> taMap;
 
         public Solution readSolution() throws IOException, JDOMException {
             // Note: javax.xml is terrible. JDom is much much easier.
@@ -98,42 +98,42 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
             nurseRoster.setId(0L);
             nurseRoster.setCode(schedulingPeriodElement.getAttribute("ID").getValue());
 
-            generateShiftDateList(nurseRoster,
+            generateCourseDateList(nurseRoster,
                     schedulingPeriodElement.getChild("StartDate"),
                     schedulingPeriodElement.getChild("EndDate"));
             generateNurseRosterInfo(nurseRoster);
             readSkillList(nurseRoster, schedulingPeriodElement.getChild("Skills"));
-            readShiftTypeList(nurseRoster, schedulingPeriodElement.getChild("ShiftTypes"));
-            generateShiftList(nurseRoster);
+            readCourseTypeList(nurseRoster, schedulingPeriodElement.getChild("CourseTypes"));
+            generateCourseList(nurseRoster);
             readPatternList(nurseRoster, schedulingPeriodElement.getChild("Patterns"));
             readContractList(nurseRoster, schedulingPeriodElement.getChild("Contracts"));
-            readEmployeeList(nurseRoster, schedulingPeriodElement.getChild("Employees"));
-            readRequiredEmployeeSizes(nurseRoster, schedulingPeriodElement.getChild("CoverRequirements"));
+            readTaList(nurseRoster, schedulingPeriodElement.getChild("Tas"));
+            readRequiredTaSizes(nurseRoster, schedulingPeriodElement.getChild("CoverRequirements"));
             readDayOffRequestList(nurseRoster, schedulingPeriodElement.getChild("DayOffRequests"));
             readDayOnRequestList(nurseRoster, schedulingPeriodElement.getChild("DayOnRequests"));
-            readShiftOffRequestList(nurseRoster, schedulingPeriodElement.getChild("ShiftOffRequests"));
-            readShiftOnRequestList(nurseRoster, schedulingPeriodElement.getChild("ShiftOnRequests"));
-            createShiftAssignmentList(nurseRoster);
+            readCourseOffRequestList(nurseRoster, schedulingPeriodElement.getChild("CourseOffRequests"));
+            readCourseOnRequestList(nurseRoster, schedulingPeriodElement.getChild("CourseOnRequests"));
+            createCourseAssignmentList(nurseRoster);
 
-            BigInteger possibleSolutionSize = BigInteger.valueOf(nurseRoster.getEmployeeList().size()).pow(
-                    nurseRoster.getShiftAssignmentList().size());
-            logger.info("NurseRoster {} has {} skills, {} shiftTypes, {} patterns, {} contracts, {} employees," +
-                    " {} shiftDates, {} shiftAssignments and {} requests with a search space of {}.",
+            BigInteger possibleSolutionSize = BigInteger.valueOf(nurseRoster.getTaList().size()).pow(
+                    nurseRoster.getCourseAssignmentList().size());
+            logger.info("NurseRoster {} has {} skills, {} courseTypes, {} patterns, {} contracts, {} tas," +
+                    " {} courseDates, {} courseAssignments and {} requests with a search space of {}.",
                     getInputId(),
                     nurseRoster.getSkillList().size(),
-                    nurseRoster.getShiftTypeList().size(),
+                    nurseRoster.getCourseTypeList().size(),
                     nurseRoster.getPatternList().size(),
                     nurseRoster.getContractList().size(),
-                    nurseRoster.getEmployeeList().size(),
-                    nurseRoster.getShiftDateList().size(),
-                    nurseRoster.getShiftAssignmentList().size(),
+                    nurseRoster.getTaList().size(),
+                    nurseRoster.getCourseDateList().size(),
+                    nurseRoster.getCourseAssignmentList().size(),
                     nurseRoster.getDayOffRequestList().size() + nurseRoster.getDayOnRequestList().size()
-                            + nurseRoster.getShiftOffRequestList().size() + nurseRoster.getShiftOnRequestList().size(),
+                            + nurseRoster.getCourseOffRequestList().size() + nurseRoster.getCourseOnRequestList().size(),
                     getFlooredPossibleSolutionSize(possibleSolutionSize));
             return nurseRoster;
         }
 
-        private void generateShiftDateList(NurseRoster nurseRoster,
+        private void generateCourseDateList(NurseRoster nurseRoster,
                 Element startDateElement, Element endDateElement) throws JDOMException {
             // Mimic JSR-310 LocalDate
             TimeZone LOCAL_TIMEZONE = TimeZone.getTimeZone("GMT");
@@ -174,35 +174,35 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                     tmpYear++;
                 }
             }
-            int shiftDateSize = maxDayIndex + 1;
-            List<ShiftDate> shiftDateList = new ArrayList<ShiftDate>(shiftDateSize);
-            shiftDateMap = new HashMap<String, ShiftDate>(shiftDateSize);
+            int courseDateSize = maxDayIndex + 1;
+            List<CourseDate> courseDateList = new ArrayList<CourseDate>(courseDateSize);
+            courseDateMap = new HashMap<String, CourseDate>(courseDateSize);
             long id = 0L;
             int dayIndex = 0;
             calendar.setTime(startDate);
-            for (int i = 0; i < shiftDateSize; i++) {
-                ShiftDate shiftDate = new ShiftDate();
-                shiftDate.setId(id);
-                shiftDate.setDayIndex(dayIndex);
+            for (int i = 0; i < courseDateSize; i++) {
+                CourseDate courseDate = new CourseDate();
+                courseDate.setId(id);
+                courseDate.setDayIndex(dayIndex);
                 String dateString = dateFormat.format(calendar.getTime());
-                shiftDate.setDateString(dateString);
-                shiftDate.setDayOfWeek(DayOfWeek.valueOfCalendar(calendar.get(Calendar.DAY_OF_WEEK)));
-                shiftDate.setShiftList(new ArrayList<Shift>());
-                shiftDateList.add(shiftDate);
-                shiftDateMap.put(dateString, shiftDate);
+                courseDate.setDateString(dateString);
+                courseDate.setDayOfWeek(DayOfWeek.valueOfCalendar(calendar.get(Calendar.DAY_OF_WEEK)));
+                courseDate.setCourseList(new ArrayList<Course>());
+                courseDateList.add(courseDate);
+                courseDateMap.put(dateString, courseDate);
                 id++;
                 dayIndex++;
                 calendar.add(Calendar.DAY_OF_YEAR, 1);
             }
-            nurseRoster.setShiftDateList(shiftDateList);
+            nurseRoster.setCourseDateList(courseDateList);
         }
 
         private void generateNurseRosterInfo(NurseRoster nurseRoster) {
-            List<ShiftDate> shiftDateList = nurseRoster.getShiftDateList();
+            List<CourseDate> courseDateList = nurseRoster.getCourseDateList();
             NurseRosterParametrization nurseRosterParametrization = new NurseRosterParametrization();
-            nurseRosterParametrization.setFirstShiftDate(shiftDateList.get(0));
-            nurseRosterParametrization.setLastShiftDate(shiftDateList.get(shiftDateList.size() - 1));
-            nurseRosterParametrization.setPlanningWindowStart(shiftDateList.get(0));
+            nurseRosterParametrization.setFirstCourseDate(courseDateList.get(0));
+            nurseRosterParametrization.setLastCourseDate(courseDateList.get(courseDateList.size() - 1));
+            nurseRosterParametrization.setPlanningWindowStart(courseDateList.get(0));
             nurseRoster.setNurseRosterParametrization(nurseRosterParametrization);
         }
 
@@ -232,96 +232,96 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
             nurseRoster.setSkillList(skillList);
         }
 
-        private void readShiftTypeList(NurseRoster nurseRoster, Element shiftTypesElement) throws JDOMException {
-            List<Element> shiftTypeElementList = (List<Element>) shiftTypesElement.getChildren();
-            List<ShiftType> shiftTypeList = new ArrayList<ShiftType>(shiftTypeElementList.size());
-            shiftTypeMap = new HashMap<String, ShiftType>(shiftTypeElementList.size());
+        private void readCourseTypeList(NurseRoster nurseRoster, Element courseTypesElement) throws JDOMException {
+            List<Element> courseTypeElementList = (List<Element>) courseTypesElement.getChildren();
+            List<CourseType> courseTypeList = new ArrayList<CourseType>(courseTypeElementList.size());
+            courseTypeMap = new HashMap<String, CourseType>(courseTypeElementList.size());
             long id = 0L;
             int index = 0;
-            List<ShiftTypeSkillRequirement> shiftTypeSkillRequirementList
-                    = new ArrayList<ShiftTypeSkillRequirement>(shiftTypeElementList.size() * 2);
-            long shiftTypeSkillRequirementId = 0L;
-            for (Element element : shiftTypeElementList) {
-                assertElementName(element, "Shift");
-                ShiftType shiftType = new ShiftType();
-                shiftType.setId(id);
-                shiftType.setCode(element.getAttribute("ID").getValue());
-                shiftType.setIndex(index);
+            List<CourseTypeSkillRequirement> courseTypeSkillRequirementList
+                    = new ArrayList<CourseTypeSkillRequirement>(courseTypeElementList.size() * 2);
+            long courseTypeSkillRequirementId = 0L;
+            for (Element element : courseTypeElementList) {
+                assertElementName(element, "Course");
+                CourseType courseType = new CourseType();
+                courseType.setId(id);
+                courseType.setCode(element.getAttribute("ID").getValue());
+                courseType.setIndex(index);
                 String startTimeString = element.getChild("StartTime").getText();
-                shiftType.setStartTimeString(startTimeString);
+                courseType.setStartTimeString(startTimeString);
                 String endTimeString = element.getChild("EndTime").getText();
-                shiftType.setEndTimeString(endTimeString);
-                shiftType.setNight(startTimeString.compareTo(endTimeString) > 0);
-                shiftType.setDescription(element.getChild("Description").getText());
+                courseType.setEndTimeString(endTimeString);
+                courseType.setNight(startTimeString.compareTo(endTimeString) > 0);
+                courseType.setDescription(element.getChild("Description").getText());
 
                 Element skillsElement = element.getChild("Skills");
                 if (skillsElement != null) {
                     List<Element> skillElementList = (List<Element>) skillsElement.getChildren();
                     for (Element skillElement : skillElementList) {
                         assertElementName(skillElement, "Skill");
-                        ShiftTypeSkillRequirement shiftTypeSkillRequirement = new ShiftTypeSkillRequirement();
-                        shiftTypeSkillRequirement.setId(shiftTypeSkillRequirementId);
-                        shiftTypeSkillRequirement.setShiftType(shiftType);
+                        CourseTypeSkillRequirement courseTypeSkillRequirement = new CourseTypeSkillRequirement();
+                        courseTypeSkillRequirement.setId(courseTypeSkillRequirementId);
+                        courseTypeSkillRequirement.setCourseType(courseType);
                         Skill skill = skillMap.get(skillElement.getText());
                         if (skill == null) {
                             throw new IllegalArgumentException("The skill (" + skillElement.getText()
-                                    + ") of shiftType (" + shiftType.getCode() + ") does not exist.");
+                                    + ") of courseType (" + courseType.getCode() + ") does not exist.");
                         }
-                        shiftTypeSkillRequirement.setSkill(skill);
-                        shiftTypeSkillRequirementList.add(shiftTypeSkillRequirement);
-                        shiftTypeSkillRequirementId++;
+                        courseTypeSkillRequirement.setSkill(skill);
+                        courseTypeSkillRequirementList.add(courseTypeSkillRequirement);
+                        courseTypeSkillRequirementId++;
                     }
                 }
 
-                shiftTypeList.add(shiftType);
-                if (shiftTypeMap.containsKey(shiftType.getCode())) {
-                    throw new IllegalArgumentException("There are 2 shiftTypes with the same code ("
-                            + shiftType.getCode() + ").");
+                courseTypeList.add(courseType);
+                if (courseTypeMap.containsKey(courseType.getCode())) {
+                    throw new IllegalArgumentException("There are 2 courseTypes with the same code ("
+                            + courseType.getCode() + ").");
                 }
-                shiftTypeMap.put(shiftType.getCode(), shiftType);
+                courseTypeMap.put(courseType.getCode(), courseType);
                 id++;
                 index++;
             }
-            nurseRoster.setShiftTypeList(shiftTypeList);
-            nurseRoster.setShiftTypeSkillRequirementList(shiftTypeSkillRequirementList);
+            nurseRoster.setCourseTypeList(courseTypeList);
+            nurseRoster.setCourseTypeSkillRequirementList(courseTypeSkillRequirementList);
         }
 
-        private void generateShiftList(NurseRoster nurseRoster) throws JDOMException {
-            List<ShiftType> shiftTypeList = nurseRoster.getShiftTypeList();
-            int shiftListSize = shiftDateMap.size() * shiftTypeList.size();
-            List<Shift> shiftList = new ArrayList<Shift>(shiftListSize);
-            dateAndShiftTypeToShiftMap = new HashMap<List<String>, Shift>(shiftListSize);
-            dayOfWeekAndShiftTypeToShiftListMap = new HashMap<List<Object>, List<Shift>>(7 * shiftTypeList.size());
+        private void generateCourseList(NurseRoster nurseRoster) throws JDOMException {
+            List<CourseType> courseTypeList = nurseRoster.getCourseTypeList();
+            int courseListSize = courseDateMap.size() * courseTypeList.size();
+            List<Course> courseList = new ArrayList<Course>(courseListSize);
+            dateAndCourseTypeToCourseMap = new HashMap<List<String>, Course>(courseListSize);
+            dayOfWeekAndCourseTypeToCourseListMap = new HashMap<List<Object>, List<Course>>(7 * courseTypeList.size());
             long id = 0L;
             int index = 0;
-            for (ShiftDate shiftDate : nurseRoster.getShiftDateList()) {
-                for (ShiftType shiftType : shiftTypeList) {
-                    Shift shift = new Shift();
-                    shift.setId(id);
-                    shift.setShiftDate(shiftDate);
-                    shiftDate.getShiftList().add(shift);
-                    shift.setShiftType(shiftType);
-                    shift.setIndex(index);
-                    shift.setRequiredEmployeeSize(0); // Filled in later
-                    shiftList.add(shift);
-                    dateAndShiftTypeToShiftMap.put(Arrays.asList(shiftDate.getDateString(), shiftType.getCode()), shift);
-                    addShiftToDayOfWeekAndShiftTypeToShiftListMap(shiftDate, shiftType, shift);
+            for (CourseDate courseDate : nurseRoster.getCourseDateList()) {
+                for (CourseType courseType : courseTypeList) {
+                    Course course = new Course();
+                    course.setId(id);
+                    course.setCourseDate(courseDate);
+                    courseDate.getCourseList().add(course);
+                    course.setCourseType(courseType);
+                    course.setIndex(index);
+                    course.setRequiredTaSize(0); // Filled in later
+                    courseList.add(course);
+                    dateAndCourseTypeToCourseMap.put(Arrays.asList(courseDate.getDateString(), courseType.getCode()), course);
+                    addCourseToDayOfWeekAndCourseTypeToCourseListMap(courseDate, courseType, course);
                     id++;
                     index++;
                 }
             }
-            nurseRoster.setShiftList(shiftList);
+            nurseRoster.setCourseList(courseList);
         }
 
-        private void addShiftToDayOfWeekAndShiftTypeToShiftListMap(ShiftDate shiftDate, ShiftType shiftType,
-                Shift shift) {
-            List<Object> key = Arrays.<Object>asList(shiftDate.getDayOfWeek(), shiftType);
-            List<Shift> dayOfWeekAndShiftTypeToShiftList = dayOfWeekAndShiftTypeToShiftListMap.get(key);
-            if (dayOfWeekAndShiftTypeToShiftList == null) {
-                dayOfWeekAndShiftTypeToShiftList = new ArrayList<Shift>((shiftDateMap.size() + 6) / 7);
-                dayOfWeekAndShiftTypeToShiftListMap.put(key, dayOfWeekAndShiftTypeToShiftList);
+        private void addCourseToDayOfWeekAndCourseTypeToCourseListMap(CourseDate courseDate, CourseType courseType,
+                Course course) {
+            List<Object> key = Arrays.<Object>asList(courseDate.getDayOfWeek(), courseType);
+            List<Course> dayOfWeekAndCourseTypeToCourseList = dayOfWeekAndCourseTypeToCourseListMap.get(key);
+            if (dayOfWeekAndCourseTypeToCourseList == null) {
+                dayOfWeekAndCourseTypeToCourseList = new ArrayList<Course>((courseDateMap.size() + 6) / 7);
+                dayOfWeekAndCourseTypeToCourseListMap.put(key, dayOfWeekAndCourseTypeToCourseList);
             }
-            dayOfWeekAndShiftTypeToShiftList.add(shift);
+            dayOfWeekAndCourseTypeToCourseList.add(course);
         }
 
         private void readPatternList(NurseRoster nurseRoster, Element patternsElement) throws JDOMException {
@@ -346,12 +346,12 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                                 + patternEntryElementList.size() + ") of pattern (" + code + ") should be at least 2.");
                     }
                     Pattern pattern;
-                    if (patternEntryElementList.get(0).getChild("ShiftType").getText().equals("None")) {
+                    if (patternEntryElementList.get(0).getChild("CourseType").getText().equals("None")) {
                         pattern = new FreeBefore2DaysWithAWorkDayPattern();
                         if (patternEntryElementList.size() != 3) {
                             throw new IllegalStateException("boe");
                         }
-                    } else if (patternEntryElementList.get(1).getChild("ShiftType").getText().equals("None")) {
+                    } else if (patternEntryElementList.get(1).getChild("CourseType").getText().equals("None")) {
                         pattern = new WorkBeforeFreeSequencePattern();
                         // TODO support this too (not needed for competition)
                         throw new UnsupportedOperationException("The pattern (" + code + ") is not supported."
@@ -359,10 +359,10 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                     } else {
                         switch (patternEntryElementList.size()) {
                             case 2:
-                                pattern = new ShiftType2DaysPattern();
+                                pattern = new CourseType2DaysPattern();
                                 break;
                             case 3:
-                                pattern = new ShiftType3DaysPattern();
+                                pattern = new CourseType3DaysPattern();
                                 break;
                             default:
                                 throw new IllegalArgumentException("A size of PatternEntries ("
@@ -377,20 +377,20 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                     DayOfWeek firstDayOfweek = null;
                     for (Element patternEntryElement : patternEntryElementList) {
                         assertElementName(patternEntryElement, "PatternEntry");
-                        Element shiftTypeElement = patternEntryElement.getChild("ShiftType");
-                        boolean shiftTypeIsNone;
-                        ShiftType shiftType;
-                        if (shiftTypeElement.getText().equals("Any")) {
-                            shiftTypeIsNone = false;
-                            shiftType = null;
-                        } else if (shiftTypeElement.getText().equals("None")) {
-                            shiftTypeIsNone = true;
-                            shiftType = null;
+                        Element courseTypeElement = patternEntryElement.getChild("CourseType");
+                        boolean courseTypeIsNone;
+                        CourseType courseType;
+                        if (courseTypeElement.getText().equals("Any")) {
+                            courseTypeIsNone = false;
+                            courseType = null;
+                        } else if (courseTypeElement.getText().equals("None")) {
+                            courseTypeIsNone = true;
+                            courseType = null;
                         } else {
-                            shiftTypeIsNone = false;
-                            shiftType = shiftTypeMap.get(shiftTypeElement.getText());
-                            if (shiftType == null) {
-                                throw new IllegalArgumentException("The shiftType (" + shiftTypeElement.getText()
+                            courseTypeIsNone = false;
+                            courseType = courseTypeMap.get(courseTypeElement.getText());
+                            if (courseType == null) {
+                                throw new IllegalArgumentException("The courseType (" + courseTypeElement.getText()
                                         + ") of pattern (" + pattern.getCode() + ") does not exist.");
                             }
                         }
@@ -436,41 +436,41 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                                 castedPattern.setFreeDayOfWeek(dayOfWeek);
                             }
                             if (patternEntryIndex == 1) {
-                                if (shiftType != null) {
-                                    // TODO Support a specific shiftType too (not needed for competition)
+                                if (courseType != null) {
+                                    // TODO Support a specific courseType too (not needed for competition)
                                     throw new UnsupportedOperationException("On patternEntryIndex (" + patternEntryIndex
                                             + ") of FreeBeforeWorkSequence pattern (" + pattern.getCode()
-                                            + ") the shiftType should be (Any)."
+                                            + ") the courseType should be (Any)."
                                             + "\n None of the test data exhibits such a pattern.");
                                 }
-                                // castedPattern.setWorkShiftType(shiftType);
+                                // castedPattern.setWorkCourseType(courseType);
                                 // castedPattern.setWorkDayLength(patternEntryElementList.size() - 1);
                             }
-                            // if (patternEntryIndex > 1 && shiftType != castedPattern.getWorkShiftType()) {
+                            // if (patternEntryIndex > 1 && courseType != castedPattern.getWorkCourseType()) {
                             //     throw new IllegalArgumentException("On patternEntryIndex (" + patternEntryIndex
                             //             + ") of FreeBeforeWorkSequence pattern (" + pattern.getCode()
-                            //             + ") the shiftType (" + shiftType + ") should be ("
-                            //             + castedPattern.getWorkShiftType() + ").");
+                            //             + ") the courseType (" + courseType + ") should be ("
+                            //             + castedPattern.getWorkCourseType() + ").");
                             // }
-                            if (patternEntryIndex != 0 && shiftTypeIsNone) {
+                            if (patternEntryIndex != 0 && courseTypeIsNone) {
                                 throw new IllegalArgumentException("On patternEntryIndex (" + patternEntryIndex
                                         + ") of FreeBeforeWorkSequence pattern (" + pattern.getCode()
-                                        + ") the shiftType can not be (None).");
+                                        + ") the courseType can not be (None).");
                             }
                         } else if (pattern instanceof WorkBeforeFreeSequencePattern) {
                             WorkBeforeFreeSequencePattern castedPattern = (WorkBeforeFreeSequencePattern) pattern;
                             if (patternEntryIndex == 0) {
                                 castedPattern.setWorkDayOfWeek(dayOfWeek);
-                                castedPattern.setWorkShiftType(shiftType);
+                                castedPattern.setWorkCourseType(courseType);
                                 castedPattern.setFreeDayLength(patternEntryElementList.size() - 1);
                             }
-                            if (patternEntryIndex != 0 && !shiftTypeIsNone) {
+                            if (patternEntryIndex != 0 && !courseTypeIsNone) {
                                 throw new IllegalArgumentException("On patternEntryIndex (" + patternEntryIndex
                                         + ") of WorkBeforeFreeSequence pattern (" + pattern.getCode()
-                                        + ") the shiftType should be (None).");
+                                        + ") the courseType should be (None).");
                             }
-                        } else if (pattern instanceof ShiftType2DaysPattern) {
-                            ShiftType2DaysPattern castedPattern = (ShiftType2DaysPattern) pattern;
+                        } else if (pattern instanceof CourseType2DaysPattern) {
+                            CourseType2DaysPattern castedPattern = (CourseType2DaysPattern) pattern;
                             if (patternEntryIndex == 0) {
                                 if (dayOfWeek != null) {
                                     // TODO Support a specific dayOfWeek too (not needed for competition)
@@ -481,26 +481,26 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                                 }
                                 // castedPattern.setStartDayOfWeek(dayOfWeek);
                             }
-                            if (shiftType == null) {
-                                // TODO Support any shiftType too (not needed for competition)
+                            if (courseType == null) {
+                                // TODO Support any courseType too (not needed for competition)
                                 throw new UnsupportedOperationException("On patternEntryIndex (" + patternEntryIndex
                                         + ") of FreeBeforeWorkSequence pattern (" + pattern.getCode()
-                                        + ") the shiftType should not be (Any)."
+                                        + ") the courseType should not be (Any)."
                                         + "\n None of the test data exhibits such a pattern.");
                             }
                             switch (patternEntryIndex) {
                                 case 0:
-                                    castedPattern.setDayIndex0ShiftType(shiftType);
+                                    castedPattern.setDayIndex0CourseType(courseType);
                                     break;
                                 case 1:
-                                    castedPattern.setDayIndex1ShiftType(shiftType);
+                                    castedPattern.setDayIndex1CourseType(courseType);
                                     break;
                                 default:
                                     throw new IllegalArgumentException("The patternEntryIndex ("
                                             + patternEntryIndex + ") is not supported.");
                             }
-                        } else if (pattern instanceof ShiftType3DaysPattern) {
-                            ShiftType3DaysPattern castedPattern = (ShiftType3DaysPattern) pattern;
+                        } else if (pattern instanceof CourseType3DaysPattern) {
+                            CourseType3DaysPattern castedPattern = (CourseType3DaysPattern) pattern;
                             if (patternEntryIndex == 0) {
                                 if (dayOfWeek != null) {
                                     // TODO Support a specific dayOfWeek too (not needed for competition)
@@ -511,22 +511,22 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                                 }
                                 // castedPattern.setStartDayOfWeek(dayOfWeek);
                             }
-                            if (shiftType == null) {
-                                // TODO Support any shiftType too
+                            if (courseType == null) {
+                                // TODO Support any courseType too
                                 throw new UnsupportedOperationException("On patternEntryIndex (" + patternEntryIndex
                                         + ") of FreeBeforeWorkSequence pattern (" + pattern.getCode()
-                                        + ") the shiftType should not be (Any)."
+                                        + ") the courseType should not be (Any)."
                                         + "\n None of the test data exhibits such a pattern.");
                             }
                             switch (patternEntryIndex) {
                                 case 0:
-                                    castedPattern.setDayIndex0ShiftType(shiftType);
+                                    castedPattern.setDayIndex0CourseType(courseType);
                                     break;
                                 case 1:
-                                    castedPattern.setDayIndex1ShiftType(shiftType);
+                                    castedPattern.setDayIndex1CourseType(courseType);
                                     break;
                                 case 2:
-                                    castedPattern.setDayIndex2ShiftType(shiftType);
+                                    castedPattern.setDayIndex2CourseType(courseType);
                                     break;
                                 default:
                                     throw new IllegalArgumentException("The patternEntryIndex ("
@@ -599,11 +599,11 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                         contractLineId, element.getChild("CompleteWeekends"),
                         ContractLineType.COMPLETE_WEEKENDS);
                 contractLineId = readBooleanContractLine(contract, contractLineList, contractLineListOfContract,
-                        contractLineId, element.getChild("IdenticalShiftTypesDuringWeekend"),
-                        ContractLineType.IDENTICAL_SHIFT_TYPES_DURING_WEEKEND);
+                        contractLineId, element.getChild("IdenticalCourseTypesDuringWeekend"),
+                        ContractLineType.IDENTICAL_COURSE_TYPES_DURING_WEEKEND);
                 contractLineId = readBooleanContractLine(contract, contractLineList, contractLineListOfContract,
-                        contractLineId, element.getChild("NoNightShiftBeforeFreeWeekend"),
-                        ContractLineType.NO_NIGHT_SHIFT_BEFORE_FREE_WEEKEND);
+                        contractLineId, element.getChild("NoNightCourseBeforeFreeWeekend"),
+                        ContractLineType.NO_NIGHT_COURSE_BEFORE_FREE_WEEKEND);
                 contractLineId = readBooleanContractLine(contract, contractLineList, contractLineListOfContract,
                         contractLineId, element.getChild("AlternativeSkillCategory"),
                         ContractLineType.ALTERNATIVE_SKILL_CATEGORY);
@@ -745,32 +745,32 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
             return contractLineId;
         }
 
-        private void readEmployeeList(NurseRoster nurseRoster, Element employeesElement) throws JDOMException {
-            List<Element> employeeElementList = (List<Element>) employeesElement.getChildren();
-            List<Employee> employeeList = new ArrayList<Employee>(employeeElementList.size());
-            employeeMap = new HashMap<String, Employee>(employeeElementList.size());
+        private void readTaList(NurseRoster nurseRoster, Element tasElement) throws JDOMException {
+            List<Element> taElementList = (List<Element>) tasElement.getChildren();
+            List<Ta> taList = new ArrayList<Ta>(taElementList.size());
+            taMap = new HashMap<String, Ta>(taElementList.size());
             long id = 0L;
             List<SkillProficiency> skillProficiencyList
-                    = new ArrayList<SkillProficiency>(employeeElementList.size() * 2);
+                    = new ArrayList<SkillProficiency>(taElementList.size() * 2);
             long skillProficiencyId = 0L;
-            for (Element element : employeeElementList) {
-                assertElementName(element, "Employee");
-                Employee employee = new Employee();
-                employee.setId(id);
-                employee.setCode(element.getAttribute("ID").getValue());
-                employee.setName(element.getChild("Name").getText());
+            for (Element element : taElementList) {
+                assertElementName(element, "Ta");
+                Ta ta = new Ta();
+                ta.setId(id);
+                ta.setCode(element.getAttribute("ID").getValue());
+                ta.setName(element.getChild("Name").getText());
                 Element contractElement = element.getChild("ContractID");
                 Contract contract = contractMap.get(contractElement.getText());
                 if (contract == null) {
                     throw new IllegalArgumentException("The contract (" + contractElement.getText()
-                            + ") of employee (" + employee.getCode() + ") does not exist.");
+                            + ") of ta (" + ta.getCode() + ") does not exist.");
                 }
-                employee.setContract(contract);
-                int estimatedRequestSize = (shiftDateMap.size() / employeeElementList.size()) + 1;
-                employee.setDayOffRequestMap(new HashMap<ShiftDate, DayOffRequest>(estimatedRequestSize));
-                employee.setDayOnRequestMap(new HashMap<ShiftDate, DayOnRequest>(estimatedRequestSize));
-                employee.setShiftOffRequestMap(new HashMap<Shift, ShiftOffRequest>(estimatedRequestSize));
-                employee.setShiftOnRequestMap(new HashMap<Shift, ShiftOnRequest>(estimatedRequestSize));
+                ta.setContract(contract);
+                int estimatedRequestSize = (courseDateMap.size() / taElementList.size()) + 1;
+                ta.setDayOffRequestMap(new HashMap<CourseDate, DayOffRequest>(estimatedRequestSize));
+                ta.setDayOnRequestMap(new HashMap<CourseDate, DayOnRequest>(estimatedRequestSize));
+                ta.setCourseOffRequestMap(new HashMap<Course, CourseOffRequest>(estimatedRequestSize));
+                ta.setCourseOnRequestMap(new HashMap<Course, CourseOnRequest>(estimatedRequestSize));
 
                 Element skillsElement = element.getChild("Skills");
                 if (skillsElement != null) {
@@ -780,30 +780,30 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                         Skill skill = skillMap.get(skillElement.getText());
                         if (skill == null) {
                             throw new IllegalArgumentException("The skill (" + skillElement.getText()
-                                    + ") of employee (" + employee.getCode() + ") does not exist.");
+                                    + ") of ta (" + ta.getCode() + ") does not exist.");
                         }
                         SkillProficiency skillProficiency = new SkillProficiency();
                         skillProficiency.setId(skillProficiencyId);
-                        skillProficiency.setEmployee(employee);
+                        skillProficiency.setTa(ta);
                         skillProficiency.setSkill(skill);
                         skillProficiencyList.add(skillProficiency);
                         skillProficiencyId++;
                     }
                 }
 
-                employeeList.add(employee);
-                if (employeeMap.containsKey(employee.getCode())) {
-                    throw new IllegalArgumentException("There are 2 employees with the same code ("
-                            + employee.getCode() + ").");
+                taList.add(ta);
+                if (taMap.containsKey(ta.getCode())) {
+                    throw new IllegalArgumentException("There are 2 tas with the same code ("
+                            + ta.getCode() + ").");
                 }
-                employeeMap.put(employee.getCode(), employee);
+                taMap.put(ta.getCode(), ta);
                 id++;
             }
-            nurseRoster.setEmployeeList(employeeList);
+            nurseRoster.setTaList(taList);
             nurseRoster.setSkillProficiencyList(skillProficiencyList);
         }
 
-        private void readRequiredEmployeeSizes(NurseRoster nurseRoster, Element coverRequirementsElement) {
+        private void readRequiredTaSizes(NurseRoster nurseRoster, Element coverRequirementsElement) {
             List<Element> coverRequirementElementList = (List<Element>) coverRequirementsElement.getChildren();
             for (Element element : coverRequirementElementList) {
                 if (element.getName().equals("DayOfWeekCover")) {
@@ -816,43 +816,43 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
 
                     List<Element> coverElementList = (List<Element>) element.getChildren("Cover");
                     for (Element coverElement : coverElementList) {
-                        Element shiftTypeElement = coverElement.getChild("Shift");
-                        ShiftType shiftType = shiftTypeMap.get(shiftTypeElement.getText());
-                        if (shiftType == null) {
-                            if (shiftTypeElement.getText().equals("Any")) {
-                                throw new IllegalStateException("The shiftType Any is not supported on DayOfWeekCover.");
-                            } else if (shiftTypeElement.getText().equals("None")) {
-                                throw new IllegalStateException("The shiftType None is not supported on DayOfWeekCover.");
+                        Element courseTypeElement = coverElement.getChild("Course");
+                        CourseType courseType = courseTypeMap.get(courseTypeElement.getText());
+                        if (courseType == null) {
+                            if (courseTypeElement.getText().equals("Any")) {
+                                throw new IllegalStateException("The courseType Any is not supported on DayOfWeekCover.");
+                            } else if (courseTypeElement.getText().equals("None")) {
+                                throw new IllegalStateException("The courseType None is not supported on DayOfWeekCover.");
                             } else {
-                                throw new IllegalArgumentException("The shiftType (" + shiftTypeElement.getText()
+                                throw new IllegalArgumentException("The courseType (" + courseTypeElement.getText()
                                         + ") of an entity DayOfWeekCover does not exist.");
                             }
                         }
-                        List<Object> key = Arrays.<Object>asList(dayOfWeek, shiftType);
-                        List<Shift> shiftList = dayOfWeekAndShiftTypeToShiftListMap.get(key);
-                        if (shiftList == null) {
+                        List<Object> key = Arrays.<Object>asList(dayOfWeek, courseType);
+                        List<Course> courseList = dayOfWeekAndCourseTypeToCourseListMap.get(key);
+                        if (courseList == null) {
                             throw new IllegalArgumentException("The dayOfWeek (" + dayOfWeekElement.getText()
-                                    + ") with the shiftType (" + shiftTypeElement.getText()
-                                    + ") of an entity DayOfWeekCover does not have any shifts.");
+                                    + ") with the courseType (" + courseTypeElement.getText()
+                                    + ") of an entity DayOfWeekCover does not have any courses.");
                         }
-                        int requiredEmployeeSize = Integer.parseInt(coverElement.getChild("Preferred").getText());
-                        for (Shift shift : shiftList) {
-                            shift.setRequiredEmployeeSize(shift.getRequiredEmployeeSize() + requiredEmployeeSize);
+                        int requiredTaSize = Integer.parseInt(coverElement.getChild("Preferred").getText());
+                        for (Course course : courseList) {
+                            course.setRequiredTaSize(course.getRequiredTaSize() + requiredTaSize);
                         }
                     }
                 } else if (element.getName().equals("DateSpecificCover")) {
                     Element dateElement = element.getChild("Date");
                     List<Element> coverElementList = (List<Element>) element.getChildren("Cover");
                     for (Element coverElement : coverElementList) {
-                        Element shiftTypeElement = coverElement.getChild("Shift");
-                        Shift shift = dateAndShiftTypeToShiftMap.get(Arrays.asList(dateElement.getText(), shiftTypeElement.getText()));
-                        if (shift == null) {
+                        Element courseTypeElement = coverElement.getChild("Course");
+                        Course course = dateAndCourseTypeToCourseMap.get(Arrays.asList(dateElement.getText(), courseTypeElement.getText()));
+                        if (course == null) {
                             throw new IllegalArgumentException("The date (" + dateElement.getText()
-                                    + ") with the shiftType (" + shiftTypeElement.getText()
-                                    + ") of an entity DateSpecificCover does not have a shift.");
+                                    + ") with the courseType (" + courseTypeElement.getText()
+                                    + ") of an entity DateSpecificCover does not have a course.");
                         }
-                        int requiredEmployeeSize = Integer.parseInt(coverElement.getChild("Preferred").getText());
-                        shift.setRequiredEmployeeSize(shift.getRequiredEmployeeSize() + requiredEmployeeSize);
+                        int requiredTaSize = Integer.parseInt(coverElement.getChild("Preferred").getText());
+                        course.setRequiredTaSize(course.getRequiredTaSize() + requiredTaSize);
                     }
                 } else {
                     throw new IllegalArgumentException("Unknown cover entity (" + element.getName() + ").");
@@ -873,26 +873,26 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                     DayOffRequest dayOffRequest = new DayOffRequest();
                     dayOffRequest.setId(id);
 
-                    Element employeeElement = element.getChild("EmployeeID");
-                    Employee employee = employeeMap.get(employeeElement.getText());
-                    if (employee == null) {
-                        throw new IllegalArgumentException("The shiftDate (" + employeeElement.getText()
+                    Element taElement = element.getChild("TaID");
+                    Ta ta = taMap.get(taElement.getText());
+                    if (ta == null) {
+                        throw new IllegalArgumentException("The courseDate (" + taElement.getText()
                                 + ") of dayOffRequest (" + dayOffRequest + ") does not exist.");
                     }
-                    dayOffRequest.setEmployee(employee);
+                    dayOffRequest.setTa(ta);
 
                     Element dateElement = element.getChild("Date");
-                    ShiftDate shiftDate = shiftDateMap.get(dateElement.getText());
-                    if (shiftDate == null) {
+                    CourseDate courseDate = courseDateMap.get(dateElement.getText());
+                    if (courseDate == null) {
                         throw new IllegalArgumentException("The date (" + dateElement.getText()
                                 + ") of dayOffRequest (" + dayOffRequest + ") does not exist.");
                     }
-                    dayOffRequest.setShiftDate(shiftDate);
+                    dayOffRequest.setCourseDate(courseDate);
 
                     dayOffRequest.setWeight(element.getAttribute("weight").getIntValue());
 
                     dayOffRequestList.add(dayOffRequest);
-                    employee.getDayOffRequestMap().put(shiftDate, dayOffRequest);
+                    ta.getDayOffRequestMap().put(courseDate, dayOffRequest);
                     id++;
                 }
             }
@@ -912,130 +912,130 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                     DayOnRequest dayOnRequest = new DayOnRequest();
                     dayOnRequest.setId(id);
 
-                    Element employeeElement = element.getChild("EmployeeID");
-                    Employee employee = employeeMap.get(employeeElement.getText());
-                    if (employee == null) {
-                        throw new IllegalArgumentException("The shiftDate (" + employeeElement.getText()
+                    Element taElement = element.getChild("TaID");
+                    Ta ta = taMap.get(taElement.getText());
+                    if (ta == null) {
+                        throw new IllegalArgumentException("The courseDate (" + taElement.getText()
                                 + ") of dayOnRequest (" + dayOnRequest + ") does not exist.");
                     }
-                    dayOnRequest.setEmployee(employee);
+                    dayOnRequest.setTa(ta);
 
                     Element dateElement = element.getChild("Date");
-                    ShiftDate shiftDate = shiftDateMap.get(dateElement.getText());
-                    if (shiftDate == null) {
+                    CourseDate courseDate = courseDateMap.get(dateElement.getText());
+                    if (courseDate == null) {
                         throw new IllegalArgumentException("The date (" + dateElement.getText()
                                 + ") of dayOnRequest (" + dayOnRequest + ") does not exist.");
                     }
-                    dayOnRequest.setShiftDate(shiftDate);
+                    dayOnRequest.setCourseDate(courseDate);
 
                     dayOnRequest.setWeight(element.getAttribute("weight").getIntValue());
 
                     dayOnRequestList.add(dayOnRequest);
-                    employee.getDayOnRequestMap().put(shiftDate, dayOnRequest);
+                    ta.getDayOnRequestMap().put(courseDate, dayOnRequest);
                     id++;
                 }
             }
             nurseRoster.setDayOnRequestList(dayOnRequestList);
         }
 
-        private void readShiftOffRequestList(NurseRoster nurseRoster, Element shiftOffRequestsElement) throws JDOMException {
-            List<ShiftOffRequest> shiftOffRequestList;
-            if (shiftOffRequestsElement == null) {
-                shiftOffRequestList = Collections.emptyList();
+        private void readCourseOffRequestList(NurseRoster nurseRoster, Element courseOffRequestsElement) throws JDOMException {
+            List<CourseOffRequest> courseOffRequestList;
+            if (courseOffRequestsElement == null) {
+                courseOffRequestList = Collections.emptyList();
             } else {
-                List<Element> shiftOffElementList = (List<Element>) shiftOffRequestsElement.getChildren();
-                shiftOffRequestList = new ArrayList<ShiftOffRequest>(shiftOffElementList.size());
+                List<Element> courseOffElementList = (List<Element>) courseOffRequestsElement.getChildren();
+                courseOffRequestList = new ArrayList<CourseOffRequest>(courseOffElementList.size());
                 long id = 0L;
-                for (Element element : shiftOffElementList) {
-                    assertElementName(element, "ShiftOff");
-                    ShiftOffRequest shiftOffRequest = new ShiftOffRequest();
-                    shiftOffRequest.setId(id);
+                for (Element element : courseOffElementList) {
+                    assertElementName(element, "CourseOff");
+                    CourseOffRequest courseOffRequest = new CourseOffRequest();
+                    courseOffRequest.setId(id);
 
-                    Element employeeElement = element.getChild("EmployeeID");
-                    Employee employee = employeeMap.get(employeeElement.getText());
-                    if (employee == null) {
-                        throw new IllegalArgumentException("The shift (" + employeeElement.getText()
-                                + ") of shiftOffRequest (" + shiftOffRequest + ") does not exist.");
+                    Element taElement = element.getChild("TaID");
+                    Ta ta = taMap.get(taElement.getText());
+                    if (ta == null) {
+                        throw new IllegalArgumentException("The course (" + taElement.getText()
+                                + ") of courseOffRequest (" + courseOffRequest + ") does not exist.");
                     }
-                    shiftOffRequest.setEmployee(employee);
+                    courseOffRequest.setTa(ta);
 
                     Element dateElement = element.getChild("Date");
-                    Element shiftTypeElement = element.getChild("ShiftTypeID");
-                    Shift shift = dateAndShiftTypeToShiftMap.get(Arrays.asList(dateElement.getText(), shiftTypeElement.getText()));
-                    if (shift == null) {
+                    Element courseTypeElement = element.getChild("CourseTypeID");
+                    Course course = dateAndCourseTypeToCourseMap.get(Arrays.asList(dateElement.getText(), courseTypeElement.getText()));
+                    if (course == null) {
                         throw new IllegalArgumentException("The date (" + dateElement.getText()
-                                + ") or the shiftType (" + shiftTypeElement.getText()
-                                + ") of shiftOffRequest (" + shiftOffRequest + ") does not exist.");
+                                + ") or the courseType (" + courseTypeElement.getText()
+                                + ") of courseOffRequest (" + courseOffRequest + ") does not exist.");
                     }
-                    shiftOffRequest.setShift(shift);
+                    courseOffRequest.setCourse(course);
 
-                    shiftOffRequest.setWeight(element.getAttribute("weight").getIntValue());
+                    courseOffRequest.setWeight(element.getAttribute("weight").getIntValue());
 
-                    shiftOffRequestList.add(shiftOffRequest);
-                    employee.getShiftOffRequestMap().put(shift, shiftOffRequest);
+                    courseOffRequestList.add(courseOffRequest);
+                    ta.getCourseOffRequestMap().put(course, courseOffRequest);
                     id++;
                 }
             }
-            nurseRoster.setShiftOffRequestList(shiftOffRequestList);
+            nurseRoster.setCourseOffRequestList(courseOffRequestList);
         }
 
-        private void readShiftOnRequestList(NurseRoster nurseRoster, Element shiftOnRequestsElement) throws JDOMException {
-            List<ShiftOnRequest> shiftOnRequestList;
-            if (shiftOnRequestsElement == null) {
-                shiftOnRequestList = Collections.emptyList();
+        private void readCourseOnRequestList(NurseRoster nurseRoster, Element courseOnRequestsElement) throws JDOMException {
+            List<CourseOnRequest> courseOnRequestList;
+            if (courseOnRequestsElement == null) {
+                courseOnRequestList = Collections.emptyList();
             } else {
-                List<Element> shiftOnElementList = (List<Element>) shiftOnRequestsElement.getChildren();
-                shiftOnRequestList = new ArrayList<ShiftOnRequest>(shiftOnElementList.size());
+                List<Element> courseOnElementList = (List<Element>) courseOnRequestsElement.getChildren();
+                courseOnRequestList = new ArrayList<CourseOnRequest>(courseOnElementList.size());
                 long id = 0L;
-                for (Element element : shiftOnElementList) {
-                    assertElementName(element, "ShiftOn");
-                    ShiftOnRequest shiftOnRequest = new ShiftOnRequest();
-                    shiftOnRequest.setId(id);
+                for (Element element : courseOnElementList) {
+                    assertElementName(element, "CourseOn");
+                    CourseOnRequest courseOnRequest = new CourseOnRequest();
+                    courseOnRequest.setId(id);
 
-                    Element employeeElement = element.getChild("EmployeeID");
-                    Employee employee = employeeMap.get(employeeElement.getText());
-                    if (employee == null) {
-                        throw new IllegalArgumentException("The shift (" + employeeElement.getText()
-                                + ") of shiftOnRequest (" + shiftOnRequest + ") does not exist.");
+                    Element taElement = element.getChild("TaID");
+                    Ta ta = taMap.get(taElement.getText());
+                    if (ta == null) {
+                        throw new IllegalArgumentException("The course (" + taElement.getText()
+                                + ") of courseOnRequest (" + courseOnRequest + ") does not exist.");
                     }
-                    shiftOnRequest.setEmployee(employee);
+                    courseOnRequest.setTa(ta);
 
                     Element dateElement = element.getChild("Date");
-                    Element shiftTypeElement = element.getChild("ShiftTypeID");
-                    Shift shift = dateAndShiftTypeToShiftMap.get(Arrays.asList(dateElement.getText(), shiftTypeElement.getText()));
-                    if (shift == null) {
+                    Element courseTypeElement = element.getChild("CourseTypeID");
+                    Course course = dateAndCourseTypeToCourseMap.get(Arrays.asList(dateElement.getText(), courseTypeElement.getText()));
+                    if (course == null) {
                         throw new IllegalArgumentException("The date (" + dateElement.getText()
-                                + ") or the shiftType (" + shiftTypeElement.getText()
-                                + ") of shiftOnRequest (" + shiftOnRequest + ") does not exist.");
+                                + ") or the courseType (" + courseTypeElement.getText()
+                                + ") of courseOnRequest (" + courseOnRequest + ") does not exist.");
                     }
-                    shiftOnRequest.setShift(shift);
+                    courseOnRequest.setCourse(course);
 
-                    shiftOnRequest.setWeight(element.getAttribute("weight").getIntValue());
+                    courseOnRequest.setWeight(element.getAttribute("weight").getIntValue());
 
-                    shiftOnRequestList.add(shiftOnRequest);
-                    employee.getShiftOnRequestMap().put(shift, shiftOnRequest);
+                    courseOnRequestList.add(courseOnRequest);
+                    ta.getCourseOnRequestMap().put(course, courseOnRequest);
                     id++;
                 }
             }
-            nurseRoster.setShiftOnRequestList(shiftOnRequestList);
+            nurseRoster.setCourseOnRequestList(courseOnRequestList);
         }
 
-        private void createShiftAssignmentList(NurseRoster nurseRoster) {
-            List<Shift> shiftList = nurseRoster.getShiftList();
-            List<ShiftAssignment> shiftAssignmentList = new ArrayList<ShiftAssignment>(shiftList.size());
+        private void createCourseAssignmentList(NurseRoster nurseRoster) {
+            List<Course> courseList = nurseRoster.getCourseList();
+            List<CourseAssignment> courseAssignmentList = new ArrayList<CourseAssignment>(courseList.size());
             long id = 0L;
-            for (Shift shift : shiftList) {
-                for (int i = 0; i < shift.getRequiredEmployeeSize(); i++) {
-                    ShiftAssignment shiftAssignment = new ShiftAssignment();
-                    shiftAssignment.setId(id);
+            for (Course course : courseList) {
+                for (int i = 0; i < course.getRequiredTaSize(); i++) {
+                    CourseAssignment courseAssignment = new CourseAssignment();
+                    courseAssignment.setId(id);
                     id++;
-                    shiftAssignment.setShift(shift);
-                    shiftAssignment.setIndexInShift(i);
+                    courseAssignment.setCourse(course);
+                    courseAssignment.setIndexInCourse(i);
                     // Notice that we leave the PlanningVariable properties on null
-                    shiftAssignmentList.add(shiftAssignment);
+                    courseAssignmentList.add(courseAssignment);
                 }
             }
-            nurseRoster.setShiftAssignmentList(shiftAssignmentList);
+            nurseRoster.setCourseAssignmentList(courseAssignmentList);
         }
 
     }

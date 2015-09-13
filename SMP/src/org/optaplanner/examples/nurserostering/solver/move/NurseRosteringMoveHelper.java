@@ -17,15 +17,15 @@
 package org.optaplanner.examples.nurserostering.solver.move;
 
 import org.optaplanner.core.impl.score.director.ScoreDirector;
-import org.optaplanner.examples.nurserostering.domain.Employee;
-import org.optaplanner.examples.nurserostering.domain.ShiftAssignment;
+import org.optaplanner.examples.nurserostering.domain.Ta;
+import org.optaplanner.examples.nurserostering.domain.CourseAssignment;
 
 public class NurseRosteringMoveHelper {
 
-    public static void moveEmployee(ScoreDirector scoreDirector, ShiftAssignment shiftAssignment, Employee toEmployee) {
-        scoreDirector.beforeVariableChanged(shiftAssignment, "employee");
-        shiftAssignment.setEmployee(toEmployee);
-        scoreDirector.afterVariableChanged(shiftAssignment, "employee");
+    public static void moveTa(ScoreDirector scoreDirector, CourseAssignment courseAssignment, Ta toTa) {
+        scoreDirector.beforeVariableChanged(courseAssignment, "ta");
+        courseAssignment.setTa(toTa);
+        scoreDirector.afterVariableChanged(courseAssignment, "ta");
     }
 
     private NurseRosteringMoveHelper() {

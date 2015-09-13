@@ -18,13 +18,13 @@ package org.optaplanner.examples.nurserostering.domain.pattern;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.optaplanner.examples.nurserostering.domain.DayOfWeek;
-import org.optaplanner.examples.nurserostering.domain.ShiftType;
+import org.optaplanner.examples.nurserostering.domain.CourseType;
 
 @XStreamAlias("WorkBeforeFreeSequencePattern")
 public class WorkBeforeFreeSequencePattern extends Pattern {
 
     private DayOfWeek workDayOfWeek; // null means any
-    private ShiftType workShiftType; // null means any
+    private CourseType workCourseType; // null means any
 
     private int freeDayLength;
 
@@ -36,12 +36,12 @@ public class WorkBeforeFreeSequencePattern extends Pattern {
         this.workDayOfWeek = workDayOfWeek;
     }
 
-    public ShiftType getWorkShiftType() {
-        return workShiftType;
+    public CourseType getWorkCourseType() {
+        return workCourseType;
     }
 
-    public void setWorkShiftType(ShiftType workShiftType) {
-        this.workShiftType = workShiftType;
+    public void setWorkCourseType(CourseType workCourseType) {
+        this.workCourseType = workCourseType;
     }
 
     public int getFreeDayLength() {
@@ -54,7 +54,7 @@ public class WorkBeforeFreeSequencePattern extends Pattern {
 
     @Override
     public String toString() {
-        return "Work " + workShiftType + " on " + workDayOfWeek + " followed by " + freeDayLength + " free days";
+        return "Work " + workCourseType + " on " + workDayOfWeek + " followed by " + freeDayLength + " free days";
     }
 
 }

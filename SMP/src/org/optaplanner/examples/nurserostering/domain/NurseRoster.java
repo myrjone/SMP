@@ -35,8 +35,8 @@ import org.optaplanner.examples.nurserostering.domain.contract.PatternContractLi
 import org.optaplanner.examples.nurserostering.domain.pattern.Pattern;
 import org.optaplanner.examples.nurserostering.domain.request.DayOffRequest;
 import org.optaplanner.examples.nurserostering.domain.request.DayOnRequest;
-import org.optaplanner.examples.nurserostering.domain.request.ShiftOffRequest;
-import org.optaplanner.examples.nurserostering.domain.request.ShiftOnRequest;
+import org.optaplanner.examples.nurserostering.domain.request.CourseOffRequest;
+import org.optaplanner.examples.nurserostering.domain.request.CourseOnRequest;
 import org.optaplanner.persistence.xstream.impl.score.XStreamScoreConverter;
 
 @PlanningSolution
@@ -47,22 +47,22 @@ public class NurseRoster extends AbstractPersistable implements Solution<HardSof
 
     private NurseRosterParametrization nurseRosterParametrization;
     private List<Skill> skillList;
-    private List<ShiftType> shiftTypeList;
-    private List<ShiftTypeSkillRequirement> shiftTypeSkillRequirementList;
+    private List<CourseType> courseTypeList;
+    private List<CourseTypeSkillRequirement> courseTypeSkillRequirementList;
     private List<Pattern> patternList;
     private List<Contract> contractList;
     private List<ContractLine> contractLineList;
     private List<PatternContractLine> patternContractLineList;
-    private List<Employee> employeeList;
+    private List<Ta> taList;
     private List<SkillProficiency> skillProficiencyList;
-    private List<ShiftDate> shiftDateList;
-    private List<Shift> shiftList;
+    private List<CourseDate> courseDateList;
+    private List<Course> courseList;
     private List<DayOffRequest> dayOffRequestList;
     private List<DayOnRequest> dayOnRequestList;
-    private List<ShiftOffRequest> shiftOffRequestList;
-    private List<ShiftOnRequest> shiftOnRequestList;
+    private List<CourseOffRequest> courseOffRequestList;
+    private List<CourseOnRequest> courseOnRequestList;
 
-    private List<ShiftAssignment> shiftAssignmentList;
+    private List<CourseAssignment> courseAssignmentList;
 
     @XStreamConverter(value = XStreamScoreConverter.class, types = {HardSoftScoreDefinition.class})
     private HardSoftScore score;
@@ -91,20 +91,20 @@ public class NurseRoster extends AbstractPersistable implements Solution<HardSof
         this.skillList = skillList;
     }
 
-    public List<ShiftType> getShiftTypeList() {
-        return shiftTypeList;
+    public List<CourseType> getCourseTypeList() {
+        return courseTypeList;
     }
 
-    public void setShiftTypeList(List<ShiftType> shiftTypeList) {
-        this.shiftTypeList = shiftTypeList;
+    public void setCourseTypeList(List<CourseType> courseTypeList) {
+        this.courseTypeList = courseTypeList;
     }
 
-    public List<ShiftTypeSkillRequirement> getShiftTypeSkillRequirementList() {
-        return shiftTypeSkillRequirementList;
+    public List<CourseTypeSkillRequirement> getCourseTypeSkillRequirementList() {
+        return courseTypeSkillRequirementList;
     }
 
-    public void setShiftTypeSkillRequirementList(List<ShiftTypeSkillRequirement> shiftTypeSkillRequirementList) {
-        this.shiftTypeSkillRequirementList = shiftTypeSkillRequirementList;
+    public void setCourseTypeSkillRequirementList(List<CourseTypeSkillRequirement> courseTypeSkillRequirementList) {
+        this.courseTypeSkillRequirementList = courseTypeSkillRequirementList;
     }
 
     public List<Pattern> getPatternList() {
@@ -139,13 +139,13 @@ public class NurseRoster extends AbstractPersistable implements Solution<HardSof
         this.patternContractLineList = patternContractLineList;
     }
 
-    @ValueRangeProvider(id = "employeeRange")
-    public List<Employee> getEmployeeList() {
-        return employeeList;
+    @ValueRangeProvider(id = "taRange")
+    public List<Ta> getTaList() {
+        return taList;
     }
 
-    public void setEmployeeList(List<Employee> employeeList) {
-        this.employeeList = employeeList;
+    public void setTaList(List<Ta> taList) {
+        this.taList = taList;
     }
 
     public List<SkillProficiency> getSkillProficiencyList() {
@@ -156,20 +156,20 @@ public class NurseRoster extends AbstractPersistable implements Solution<HardSof
         this.skillProficiencyList = skillProficiencyList;
     }
 
-    public List<ShiftDate> getShiftDateList() {
-        return shiftDateList;
+    public List<CourseDate> getCourseDateList() {
+        return courseDateList;
     }
 
-    public void setShiftDateList(List<ShiftDate> shiftDateList) {
-        this.shiftDateList = shiftDateList;
+    public void setCourseDateList(List<CourseDate> courseDateList) {
+        this.courseDateList = courseDateList;
     }
 
-    public List<Shift> getShiftList() {
-        return shiftList;
+    public List<Course> getCourseList() {
+        return courseList;
     }
 
-    public void setShiftList(List<Shift> shiftList) {
-        this.shiftList = shiftList;
+    public void setCourseList(List<Course> courseList) {
+        this.courseList = courseList;
     }
 
     public List<DayOffRequest> getDayOffRequestList() {
@@ -188,29 +188,29 @@ public class NurseRoster extends AbstractPersistable implements Solution<HardSof
         this.dayOnRequestList = dayOnRequestList;
     }
 
-    public List<ShiftOffRequest> getShiftOffRequestList() {
-        return shiftOffRequestList;
+    public List<CourseOffRequest> getCourseOffRequestList() {
+        return courseOffRequestList;
     }
 
-    public void setShiftOffRequestList(List<ShiftOffRequest> shiftOffRequestList) {
-        this.shiftOffRequestList = shiftOffRequestList;
+    public void setCourseOffRequestList(List<CourseOffRequest> courseOffRequestList) {
+        this.courseOffRequestList = courseOffRequestList;
     }
 
-    public List<ShiftOnRequest> getShiftOnRequestList() {
-        return shiftOnRequestList;
+    public List<CourseOnRequest> getCourseOnRequestList() {
+        return courseOnRequestList;
     }
 
-    public void setShiftOnRequestList(List<ShiftOnRequest> shiftOnRequestList) {
-        this.shiftOnRequestList = shiftOnRequestList;
+    public void setCourseOnRequestList(List<CourseOnRequest> courseOnRequestList) {
+        this.courseOnRequestList = courseOnRequestList;
     }
 
     @PlanningEntityCollectionProperty
-    public List<ShiftAssignment> getShiftAssignmentList() {
-        return shiftAssignmentList;
+    public List<CourseAssignment> getCourseAssignmentList() {
+        return courseAssignmentList;
     }
 
-    public void setShiftAssignmentList(List<ShiftAssignment> shiftAssignmentList) {
-        this.shiftAssignmentList = shiftAssignmentList;
+    public void setCourseAssignmentList(List<CourseAssignment> courseAssignmentList) {
+        this.courseAssignmentList = courseAssignmentList;
     }
 
     public HardSoftScore getScore() {
@@ -229,21 +229,21 @@ public class NurseRoster extends AbstractPersistable implements Solution<HardSof
         List<Object> facts = new ArrayList<Object>();
         facts.add(nurseRosterParametrization);
         facts.addAll(skillList);
-        facts.addAll(shiftTypeList);
-        facts.addAll(shiftTypeSkillRequirementList);
+        facts.addAll(courseTypeList);
+        facts.addAll(courseTypeSkillRequirementList);
         facts.addAll(patternList);
         facts.addAll(contractList);
         facts.addAll(contractLineList);
         facts.addAll(patternContractLineList);
-        facts.addAll(employeeList);
+        facts.addAll(taList);
         facts.addAll(skillProficiencyList);
-        facts.addAll(shiftDateList);
-        facts.addAll(shiftList);
+        facts.addAll(courseDateList);
+        facts.addAll(courseList);
         facts.addAll(dayOffRequestList);
         facts.addAll(dayOnRequestList);
-        facts.addAll(shiftOffRequestList);
-        facts.addAll(shiftOnRequestList);
-        // Do not add the planning entity's (shiftAssignmentList) because that will be done automatically
+        facts.addAll(courseOffRequestList);
+        facts.addAll(courseOnRequestList);
+        // Do not add the planning entity's (courseAssignmentList) because that will be done automatically
         return facts;
     }
 

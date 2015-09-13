@@ -39,9 +39,9 @@ public class NurseRosteringApp extends CommonApp {
     }
 
     public NurseRosteringApp() {
-        super("Employee rostering",
+        super("Ta rostering",
                 "Official competition name: INRC2010 - Nurse rostering\n\n" +
-                        "Assign shifts to employees.",
+                        "Assign courses to tas.",
                 NurseRosteringPanel.LOGO_PATH);
     }
 

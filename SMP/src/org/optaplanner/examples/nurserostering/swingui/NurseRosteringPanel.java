@@ -42,49 +42,49 @@ import org.optaplanner.core.api.domain.solution.Solution;
 import org.optaplanner.core.impl.score.director.ScoreDirector;
 import org.optaplanner.core.impl.solver.ProblemFactChange;
 import org.optaplanner.examples.common.swingui.SolutionPanel;
-import org.optaplanner.examples.nurserostering.domain.Employee;
+import org.optaplanner.examples.nurserostering.domain.Ta;
 import org.optaplanner.examples.nurserostering.domain.NurseRoster;
 import org.optaplanner.examples.nurserostering.domain.NurseRosterParametrization;
-import org.optaplanner.examples.nurserostering.domain.Shift;
-import org.optaplanner.examples.nurserostering.domain.ShiftAssignment;
-import org.optaplanner.examples.nurserostering.domain.ShiftDate;
+import org.optaplanner.examples.nurserostering.domain.Course;
+import org.optaplanner.examples.nurserostering.domain.CourseAssignment;
+import org.optaplanner.examples.nurserostering.domain.CourseDate;
 
 public class NurseRosteringPanel extends SolutionPanel {
 
     public static final String LOGO_PATH = "/org/optaplanner/examples/nurserostering/swingui/nurseRosteringLogo.png";
 
-    private final ImageIcon employeeIcon;
-    private final ImageIcon deleteEmployeeIcon;
+    private final ImageIcon taIcon;
+    private final ImageIcon deleteTaIcon;
 
-    private JPanel employeeListPanel;
+    private JPanel taListPanel;
 
     private JTextField planningWindowStartField;
     private AbstractAction advancePlanningWindowStartAction;
-    private EmployeePanel unassignedPanel;
-    private Map<Employee, EmployeePanel> employeeToPanelMap;
+    private TaPanel unassignedPanel;
+    private Map<Ta, TaPanel> taToPanelMap;
 
     public NurseRosteringPanel() {
-        employeeIcon = new ImageIcon(getClass().getResource("employee.png"));
-        deleteEmployeeIcon = new ImageIcon(getClass().getResource("deleteEmployee.png"));
+        taIcon = new ImageIcon(getClass().getResource("ta.png"));
+        deleteTaIcon = new ImageIcon(getClass().getResource("deleteTa.png"));
         GroupLayout layout = new GroupLayout(this);
         setLayout(layout);
-        createEmployeeListPanel();
+        createTaListPanel();
         JPanel headerPanel = createHeaderPanel();
         layout.setHorizontalGroup(layout.createParallelGroup()
-                .addComponent(headerPanel).addComponent(employeeListPanel));
+                .addComponent(headerPanel).addComponent(taListPanel));
         layout.setVerticalGroup(layout.createSequentialGroup()
                 .addComponent(headerPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
                         GroupLayout.PREFERRED_SIZE)
-                .addComponent(employeeListPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
+                .addComponent(taListPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
                         GroupLayout.PREFERRED_SIZE));
     }
 
-    public ImageIcon getEmployeeIcon() {
-        return employeeIcon;
+    public ImageIcon getTaIcon() {
+        return taIcon;
     }
 
-    public ImageIcon getDeleteEmployeeIcon() {
-        return deleteEmployeeIcon;
+    public ImageIcon getDeleteTaIcon() {
+        return deleteTaIcon;
     }
 
     private JPanel createHeaderPanel() {
@@ -103,19 +103,19 @@ public class NurseRosteringPanel extends SolutionPanel {
         advancePlanningWindowStartAction.setEnabled(false);
         planningWindowPanel.add(new JButton(advancePlanningWindowStartAction));
         headerPanel.add(planningWindowPanel, BorderLayout.WEST);
-        JLabel shiftTypeExplanation = new JLabel("E = Early shift, L = Late shift, ...");
-        headerPanel.add(shiftTypeExplanation, BorderLayout.CENTER);
+        JLabel courseTypeExplanation = new JLabel("E = Early course, L = Late course, ...");
+        headerPanel.add(courseTypeExplanation, BorderLayout.CENTER);
         return headerPanel;
     }
 
-    private void createEmployeeListPanel() {
-        employeeListPanel = new JPanel();
-        employeeListPanel.setLayout(new BoxLayout(employeeListPanel, BoxLayout.Y_AXIS));
-        unassignedPanel = new EmployeePanel(this, Collections.<ShiftDate>emptyList(), Collections.<Shift>emptyList(),
+    private void createTaListPanel() {
+        taListPanel = new JPanel();
+        taListPanel.setLayout(new BoxLayout(taListPanel, BoxLayout.Y_AXIS));
+        unassignedPanel = new TaPanel(this, Collections.<CourseDate>emptyList(), Collections.<Course>emptyList(),
                 null);
-        employeeListPanel.add(unassignedPanel);
-        employeeToPanelMap = new LinkedHashMap<Employee, EmployeePanel>();
-        employeeToPanelMap.put(null, unassignedPanel);
+        taListPanel.add(unassignedPanel);
+        taToPanelMap = new LinkedHashMap<Ta, TaPanel>();
+        taToPanelMap.put(null, unassignedPanel);
     }
 
     @Override
@@ -129,17 +129,17 @@ public class NurseRosteringPanel extends SolutionPanel {
 
     public void resetPanel(Solution solution) {
         NurseRoster nurseRoster = (NurseRoster) solution;
-        for (EmployeePanel employeePanel : employeeToPanelMap.values()) {
-            if (employeePanel.getEmployee() != null) {
-                employeeListPanel.remove(employeePanel);
+        for (TaPanel taPanel : taToPanelMap.values()) {
+            if (taPanel.getTa() != null) {
+                taListPanel.remove(taPanel);
             }
         }
-        employeeToPanelMap.clear();
-        employeeToPanelMap.put(null, unassignedPanel);
-        unassignedPanel.clearShiftAssignments();
-        List<ShiftDate> shiftDateList = nurseRoster.getShiftDateList();
-        List<Shift> shiftList = nurseRoster.getShiftList();
-        unassignedPanel.setShiftDateListAndShiftList(shiftDateList, shiftList);
+        taToPanelMap.clear();
+        taToPanelMap.put(null, unassignedPanel);
+        unassignedPanel.clearCourseAssignments();
+        List<CourseDate> courseDateList = nurseRoster.getCourseDateList();
+        List<Course> courseList = nurseRoster.getCourseList();
+        unassignedPanel.setCourseDateListAndCourseList(courseDateList, courseList);
         updatePanel(nurseRoster);
         advancePlanningWindowStartAction.setEnabled(true);
         planningWindowStartField.setText(nurseRoster.getNurseRosterParametrization().getPlanningWindowStart().getLabel());
@@ -148,32 +148,32 @@ public class NurseRosteringPanel extends SolutionPanel {
     @Override
     public void updatePanel(Solution solution) {
         NurseRoster nurseRoster = (NurseRoster) solution;
-        List<ShiftDate> shiftDateList = nurseRoster.getShiftDateList();
-        List<Shift> shiftList = nurseRoster.getShiftList();
-        Set<Employee> deadEmployeeSet = new LinkedHashSet<Employee>(employeeToPanelMap.keySet());
-        deadEmployeeSet.remove(null);
-        for (Employee employee : nurseRoster.getEmployeeList()) {
-            deadEmployeeSet.remove(employee);
-            EmployeePanel employeePanel = employeeToPanelMap.get(employee);
-            if (employeePanel == null) {
-                employeePanel = new EmployeePanel(this, shiftDateList, shiftList, employee);
-                employeeListPanel.add(employeePanel);
-                employeeToPanelMap.put(employee, employeePanel);
+        List<CourseDate> courseDateList = nurseRoster.getCourseDateList();
+        List<Course> courseList = nurseRoster.getCourseList();
+        Set<Ta> deadTaSet = new LinkedHashSet<Ta>(taToPanelMap.keySet());
+        deadTaSet.remove(null);
+        for (Ta ta : nurseRoster.getTaList()) {
+            deadTaSet.remove(ta);
+            TaPanel taPanel = taToPanelMap.get(ta);
+            if (taPanel == null) {
+                taPanel = new TaPanel(this, courseDateList, courseList, ta);
+                taListPanel.add(taPanel);
+                taToPanelMap.put(ta, taPanel);
             }
-            employeePanel.clearShiftAssignments();
+            taPanel.clearCourseAssignments();
         }
-        unassignedPanel.clearShiftAssignments();
-        for (ShiftAssignment shiftAssignment : nurseRoster.getShiftAssignmentList()) {
-            Employee employee = shiftAssignment.getEmployee();
-            EmployeePanel employeePanel = employeeToPanelMap.get(employee);
-            employeePanel.addShiftAssignment(shiftAssignment);
+        unassignedPanel.clearCourseAssignments();
+        for (CourseAssignment courseAssignment : nurseRoster.getCourseAssignmentList()) {
+            Ta ta = courseAssignment.getTa();
+            TaPanel taPanel = taToPanelMap.get(ta);
+            taPanel.addCourseAssignment(courseAssignment);
         }
-        for (Employee deadEmployee : deadEmployeeSet) {
-            EmployeePanel deadEmployeePanel = employeeToPanelMap.remove(deadEmployee);
-            employeeListPanel.remove(deadEmployeePanel);
+        for (Ta deadTa : deadTaSet) {
+            TaPanel deadTaPanel = taToPanelMap.remove(deadTa);
+            taListPanel.remove(deadTaPanel);
         }
-        for (EmployeePanel employeePanel : employeeToPanelMap.values()) {
-            employeePanel.update();
+        for (TaPanel taPanel : taToPanelMap.values()) {
+            taPanel.update();
         }
     }
 
@@ -190,84 +190,84 @@ public class NurseRosteringPanel extends SolutionPanel {
             public void doChange(ScoreDirector scoreDirector) {
                 NurseRoster nurseRoster = (NurseRoster) scoreDirector.getWorkingSolution();
                 NurseRosterParametrization nurseRosterParametrization = nurseRoster.getNurseRosterParametrization();
-                List<ShiftDate> shiftDateList = nurseRoster.getShiftDateList();
-                ShiftDate planningWindowStart = nurseRosterParametrization.getPlanningWindowStart();
-                int windowStartIndex = shiftDateList.indexOf(planningWindowStart);
+                List<CourseDate> courseDateList = nurseRoster.getCourseDateList();
+                CourseDate planningWindowStart = nurseRosterParametrization.getPlanningWindowStart();
+                int windowStartIndex = courseDateList.indexOf(planningWindowStart);
                 if (windowStartIndex < 0) {
                     throw new IllegalStateException("The planningWindowStart ("
-                            + planningWindowStart + ") must be in the shiftDateList ("
-                            + shiftDateList +").");
+                            + planningWindowStart + ") must be in the courseDateList ("
+                            + courseDateList +").");
                 }
-                ShiftDate oldLastShiftDate = shiftDateList.get(shiftDateList.size() - 1);
-                ShiftDate newShiftDate = new ShiftDate();
-                newShiftDate.setId(oldLastShiftDate.getId() + 1L);
-                newShiftDate.setDayIndex(oldLastShiftDate.getDayIndex() + 1);
-                newShiftDate.setDateString(oldLastShiftDate.determineNextDateString());
-                newShiftDate.setDayOfWeek(oldLastShiftDate.getDayOfWeek().determineNextDayOfWeek());
-                List<Shift> refShiftList = planningWindowStart.getShiftList();
-                List<Shift> newShiftList = new ArrayList<Shift>(refShiftList.size());
-                newShiftDate.setShiftList(newShiftList);
-                nurseRoster.getShiftDateList().add(newShiftDate);
-                scoreDirector.afterProblemFactAdded(newShiftDate);
-                Shift oldLastShift = nurseRoster.getShiftList().get(nurseRoster.getShiftList().size() - 1);
-                long shiftId = oldLastShift.getId() + 1L;
-                int shiftIndex = oldLastShift.getIndex() + 1;
-                long shiftAssignmentId = nurseRoster.getShiftAssignmentList().get(
-                        nurseRoster.getShiftAssignmentList().size() - 1).getId() + 1L;
-                for (Shift refShift : refShiftList) {
-                    Shift newShift = new Shift();
-                    newShift.setId(shiftId);
-                    shiftId++;
-                    newShift.setShiftDate(newShiftDate);
-                    newShift.setShiftType(refShift.getShiftType());
-                    newShift.setIndex(shiftIndex);
-                    shiftIndex++;
-                    newShift.setRequiredEmployeeSize(refShift.getRequiredEmployeeSize());
-                    newShiftList.add(newShift);
-                    nurseRoster.getShiftList().add(newShift);
-                    scoreDirector.afterProblemFactAdded(newShift);
-                    for (int indexInShift = 0; indexInShift < newShift.getRequiredEmployeeSize(); indexInShift++) {
-                        ShiftAssignment newShiftAssignment = new ShiftAssignment();
-                        newShiftAssignment.setId(shiftAssignmentId);
-                        shiftAssignmentId++;
-                        newShiftAssignment.setShift(newShift);
-                        newShiftAssignment.setIndexInShift(indexInShift);
-                        nurseRoster.getShiftAssignmentList().add(newShiftAssignment);
-                        scoreDirector.afterEntityAdded(newShiftAssignment);
+                CourseDate oldLastCourseDate = courseDateList.get(courseDateList.size() - 1);
+                CourseDate newCourseDate = new CourseDate();
+                newCourseDate.setId(oldLastCourseDate.getId() + 1L);
+                newCourseDate.setDayIndex(oldLastCourseDate.getDayIndex() + 1);
+                newCourseDate.setDateString(oldLastCourseDate.determineNextDateString());
+                newCourseDate.setDayOfWeek(oldLastCourseDate.getDayOfWeek().determineNextDayOfWeek());
+                List<Course> refCourseList = planningWindowStart.getCourseList();
+                List<Course> newCourseList = new ArrayList<Course>(refCourseList.size());
+                newCourseDate.setCourseList(newCourseList);
+                nurseRoster.getCourseDateList().add(newCourseDate);
+                scoreDirector.afterProblemFactAdded(newCourseDate);
+                Course oldLastCourse = nurseRoster.getCourseList().get(nurseRoster.getCourseList().size() - 1);
+                long courseId = oldLastCourse.getId() + 1L;
+                int courseIndex = oldLastCourse.getIndex() + 1;
+                long courseAssignmentId = nurseRoster.getCourseAssignmentList().get(
+                        nurseRoster.getCourseAssignmentList().size() - 1).getId() + 1L;
+                for (Course refCourse : refCourseList) {
+                    Course newCourse = new Course();
+                    newCourse.setId(courseId);
+                    courseId++;
+                    newCourse.setCourseDate(newCourseDate);
+                    newCourse.setCourseType(refCourse.getCourseType());
+                    newCourse.setIndex(courseIndex);
+                    courseIndex++;
+                    newCourse.setRequiredTaSize(refCourse.getRequiredTaSize());
+                    newCourseList.add(newCourse);
+                    nurseRoster.getCourseList().add(newCourse);
+                    scoreDirector.afterProblemFactAdded(newCourse);
+                    for (int indexInCourse = 0; indexInCourse < newCourse.getRequiredTaSize(); indexInCourse++) {
+                        CourseAssignment newCourseAssignment = new CourseAssignment();
+                        newCourseAssignment.setId(courseAssignmentId);
+                        courseAssignmentId++;
+                        newCourseAssignment.setCourse(newCourse);
+                        newCourseAssignment.setIndexInCourse(indexInCourse);
+                        nurseRoster.getCourseAssignmentList().add(newCourseAssignment);
+                        scoreDirector.afterEntityAdded(newCourseAssignment);
                     }
                 }
                 windowStartIndex++;
-                ShiftDate newPlanningWindowStart = shiftDateList.get(windowStartIndex);
+                CourseDate newPlanningWindowStart = courseDateList.get(windowStartIndex);
                 nurseRosterParametrization.setPlanningWindowStart(newPlanningWindowStart);
-                nurseRosterParametrization.setLastShiftDate(newShiftDate);
+                nurseRosterParametrization.setLastCourseDate(newCourseDate);
                 scoreDirector.afterProblemFactChanged(nurseRosterParametrization);
             }
         }, true);
     }
 
-    public void deleteEmployee(final Employee employee) {
-        logger.info("Scheduling delete of employee ({}).", employee);
+    public void deleteTa(final Ta ta) {
+        logger.info("Scheduling delete of ta ({}).", ta);
         doProblemFactChange(new ProblemFactChange() {
             public void doChange(ScoreDirector scoreDirector) {
                 NurseRoster nurseRoster = (NurseRoster) scoreDirector.getWorkingSolution();
                 // First remove the planning fact from all planning entities that use it
-                for (ShiftAssignment shiftAssignment : nurseRoster.getShiftAssignmentList()) {
-                    if (ObjectUtils.equals(shiftAssignment.getEmployee(), employee)) {
-                        scoreDirector.beforeVariableChanged(shiftAssignment, "employee");
-                        shiftAssignment.setEmployee(null);
-                        scoreDirector.afterVariableChanged(shiftAssignment, "employee");
+                for (CourseAssignment courseAssignment : nurseRoster.getCourseAssignmentList()) {
+                    if (ObjectUtils.equals(courseAssignment.getTa(), ta)) {
+                        scoreDirector.beforeVariableChanged(courseAssignment, "ta");
+                        courseAssignment.setTa(null);
+                        scoreDirector.afterVariableChanged(courseAssignment, "ta");
                     }
                 }
-                // A SolutionCloner does not clone problem fact lists (such as employeeList)
-                // Shallow clone the employeeList so only workingSolution is affected, not bestSolution or guiSolution
-                nurseRoster.setEmployeeList(new ArrayList<Employee>(nurseRoster.getEmployeeList()));
+                // A SolutionCloner does not clone problem fact lists (such as taList)
+                // Shallow clone the taList so only workingSolution is affected, not bestSolution or guiSolution
+                nurseRoster.setTaList(new ArrayList<Ta>(nurseRoster.getTaList()));
                 // Remove it the planning fact itself
-                for (Iterator<Employee> it = nurseRoster.getEmployeeList().iterator(); it.hasNext(); ) {
-                    Employee workingEmployee = it.next();
-                    if (ObjectUtils.equals(workingEmployee, employee)) {
-                        scoreDirector.beforeProblemFactRemoved(workingEmployee);
+                for (Iterator<Ta> it = nurseRoster.getTaList().iterator(); it.hasNext(); ) {
+                    Ta workingTa = it.next();
+                    if (ObjectUtils.equals(workingTa, ta)) {
+                        scoreDirector.beforeProblemFactRemoved(workingTa);
                         it.remove(); // remove from list
-                        scoreDirector.beforeProblemFactRemoved(employee);
+                        scoreDirector.beforeProblemFactRemoved(ta);
                         break;
                     }
                 }
@@ -275,8 +275,8 @@ public class NurseRosteringPanel extends SolutionPanel {
         });
     }
 
-    public void moveShiftAssignmentToEmployee(ShiftAssignment shiftAssignment, Employee toEmployee) {
-        solutionBusiness.doChangeMove(shiftAssignment, "employee", toEmployee);
+    public void moveCourseAssignmentToTa(CourseAssignment courseAssignment, Ta toTa) {
+        solutionBusiness.doChangeMove(courseAssignment, "ta", toTa);
         solverAndPersistenceFrame.resetScreen();
     }
 

@@ -17,40 +17,33 @@
 package org.optaplanner.examples.nurserostering.domain.pattern;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamInclude;
-import org.optaplanner.examples.common.domain.AbstractPersistable;
+import org.optaplanner.examples.nurserostering.domain.CourseType;
 
-@XStreamAlias("Pattern")
-@XStreamInclude({
-        CourseType2DaysPattern.class,
-        CourseType3DaysPattern.class,
-        WorkBeforeFreeSequencePattern.class,
-        FreeBefore2DaysWithAWorkDayPattern.class
-})
-public abstract class Pattern extends AbstractPersistable {
+@XStreamAlias("CourseType2DaysPattern")
+public class CourseType2DaysPattern extends Pattern {
 
-    protected String code;
-    protected int weight;
+    private CourseType dayIndex0CourseType;
+    private CourseType dayIndex1CourseType;
 
-    public String getCode() {
-        return code;
+    public CourseType getDayIndex0CourseType() {
+        return dayIndex0CourseType;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setDayIndex0CourseType(CourseType dayIndex0CourseType) {
+        this.dayIndex0CourseType = dayIndex0CourseType;
     }
 
-    public int getWeight() {
-        return weight;
+    public CourseType getDayIndex1CourseType() {
+        return dayIndex1CourseType;
     }
 
-    public void setWeight(int weight) {
-        this.weight = weight;
+    public void setDayIndex1CourseType(CourseType dayIndex1CourseType) {
+        this.dayIndex1CourseType = dayIndex1CourseType;
     }
 
     @Override
     public String toString() {
-        return code;
+        return "Work pattern: " + dayIndex0CourseType + ", " + dayIndex1CourseType;
     }
 
 }

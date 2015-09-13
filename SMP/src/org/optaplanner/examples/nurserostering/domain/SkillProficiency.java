@@ -22,15 +22,15 @@ import org.optaplanner.examples.common.domain.AbstractPersistable;
 @XStreamAlias("SkillProficiency")
 public class SkillProficiency extends AbstractPersistable {
 
-    private Employee employee;
+    private Ta ta;
     private Skill skill;
 
-    public Employee getEmployee() {
-        return employee;
+    public Ta getTa() {
+        return ta;
     }
 
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
+    public void setTa(Ta ta) {
+        this.ta = ta;
     }
 
     public Skill getSkill() {
@@ -43,7 +43,7 @@ public class SkillProficiency extends AbstractPersistable {
 
     @Override
     public String toString() {
-        return employee + "-" + skill;
+        return ta + "-" + skill;
     }
 
 }

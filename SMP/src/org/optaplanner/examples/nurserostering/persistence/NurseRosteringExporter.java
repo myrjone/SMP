@@ -22,8 +22,8 @@ import org.jdom2.Element;
 import org.optaplanner.core.api.domain.solution.Solution;
 import org.optaplanner.examples.common.persistence.AbstractXmlSolutionExporter;
 import org.optaplanner.examples.nurserostering.domain.NurseRoster;
-import org.optaplanner.examples.nurserostering.domain.Shift;
-import org.optaplanner.examples.nurserostering.domain.ShiftAssignment;
+import org.optaplanner.examples.nurserostering.domain.Course;
+import org.optaplanner.examples.nurserostering.domain.CourseAssignment;
 
 public class NurseRosteringExporter extends AbstractXmlSolutionExporter {
 
@@ -63,23 +63,23 @@ public class NurseRosteringExporter extends AbstractXmlSolutionExporter {
             softConstraintsPenaltyElement.setText(Integer.toString(nurseRoster.getScore().getSoftScore()));
             solutionElement.addContent(softConstraintsPenaltyElement);
 
-            for (ShiftAssignment shiftAssignment : nurseRoster.getShiftAssignmentList()) {
-                Shift shift = shiftAssignment.getShift();
-                if (shift != null) {
+            for (CourseAssignment courseAssignment : nurseRoster.getCourseAssignmentList()) {
+                Course course = courseAssignment.getCourse();
+                if (course != null) {
                     Element assignmentElement = new Element("Assignment");
                     solutionElement.addContent(assignmentElement);
 
                     Element dateElement = new Element("Date");
-                    dateElement.setText(shift.getShiftDate().getDateString());
+                    dateElement.setText(course.getCourseDate().getDateString());
                     assignmentElement.addContent(dateElement);
 
-                    Element employeeElement = new Element("Employee");
-                    employeeElement.setText(shiftAssignment.getEmployee().getCode());
-                    assignmentElement.addContent(employeeElement);
+                    Element taElement = new Element("Ta");
+                    taElement.setText(courseAssignment.getTa().getCode());
+                    assignmentElement.addContent(taElement);
 
-                    Element shiftTypeElement = new Element("ShiftType");
-                    shiftTypeElement.setText(shift.getShiftType().getCode());
-                    assignmentElement.addContent(shiftTypeElement);
+                    Element courseTypeElement = new Element("CourseType");
+                    courseTypeElement.setText(course.getCourseType().getCode());
+                    assignmentElement.addContent(courseTypeElement);
                 }
             }
         }

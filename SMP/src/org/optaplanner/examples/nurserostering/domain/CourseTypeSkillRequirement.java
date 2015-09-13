@@ -14,47 +14,36 @@
  * limitations under the License.
  */
 
-package org.optaplanner.examples.nurserostering.domain.request;
+package org.optaplanner.examples.nurserostering.domain;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.optaplanner.examples.common.domain.AbstractPersistable;
-import org.optaplanner.examples.nurserostering.domain.Ta;
-import org.optaplanner.examples.nurserostering.domain.CourseDate;
 
-@XStreamAlias("DayOffRequest")
-public class DayOffRequest extends AbstractPersistable {
+@XStreamAlias("CourseTypeSkillRequirement")
+public class CourseTypeSkillRequirement extends AbstractPersistable {
 
-    private Ta ta;
-    private CourseDate courseDate;
-    private int weight;
+    private CourseType courseType;
+    private Skill skill;
 
-    public Ta getTa() {
-        return ta;
+    public CourseType getCourseType() {
+        return courseType;
     }
 
-    public void setTa(Ta ta) {
-        this.ta = ta;
+    public void setCourseType(CourseType courseType) {
+        this.courseType = courseType;
     }
 
-    public CourseDate getCourseDate() {
-        return courseDate;
+    public Skill getSkill() {
+        return skill;
     }
 
-    public void setCourseDate(CourseDate courseDate) {
-        this.courseDate = courseDate;
-    }
-
-    public int getWeight() {
-        return weight;
-    }
-
-    public void setWeight(int weight) {
-        this.weight = weight;
+    public void setSkill(Skill skill) {
+        this.skill = skill;
     }
 
     @Override
     public String toString() {
-        return courseDate + "_OFF_" + ta;
+        return courseType + "-" + skill;
     }
 
 }

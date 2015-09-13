@@ -22,40 +22,40 @@ import org.optaplanner.examples.common.domain.AbstractPersistable;
 @XStreamAlias("NurseRosterParametrization")
 public class NurseRosterParametrization extends AbstractPersistable {
 
-    private ShiftDate firstShiftDate;
-    private ShiftDate lastShiftDate;
+    private CourseDate firstCourseDate;
+    private CourseDate lastCourseDate;
 
-    private ShiftDate planningWindowStart;
+    private CourseDate planningWindowStart;
 
-    public ShiftDate getFirstShiftDate() {
-        return firstShiftDate;
+    public CourseDate getFirstCourseDate() {
+        return firstCourseDate;
     }
 
-    public void setFirstShiftDate(ShiftDate firstShiftDate) {
-        this.firstShiftDate = firstShiftDate;
+    public void setFirstCourseDate(CourseDate firstCourseDate) {
+        this.firstCourseDate = firstCourseDate;
     }
 
-    public ShiftDate getLastShiftDate() {
-        return lastShiftDate;
+    public CourseDate getLastCourseDate() {
+        return lastCourseDate;
     }
 
-    public void setLastShiftDate(ShiftDate lastShiftDate) {
-        this.lastShiftDate = lastShiftDate;
+    public void setLastCourseDate(CourseDate lastCourseDate) {
+        this.lastCourseDate = lastCourseDate;
     }
 
-    public int getFirstShiftDateDayIndex() {
-        return firstShiftDate.getDayIndex();
+    public int getFirstCourseDateDayIndex() {
+        return firstCourseDate.getDayIndex();
     }
 
-    public int getLastShiftDateDayIndex() {
-        return lastShiftDate.getDayIndex();
+    public int getLastCourseDateDayIndex() {
+        return lastCourseDate.getDayIndex();
     }
 
-    public ShiftDate getPlanningWindowStart() {
+    public CourseDate getPlanningWindowStart() {
         return planningWindowStart;
     }
 
-    public void setPlanningWindowStart(ShiftDate planningWindowStart) {
+    public void setPlanningWindowStart(CourseDate planningWindowStart) {
         this.planningWindowStart = planningWindowStart;
     }
 
@@ -63,13 +63,13 @@ public class NurseRosterParametrization extends AbstractPersistable {
     // Worker methods
     // ************************************************************************
 
-    public boolean isInPlanningWindow(ShiftDate shiftDate) {
-        return planningWindowStart.getDayIndex() <= shiftDate.getDayIndex();
+    public boolean isInPlanningWindow(CourseDate courseDate) {
+        return planningWindowStart.getDayIndex() <= courseDate.getDayIndex();
     }
 
     @Override
     public String toString() {
-        return firstShiftDate + " - " + lastShiftDate;
+        return firstCourseDate + " - " + lastCourseDate;
     }
 
 }
