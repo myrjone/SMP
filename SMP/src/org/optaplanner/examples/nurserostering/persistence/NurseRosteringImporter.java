@@ -44,9 +44,6 @@ import org.optaplanner.examples.nurserostering.domain.Course;
 import org.optaplanner.examples.nurserostering.domain.CourseAssignment;
 import org.optaplanner.examples.nurserostering.domain.CourseDate;
 import org.optaplanner.examples.nurserostering.domain.CourseType;
-import org.optaplanner.examples.nurserostering.domain.CourseTypeSkillRequirement;
-import org.optaplanner.examples.nurserostering.domain.Skill;
-import org.optaplanner.examples.nurserostering.domain.SkillProficiency;
 import org.optaplanner.examples.nurserostering.domain.WeekendDefinition;
 import org.optaplanner.examples.nurserostering.domain.contract.BooleanContractLine;
 import org.optaplanner.examples.nurserostering.domain.contract.Contract;
@@ -81,7 +78,6 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
     public static class NurseRosteringInputBuilder extends XmlInputBuilder {
 
         protected Map<String, CourseDate> courseDateMap;
-        protected Map<String, Skill> skillMap;
         protected Map<String, CourseType> courseTypeMap;
         protected Map<List<String>, Course> dateAndCourseTypeToCourseMap;
         protected Map<List<Object>, List<Course>> dayOfWeekAndCourseTypeToCourseListMap;
@@ -102,7 +98,6 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                     schedulingPeriodElement.getChild("StartDate"),
                     schedulingPeriodElement.getChild("EndDate"));
             generateNurseRosterInfo(nurseRoster);
-            readSkillList(nurseRoster, schedulingPeriodElement.getChild("Skills"));
             readCourseTypeList(nurseRoster, schedulingPeriodElement.getChild("CourseTypes"));
             generateCourseList(nurseRoster);
             readPatternList(nurseRoster, schedulingPeriodElement.getChild("Patterns"));
@@ -117,10 +112,9 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
 
             BigInteger possibleSolutionSize = BigInteger.valueOf(nurseRoster.getTaList().size()).pow(
                     nurseRoster.getCourseAssignmentList().size());
-            logger.info("NurseRoster {} has {} skills, {} courseTypes, {} patterns, {} contracts, {} tas," +
+            logger.info("NurseRoster {} has {} courseTypes, {} patterns, {} contracts, {} tas," +
                     " {} courseDates, {} courseAssignments and {} requests with a search space of {}.",
                     getInputId(),
-                    nurseRoster.getSkillList().size(),
                     nurseRoster.getCourseTypeList().size(),
                     nurseRoster.getPatternList().size(),
                     nurseRoster.getContractList().size(),
@@ -206,41 +200,12 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
             nurseRoster.setNurseRosterParametrization(nurseRosterParametrization);
         }
 
-        private void readSkillList(NurseRoster nurseRoster, Element skillsElement) throws JDOMException {
-            List<Skill> skillList;
-            if (skillsElement == null) {
-                skillList = Collections.emptyList();
-            } else {
-                List<Element> skillElementList = (List<Element>) skillsElement.getChildren();
-                skillList = new ArrayList<Skill>(skillElementList.size());
-                skillMap = new HashMap<String, Skill>(skillElementList.size());
-                long id = 0L;
-                for (Element element : skillElementList) {
-                    assertElementName(element, "Skill");
-                    Skill skill = new Skill();
-                    skill.setId(id);
-                    skill.setCode(element.getText());
-                    skillList.add(skill);
-                    if (skillMap.containsKey(skill.getCode())) {
-                        throw new IllegalArgumentException("There are 2 skills with the same code ("
-                                + skill.getCode() + ").");
-                    }
-                    skillMap.put(skill.getCode(), skill);
-                    id++;
-                }
-            }
-            nurseRoster.setSkillList(skillList);
-        }
-
         private void readCourseTypeList(NurseRoster nurseRoster, Element courseTypesElement) throws JDOMException {
             List<Element> courseTypeElementList = (List<Element>) courseTypesElement.getChildren();
             List<CourseType> courseTypeList = new ArrayList<CourseType>(courseTypeElementList.size());
             courseTypeMap = new HashMap<String, CourseType>(courseTypeElementList.size());
             long id = 0L;
             int index = 0;
-            List<CourseTypeSkillRequirement> courseTypeSkillRequirementList
-                    = new ArrayList<CourseTypeSkillRequirement>(courseTypeElementList.size() * 2);
-            long courseTypeSkillRequirementId = 0L;
             for (Element element : courseTypeElementList) {
                 assertElementName(element, "Course");
                 CourseType courseType = new CourseType();
@@ -254,25 +219,6 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                 courseType.setNight(startTimeString.compareTo(endTimeString) > 0);
                 courseType.setDescription(element.getChild("Description").getText());
 
-                Element skillsElement = element.getChild("Skills");
-                if (skillsElement != null) {
-                    List<Element> skillElementList = (List<Element>) skillsElement.getChildren();
-                    for (Element skillElement : skillElementList) {
-                        assertElementName(skillElement, "Skill");
-                        CourseTypeSkillRequirement courseTypeSkillRequirement = new CourseTypeSkillRequirement();
-                        courseTypeSkillRequirement.setId(courseTypeSkillRequirementId);
-                        courseTypeSkillRequirement.setCourseType(courseType);
-                        Skill skill = skillMap.get(skillElement.getText());
-                        if (skill == null) {
-                            throw new IllegalArgumentException("The skill (" + skillElement.getText()
-                                    + ") of courseType (" + courseType.getCode() + ") does not exist.");
-                        }
-                        courseTypeSkillRequirement.setSkill(skill);
-                        courseTypeSkillRequirementList.add(courseTypeSkillRequirement);
-                        courseTypeSkillRequirementId++;
-                    }
-                }
-
                 courseTypeList.add(courseType);
                 if (courseTypeMap.containsKey(courseType.getCode())) {
                     throw new IllegalArgumentException("There are 2 courseTypes with the same code ("
@@ -283,7 +229,6 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                 index++;
             }
             nurseRoster.setCourseTypeList(courseTypeList);
-            nurseRoster.setCourseTypeSkillRequirementList(courseTypeSkillRequirementList);
         }
 
         private void generateCourseList(NurseRoster nurseRoster) throws JDOMException {
@@ -604,9 +549,6 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                 contractLineId = readBooleanContractLine(contract, contractLineList, contractLineListOfContract,
                         contractLineId, element.getChild("NoNightCourseBeforeFreeWeekend"),
                         ContractLineType.NO_NIGHT_COURSE_BEFORE_FREE_WEEKEND);
-                contractLineId = readBooleanContractLine(contract, contractLineList, contractLineListOfContract,
-                        contractLineId, element.getChild("AlternativeSkillCategory"),
-                        ContractLineType.ALTERNATIVE_SKILL_CATEGORY);
                 contract.setContractLineList(contractLineListOfContract);
 
                 List<Element> unwantedPatternElementList = (List<Element>) element.getChild("UnwantedPatterns")
@@ -750,9 +692,6 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
             List<Ta> taList = new ArrayList<Ta>(taElementList.size());
             taMap = new HashMap<String, Ta>(taElementList.size());
             long id = 0L;
-            List<SkillProficiency> skillProficiencyList
-                    = new ArrayList<SkillProficiency>(taElementList.size() * 2);
-            long skillProficiencyId = 0L;
             for (Element element : taElementList) {
                 assertElementName(element, "Ta");
                 Ta ta = new Ta();
@@ -772,25 +711,6 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                 ta.setCourseOffRequestMap(new HashMap<Course, CourseOffRequest>(estimatedRequestSize));
                 ta.setCourseOnRequestMap(new HashMap<Course, CourseOnRequest>(estimatedRequestSize));
 
-                Element skillsElement = element.getChild("Skills");
-                if (skillsElement != null) {
-                    List<Element> skillElementList = (List<Element>) skillsElement.getChildren();
-                    for (Element skillElement : skillElementList) {
-                        assertElementName(skillElement, "Skill");
-                        Skill skill = skillMap.get(skillElement.getText());
-                        if (skill == null) {
-                            throw new IllegalArgumentException("The skill (" + skillElement.getText()
-                                    + ") of ta (" + ta.getCode() + ") does not exist.");
-                        }
-                        SkillProficiency skillProficiency = new SkillProficiency();
-                        skillProficiency.setId(skillProficiencyId);
-                        skillProficiency.setTa(ta);
-                        skillProficiency.setSkill(skill);
-                        skillProficiencyList.add(skillProficiency);
-                        skillProficiencyId++;
-                    }
-                }
-
                 taList.add(ta);
                 if (taMap.containsKey(ta.getCode())) {
                     throw new IllegalArgumentException("There are 2 tas with the same code ("
@@ -800,7 +720,6 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                 id++;
             }
             nurseRoster.setTaList(taList);
-            nurseRoster.setSkillProficiencyList(skillProficiencyList);
         }
 
         private void readRequiredTaSizes(NurseRoster nurseRoster, Element coverRequirementsElement) {

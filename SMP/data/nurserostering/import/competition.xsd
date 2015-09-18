@@ -11,7 +11,6 @@
       <xs:sequence>
         <xs:element name="StartDate" type="xs:date"/>
         <xs:element name="EndDate" type="xs:date"/>
-        <xs:element name="Skills" type="Skills" minOccurs="0"/>
         <xs:element name="CourseTypes" type="CourseTypes"/>
         <xs:element name="Patterns" type="Patterns" minOccurs="0"/>
         <xs:element name="Contracts" type="Contracts"/>
@@ -26,11 +25,6 @@
       <xs:attribute name="OrganisationID" type="xs:string" use="optional"/>
     </xs:complexType>
   </xs:element>
-  <xs:complexType name="Skills">
-    <xs:sequence>
-      <xs:element name="Skill" type="ID" minOccurs="0" maxOccurs="unbounded"/>
-    </xs:sequence>
-  </xs:complexType>
   <xs:complexType name="CourseTypes">
     <xs:sequence>
       <xs:element name="Course" maxOccurs="unbounded">
@@ -39,12 +33,6 @@
             <xs:element name="StartTime" type="xs:time"/>
             <xs:element name="EndTime" type="xs:time"/>
             <xs:element name="Description" type="xs:string" minOccurs="0"/>
-            <xs:element name="Skills" minOccurs="0">
-              <xs:complexType>
-                <xs:sequence>
-                  <xs:element name="Skill" type="ID" maxOccurs="unbounded"/>
-                </xs:sequence>
-              </xs:complexType>
             </xs:element>
           </xs:all>
           <xs:attribute name="ID" type="ID" use="required"/>
@@ -101,7 +89,6 @@
             <xs:element name="IdenticalCourseTypesDuringWeekend" type="WeightOnly" minOccurs="0"/>
             <xs:element name="NoNightCourseBeforeFreeWeekend" type="WeightOnly" minOccurs="0"/>
             <xs:element name="TwoFreeDaysAfterNightCourses" type="WeightOnly" minOccurs="0"/>
-            <xs:element name="AlternativeSkillCategory" type="WeightOnly" minOccurs="0"/>
             <!-- TODO remove this! -->
             <xs:element name="UnwantedPatterns" minOccurs="0">
               <xs:complexType>
@@ -124,12 +111,6 @@
           <xs:all>
             <xs:element name="ContractID" type="ID"/>
             <xs:element name="Name" type="xs:string" minOccurs="0"/>
-            <xs:element name="Skills" minOccurs="0">
-              <xs:complexType>
-                <xs:sequence minOccurs="0" maxOccurs="unbounded">
-                  <xs:element name="Skill" type="xs:string"/>
-                </xs:sequence>
-              </xs:complexType>
             </xs:element>
           </xs:all>
           <xs:attribute name="ID" type="ID" use="required"/>

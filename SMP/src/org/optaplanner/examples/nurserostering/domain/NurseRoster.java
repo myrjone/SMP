@@ -46,15 +46,12 @@ public class NurseRoster extends AbstractPersistable implements Solution<HardSof
     private String code;
 
     private NurseRosterParametrization nurseRosterParametrization;
-    private List<Skill> skillList;
     private List<CourseType> courseTypeList;
-    private List<CourseTypeSkillRequirement> courseTypeSkillRequirementList;
     private List<Pattern> patternList;
     private List<Contract> contractList;
     private List<ContractLine> contractLineList;
     private List<PatternContractLine> patternContractLineList;
     private List<Ta> taList;
-    private List<SkillProficiency> skillProficiencyList;
     private List<CourseDate> courseDateList;
     private List<Course> courseList;
     private List<DayOffRequest> dayOffRequestList;
@@ -83,28 +80,12 @@ public class NurseRoster extends AbstractPersistable implements Solution<HardSof
         this.nurseRosterParametrization = nurseRosterParametrization;
     }
 
-    public List<Skill> getSkillList() {
-        return skillList;
-    }
-
-    public void setSkillList(List<Skill> skillList) {
-        this.skillList = skillList;
-    }
-
     public List<CourseType> getCourseTypeList() {
         return courseTypeList;
     }
 
     public void setCourseTypeList(List<CourseType> courseTypeList) {
         this.courseTypeList = courseTypeList;
-    }
-
-    public List<CourseTypeSkillRequirement> getCourseTypeSkillRequirementList() {
-        return courseTypeSkillRequirementList;
-    }
-
-    public void setCourseTypeSkillRequirementList(List<CourseTypeSkillRequirement> courseTypeSkillRequirementList) {
-        this.courseTypeSkillRequirementList = courseTypeSkillRequirementList;
     }
 
     public List<Pattern> getPatternList() {
@@ -146,14 +127,6 @@ public class NurseRoster extends AbstractPersistable implements Solution<HardSof
 
     public void setTaList(List<Ta> taList) {
         this.taList = taList;
-    }
-
-    public List<SkillProficiency> getSkillProficiencyList() {
-        return skillProficiencyList;
-    }
-
-    public void setSkillProficiencyList(List<SkillProficiency> skillProficiencyList) {
-        this.skillProficiencyList = skillProficiencyList;
     }
 
     public List<CourseDate> getCourseDateList() {
@@ -228,15 +201,12 @@ public class NurseRoster extends AbstractPersistable implements Solution<HardSof
     public Collection<? extends Object> getProblemFacts() {
         List<Object> facts = new ArrayList<Object>();
         facts.add(nurseRosterParametrization);
-        facts.addAll(skillList);
         facts.addAll(courseTypeList);
-        facts.addAll(courseTypeSkillRequirementList);
         facts.addAll(patternList);
         facts.addAll(contractList);
         facts.addAll(contractLineList);
         facts.addAll(patternContractLineList);
         facts.addAll(taList);
-        facts.addAll(skillProficiencyList);
         facts.addAll(courseDateList);
         facts.addAll(courseList);
         facts.addAll(dayOffRequestList);

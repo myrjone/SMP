@@ -27,9 +27,6 @@ import org.optaplanner.examples.nurserostering.domain.NurseRosterParametrization
 import org.optaplanner.examples.nurserostering.domain.Course;
 import org.optaplanner.examples.nurserostering.domain.CourseDate;
 import org.optaplanner.examples.nurserostering.domain.CourseType;
-import org.optaplanner.examples.nurserostering.domain.CourseTypeSkillRequirement;
-import org.optaplanner.examples.nurserostering.domain.Skill;
-import org.optaplanner.examples.nurserostering.domain.SkillProficiency;
 import org.optaplanner.examples.nurserostering.domain.WeekendDefinition;
 import org.optaplanner.examples.nurserostering.domain.pattern.FreeBefore2DaysWithAWorkDayPattern;
 import org.optaplanner.examples.nurserostering.domain.pattern.Pattern;
@@ -500,18 +497,6 @@ rule "courseOnRequest"
         not CourseAssignment(ta == $ta, course == $course)
     then
         scoreHolder.addSoftConstraintMatch(kcontext, - $weight);
-end
-
-// Alternative skill
-rule "alternativeSkill"
-    when
-        $contractLine : BooleanContractLine(contractLineType == ContractLineType.ALTERNATIVE_SKILL_CATEGORY,
-            $contract : contract)
-        $assignment : CourseAssignment(contract == $contract, $ta : ta, $courseType : courseType)
-        CourseTypeSkillRequirement(courseType == $courseType, $skill : skill)
-        not SkillProficiency(ta == $ta, skill == $skill)
-    then
-        scoreHolder.addSoftConstraintMatch(kcontext, - $contractLine.getWeight());
 end
 
 // Unwanted patterns
