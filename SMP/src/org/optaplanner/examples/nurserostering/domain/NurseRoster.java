@@ -31,8 +31,6 @@ import org.optaplanner.core.impl.score.buildin.hardsoft.HardSoftScoreDefinition;
 import org.optaplanner.examples.common.domain.AbstractPersistable;
 import org.optaplanner.examples.nurserostering.domain.contract.Contract;
 import org.optaplanner.examples.nurserostering.domain.contract.ContractLine;
-import org.optaplanner.examples.nurserostering.domain.contract.PatternContractLine;
-import org.optaplanner.examples.nurserostering.domain.pattern.Pattern;
 import org.optaplanner.examples.nurserostering.domain.request.DayOffRequest;
 import org.optaplanner.examples.nurserostering.domain.request.DayOnRequest;
 import org.optaplanner.examples.nurserostering.domain.request.CourseOffRequest;
@@ -47,10 +45,8 @@ public class NurseRoster extends AbstractPersistable implements Solution<HardSof
 
     private NurseRosterParametrization nurseRosterParametrization;
     private List<CourseType> courseTypeList;
-    private List<Pattern> patternList;
     private List<Contract> contractList;
     private List<ContractLine> contractLineList;
-    private List<PatternContractLine> patternContractLineList;
     private List<Ta> taList;
     private List<CourseDate> courseDateList;
     private List<Course> courseList;
@@ -88,14 +84,6 @@ public class NurseRoster extends AbstractPersistable implements Solution<HardSof
         this.courseTypeList = courseTypeList;
     }
 
-    public List<Pattern> getPatternList() {
-        return patternList;
-    }
-
-    public void setPatternList(List<Pattern> patternList) {
-        this.patternList = patternList;
-    }
-
     public List<Contract> getContractList() {
         return contractList;
     }
@@ -110,14 +98,6 @@ public class NurseRoster extends AbstractPersistable implements Solution<HardSof
 
     public void setContractLineList(List<ContractLine> contractLineList) {
         this.contractLineList = contractLineList;
-    }
-
-    public List<PatternContractLine> getPatternContractLineList() {
-        return patternContractLineList;
-    }
-
-    public void setPatternContractLineList(List<PatternContractLine> patternContractLineList) {
-        this.patternContractLineList = patternContractLineList;
     }
 
     @ValueRangeProvider(id = "taRange")
@@ -202,10 +182,8 @@ public class NurseRoster extends AbstractPersistable implements Solution<HardSof
         List<Object> facts = new ArrayList<Object>();
         facts.add(nurseRosterParametrization);
         facts.addAll(courseTypeList);
-        facts.addAll(patternList);
         facts.addAll(contractList);
         facts.addAll(contractLineList);
-        facts.addAll(patternContractLineList);
         facts.addAll(taList);
         facts.addAll(courseDateList);
         facts.addAll(courseList);

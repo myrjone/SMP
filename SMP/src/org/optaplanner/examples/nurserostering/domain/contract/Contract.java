@@ -20,14 +20,12 @@ import java.util.List;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.optaplanner.examples.common.domain.AbstractPersistable;
-import org.optaplanner.examples.nurserostering.domain.WeekendDefinition;
 
 @XStreamAlias("Contract")
 public class Contract extends AbstractPersistable {
 
     private String code;
     private String description;
-    private WeekendDefinition weekendDefinition;
 
     private List<ContractLine> contractLineList;
 
@@ -47,14 +45,6 @@ public class Contract extends AbstractPersistable {
         this.description = description;
     }
 
-    public WeekendDefinition getWeekendDefinition() {
-        return weekendDefinition;
-    }
-
-    public void setWeekendDefinition(WeekendDefinition weekendDefinition) {
-        this.weekendDefinition = weekendDefinition;
-    }
-
     public List<ContractLine> getContractLineList() {
         return contractLineList;
     }
@@ -66,10 +56,6 @@ public class Contract extends AbstractPersistable {
     @Override
     public String toString() {
         return code;
-    }
-
-    public int getWeekendLength() {
-        return weekendDefinition.getWeekendLength();
     }
 
 }

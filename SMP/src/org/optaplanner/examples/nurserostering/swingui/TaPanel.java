@@ -43,7 +43,6 @@ import org.optaplanner.examples.nurserostering.domain.Course;
 import org.optaplanner.examples.nurserostering.domain.CourseAssignment;
 import org.optaplanner.examples.nurserostering.domain.CourseDate;
 import org.optaplanner.examples.nurserostering.domain.CourseType;
-import org.optaplanner.examples.nurserostering.domain.WeekendDefinition;
 
 public class TaPanel extends JPanel {
 
@@ -128,14 +127,11 @@ public class TaPanel extends JPanel {
         if (courseDateListPanel != null) {
             remove(courseDateListPanel);
         }
-        WeekendDefinition weekendDefinition = (ta == null) ? WeekendDefinition.SATURDAY_SUNDAY
-                : ta.getContract().getWeekendDefinition();
         courseDateListPanel = new JPanel(new GridLayout(1, 0));
         courseDatePanelMap = new LinkedHashMap<CourseDate, JPanel>(courseDateList.size());
         for (CourseDate courseDate : courseDateList) {
             JPanel courseDatePanel = new JPanel(new GridLayout(1, 0));
-            Color backgroundColor = weekendDefinition.isWeekend(courseDate.getDayOfWeek())
-                    ? TangoColorFactory.ALUMINIUM_2 : courseDatePanel.getBackground();
+            Color backgroundColor = courseDatePanel.getBackground();
             if (ta != null) {
                 if (ta.getDayOffRequestMap().containsKey(courseDate)) {
                     backgroundColor = TangoColorFactory.ALUMINIUM_4;

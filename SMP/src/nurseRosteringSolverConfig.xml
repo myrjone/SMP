@@ -15,7 +15,6 @@
       - ge0ffrey's main pc: sprint 11, medium 700, long 42000
     -->
     <secondsSpentLimit>700</secondsSpentLimit>
-    <!--<bestScoreLimit>-0hard/-999999soft</bestScoreLimit>-->
   </termination>
   <constructionHeuristic>
     <constructionHeuristicType>WEAKEST_FIT</constructionHeuristicType>
@@ -34,14 +33,6 @@
         <cacheType>STEP</cacheType>
         <moveListFactoryClass>org.optaplanner.examples.nurserostering.solver.move.factory.CourseAssignmentPillarPartSwapMoveFactory</moveListFactoryClass>
       </moveListFactory>
-      <!--<moveListFactory>-->
-        <!--<cacheType>STEP</cacheType>-->
-        <!--<moveListFactoryClass>org.optaplanner.examples.nurserostering.solver.move.factory.CourseAssignmentSequenceSwitchLength2MoveFactory</moveListFactoryClass>-->
-      <!--</moveListFactory>-->
-      <!--<moveListFactory>-->
-        <!--<cacheType>STEP</cacheType>-->
-        <!--<moveListFactoryClass>org.optaplanner.examples.nurserostering.solver.move.factory.CourseAssignmentSequenceSwitchLength3MoveFactory</moveListFactoryClass>-->
-      <!--</moveListFactory>-->
     </unionMoveSelector>
     <acceptor>
       <entityTabuSize>7</entityTabuSize>

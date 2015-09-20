@@ -63,10 +63,6 @@ public class Ta extends AbstractPersistable implements Labeled {
         this.contract = contract;
     }
 
-    public int getWeekendLength() {
-        return getContract().getWeekendLength();
-    }
-
     public Map<CourseDate, DayOffRequest> getDayOffRequestMap() {
         return dayOffRequestMap;
     }

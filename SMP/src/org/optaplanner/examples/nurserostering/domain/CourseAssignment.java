@@ -89,19 +89,6 @@ public class CourseAssignment extends AbstractPersistable {
         return ta.getContract();
     }
 
-    public boolean isWeekend() {
-        if (ta == null) {
-            return false;
-        }
-        WeekendDefinition weekendDefinition = ta.getContract().getWeekendDefinition();
-        DayOfWeek dayOfWeek = course.getCourseDate().getDayOfWeek();
-        return weekendDefinition.isWeekend(dayOfWeek);
-    }
-
-    public int getWeekendSundayIndex() {
-        return course.getCourseDate().getWeekendSundayIndex();
-    }
-
     @Override
     public String toString() {
         return course + "@" + ta;

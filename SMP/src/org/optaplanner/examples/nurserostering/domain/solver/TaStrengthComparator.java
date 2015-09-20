@@ -28,7 +28,6 @@ public class TaStrengthComparator implements Comparator<Ta>, Serializable {
         // TODO refactor to DifficultyWeightFactory and use getContract().getContractLineList()
         // to sum maximumValue and minimumValue etc
         return new CompareToBuilder()
-                .append(b.getWeekendLength(), a.getWeekendLength()) // Descending
                 .append(a.getId(), b.getId())
                 .toComparison();
     }

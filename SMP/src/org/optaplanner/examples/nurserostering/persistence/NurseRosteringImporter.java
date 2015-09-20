@@ -44,18 +44,11 @@ import org.optaplanner.examples.nurserostering.domain.Course;
 import org.optaplanner.examples.nurserostering.domain.CourseAssignment;
 import org.optaplanner.examples.nurserostering.domain.CourseDate;
 import org.optaplanner.examples.nurserostering.domain.CourseType;
-import org.optaplanner.examples.nurserostering.domain.WeekendDefinition;
 import org.optaplanner.examples.nurserostering.domain.contract.BooleanContractLine;
 import org.optaplanner.examples.nurserostering.domain.contract.Contract;
 import org.optaplanner.examples.nurserostering.domain.contract.ContractLine;
 import org.optaplanner.examples.nurserostering.domain.contract.ContractLineType;
 import org.optaplanner.examples.nurserostering.domain.contract.MinMaxContractLine;
-import org.optaplanner.examples.nurserostering.domain.contract.PatternContractLine;
-import org.optaplanner.examples.nurserostering.domain.pattern.FreeBefore2DaysWithAWorkDayPattern;
-import org.optaplanner.examples.nurserostering.domain.pattern.Pattern;
-import org.optaplanner.examples.nurserostering.domain.pattern.CourseType2DaysPattern;
-import org.optaplanner.examples.nurserostering.domain.pattern.CourseType3DaysPattern;
-import org.optaplanner.examples.nurserostering.domain.pattern.WorkBeforeFreeSequencePattern;
 import org.optaplanner.examples.nurserostering.domain.request.DayOffRequest;
 import org.optaplanner.examples.nurserostering.domain.request.DayOnRequest;
 import org.optaplanner.examples.nurserostering.domain.request.CourseOffRequest;
@@ -71,6 +64,7 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
         super(new NurseRosteringDao());
     }
 
+    @Override
     public XmlInputBuilder createXmlInputBuilder() {
         return new NurseRosteringInputBuilder();
     }
@@ -81,10 +75,10 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
         protected Map<String, CourseType> courseTypeMap;
         protected Map<List<String>, Course> dateAndCourseTypeToCourseMap;
         protected Map<List<Object>, List<Course>> dayOfWeekAndCourseTypeToCourseListMap;
-        protected Map<String, Pattern> patternMap;
         protected Map<String, Contract> contractMap;
         protected Map<String, Ta> taMap;
 
+        @Override
         public Solution readSolution() throws IOException, JDOMException {
             // Note: javax.xml is terrible. JDom is much much easier.
 
@@ -100,7 +94,6 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
             generateNurseRosterInfo(nurseRoster);
             readCourseTypeList(nurseRoster, schedulingPeriodElement.getChild("CourseTypes"));
             generateCourseList(nurseRoster);
-            readPatternList(nurseRoster, schedulingPeriodElement.getChild("Patterns"));
             readContractList(nurseRoster, schedulingPeriodElement.getChild("Contracts"));
             readTaList(nurseRoster, schedulingPeriodElement.getChild("Tas"));
             readRequiredTaSizes(nurseRoster, schedulingPeriodElement.getChild("CoverRequirements"));
@@ -112,11 +105,10 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
 
             BigInteger possibleSolutionSize = BigInteger.valueOf(nurseRoster.getTaList().size()).pow(
                     nurseRoster.getCourseAssignmentList().size());
-            logger.info("NurseRoster {} has {} courseTypes, {} patterns, {} contracts, {} tas," +
+            logger.info("NurseRoster {} has {} courseTypes, {} contracts, {} tas," +
                     " {} courseDates, {} courseAssignments and {} requests with a search space of {}.",
                     getInputId(),
                     nurseRoster.getCourseTypeList().size(),
-                    nurseRoster.getPatternList().size(),
                     nurseRoster.getContractList().size(),
                     nurseRoster.getTaList().size(),
                     nurseRoster.getCourseDateList().size(),
@@ -169,8 +161,8 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                 }
             }
             int courseDateSize = maxDayIndex + 1;
-            List<CourseDate> courseDateList = new ArrayList<CourseDate>(courseDateSize);
-            courseDateMap = new HashMap<String, CourseDate>(courseDateSize);
+            List<CourseDate> courseDateList = new ArrayList<>(courseDateSize);
+            courseDateMap = new HashMap<>(courseDateSize);
             long id = 0L;
             int dayIndex = 0;
             calendar.setTime(startDate);
@@ -202,8 +194,8 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
 
         private void readCourseTypeList(NurseRoster nurseRoster, Element courseTypesElement) throws JDOMException {
             List<Element> courseTypeElementList = (List<Element>) courseTypesElement.getChildren();
-            List<CourseType> courseTypeList = new ArrayList<CourseType>(courseTypeElementList.size());
-            courseTypeMap = new HashMap<String, CourseType>(courseTypeElementList.size());
+            List<CourseType> courseTypeList = new ArrayList<>(courseTypeElementList.size());
+            courseTypeMap = new HashMap<>(courseTypeElementList.size());
             long id = 0L;
             int index = 0;
             for (Element element : courseTypeElementList) {
@@ -234,9 +226,9 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
         private void generateCourseList(NurseRoster nurseRoster) throws JDOMException {
             List<CourseType> courseTypeList = nurseRoster.getCourseTypeList();
             int courseListSize = courseDateMap.size() * courseTypeList.size();
-            List<Course> courseList = new ArrayList<Course>(courseListSize);
-            dateAndCourseTypeToCourseMap = new HashMap<List<String>, Course>(courseListSize);
-            dayOfWeekAndCourseTypeToCourseListMap = new HashMap<List<Object>, List<Course>>(7 * courseTypeList.size());
+            List<Course> courseList = new ArrayList<>(courseListSize);
+            dateAndCourseTypeToCourseMap = new HashMap<>(courseListSize);
+            dayOfWeekAndCourseTypeToCourseListMap = new HashMap<>(7 * courseTypeList.size());
             long id = 0L;
             int index = 0;
             for (CourseDate courseDate : nurseRoster.getCourseDateList()) {
@@ -263,248 +255,21 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
             List<Object> key = Arrays.<Object>asList(courseDate.getDayOfWeek(), courseType);
             List<Course> dayOfWeekAndCourseTypeToCourseList = dayOfWeekAndCourseTypeToCourseListMap.get(key);
             if (dayOfWeekAndCourseTypeToCourseList == null) {
-                dayOfWeekAndCourseTypeToCourseList = new ArrayList<Course>((courseDateMap.size() + 6) / 7);
+                dayOfWeekAndCourseTypeToCourseList = new ArrayList<>((courseDateMap.size() + 6) / 7);
                 dayOfWeekAndCourseTypeToCourseListMap.put(key, dayOfWeekAndCourseTypeToCourseList);
             }
             dayOfWeekAndCourseTypeToCourseList.add(course);
         }
 
-        private void readPatternList(NurseRoster nurseRoster, Element patternsElement) throws JDOMException {
-            List<Pattern> patternList;
-            if (patternsElement == null) {
-                patternList = Collections.emptyList();
-            } else {
-                List<Element> patternElementList = (List<Element>) patternsElement.getChildren();
-                patternList = new ArrayList<Pattern>(patternElementList.size());
-                patternMap = new HashMap<String, Pattern>(patternElementList.size());
-                long id = 0L;
-                long patternEntryId = 0L;
-                for (Element element : patternElementList) {
-                    assertElementName(element, "Pattern");
-                    String code = element.getAttribute("ID").getValue();
-                    int weight = element.getAttribute("weight").getIntValue();
-
-                    List<Element> patternEntryElementList = (List<Element>) element.getChild("PatternEntries")
-                            .getChildren();
-                    if (patternEntryElementList.size() < 2) {
-                        throw new IllegalArgumentException("The size of PatternEntries ("
-                                + patternEntryElementList.size() + ") of pattern (" + code + ") should be at least 2.");
-                    }
-                    Pattern pattern;
-                    if (patternEntryElementList.get(0).getChild("CourseType").getText().equals("None")) {
-                        pattern = new FreeBefore2DaysWithAWorkDayPattern();
-                        if (patternEntryElementList.size() != 3) {
-                            throw new IllegalStateException("boe");
-                        }
-                    } else if (patternEntryElementList.get(1).getChild("CourseType").getText().equals("None")) {
-                        pattern = new WorkBeforeFreeSequencePattern();
-                        // TODO support this too (not needed for competition)
-                        throw new UnsupportedOperationException("The pattern (" + code + ") is not supported."
-                                + " None of the test data exhibits such a pattern.");
-                    } else {
-                        switch (patternEntryElementList.size()) {
-                            case 2:
-                                pattern = new CourseType2DaysPattern();
-                                break;
-                            case 3:
-                                pattern = new CourseType3DaysPattern();
-                                break;
-                            default:
-                                throw new IllegalArgumentException("A size of PatternEntries ("
-                                        + patternEntryElementList.size() + ") of pattern (" + code
-                                        + ") above 3 is not supported.");
-                        }
-                    }
-                    pattern.setId(id);
-                    pattern.setCode(code);
-                    pattern.setWeight(weight);
-                    int patternEntryIndex = 0;
-                    DayOfWeek firstDayOfweek = null;
-                    for (Element patternEntryElement : patternEntryElementList) {
-                        assertElementName(patternEntryElement, "PatternEntry");
-                        Element courseTypeElement = patternEntryElement.getChild("CourseType");
-                        boolean courseTypeIsNone;
-                        CourseType courseType;
-                        if (courseTypeElement.getText().equals("Any")) {
-                            courseTypeIsNone = false;
-                            courseType = null;
-                        } else if (courseTypeElement.getText().equals("None")) {
-                            courseTypeIsNone = true;
-                            courseType = null;
-                        } else {
-                            courseTypeIsNone = false;
-                            courseType = courseTypeMap.get(courseTypeElement.getText());
-                            if (courseType == null) {
-                                throw new IllegalArgumentException("The courseType (" + courseTypeElement.getText()
-                                        + ") of pattern (" + pattern.getCode() + ") does not exist.");
-                            }
-                        }
-                        Element dayElement = patternEntryElement.getChild("Day");
-                        DayOfWeek dayOfWeek;
-                        if (dayElement.getText().equals("Any")) {
-                            dayOfWeek = null;
-                        } else {
-                            dayOfWeek = DayOfWeek.valueOfCode(dayElement.getText());
-                            if (dayOfWeek == null) {
-                                throw new IllegalArgumentException("The dayOfWeek (" + dayElement.getText()
-                                        + ") of pattern (" + pattern.getCode() + ") does not exist.");
-                            }
-                        }
-                        if (patternEntryIndex == 0) {
-                            firstDayOfweek = dayOfWeek;
-                        } else {
-                            if (firstDayOfweek != null) {
-                                if (firstDayOfweek.getDistanceToNext(dayOfWeek) != patternEntryIndex) {
-                                    throw new IllegalArgumentException("On patternEntryIndex (" + patternEntryIndex
-                                            + ") of pattern (" + pattern.getCode()
-                                            + ") the dayOfWeek (" + dayOfWeek
-                                            + ") is not valid with previous entries.");
-                                }
-                            } else {
-                                if (dayOfWeek != null) {
-                                    throw new IllegalArgumentException("On patternEntryIndex (" + patternEntryIndex
-                                            + ") of pattern (" + pattern.getCode()
-                                            + ") the dayOfWeek should be (Any), in line with previous entries.");
-                                }
-                            }
-                        }
-                        if (pattern instanceof FreeBefore2DaysWithAWorkDayPattern) {
-                            FreeBefore2DaysWithAWorkDayPattern castedPattern = (FreeBefore2DaysWithAWorkDayPattern) pattern;
-                            if (patternEntryIndex == 0) {
-                                if (dayOfWeek == null) {
-                                    // TODO Support an any dayOfWeek too (not needed for competition)
-                                    throw new UnsupportedOperationException("On patternEntryIndex (" + patternEntryIndex
-                                            + ") of FreeBeforeWorkSequence pattern (" + pattern.getCode()
-                                            + ") the dayOfWeek should not be (Any)."
-                                            + "\n None of the test data exhibits such a pattern.");
-                                }
-                                castedPattern.setFreeDayOfWeek(dayOfWeek);
-                            }
-                            if (patternEntryIndex == 1) {
-                                if (courseType != null) {
-                                    // TODO Support a specific courseType too (not needed for competition)
-                                    throw new UnsupportedOperationException("On patternEntryIndex (" + patternEntryIndex
-                                            + ") of FreeBeforeWorkSequence pattern (" + pattern.getCode()
-                                            + ") the courseType should be (Any)."
-                                            + "\n None of the test data exhibits such a pattern.");
-                                }
-                                // castedPattern.setWorkCourseType(courseType);
-                                // castedPattern.setWorkDayLength(patternEntryElementList.size() - 1);
-                            }
-                            // if (patternEntryIndex > 1 && courseType != castedPattern.getWorkCourseType()) {
-                            //     throw new IllegalArgumentException("On patternEntryIndex (" + patternEntryIndex
-                            //             + ") of FreeBeforeWorkSequence pattern (" + pattern.getCode()
-                            //             + ") the courseType (" + courseType + ") should be ("
-                            //             + castedPattern.getWorkCourseType() + ").");
-                            // }
-                            if (patternEntryIndex != 0 && courseTypeIsNone) {
-                                throw new IllegalArgumentException("On patternEntryIndex (" + patternEntryIndex
-                                        + ") of FreeBeforeWorkSequence pattern (" + pattern.getCode()
-                                        + ") the courseType can not be (None).");
-                            }
-                        } else if (pattern instanceof WorkBeforeFreeSequencePattern) {
-                            WorkBeforeFreeSequencePattern castedPattern = (WorkBeforeFreeSequencePattern) pattern;
-                            if (patternEntryIndex == 0) {
-                                castedPattern.setWorkDayOfWeek(dayOfWeek);
-                                castedPattern.setWorkCourseType(courseType);
-                                castedPattern.setFreeDayLength(patternEntryElementList.size() - 1);
-                            }
-                            if (patternEntryIndex != 0 && !courseTypeIsNone) {
-                                throw new IllegalArgumentException("On patternEntryIndex (" + patternEntryIndex
-                                        + ") of WorkBeforeFreeSequence pattern (" + pattern.getCode()
-                                        + ") the courseType should be (None).");
-                            }
-                        } else if (pattern instanceof CourseType2DaysPattern) {
-                            CourseType2DaysPattern castedPattern = (CourseType2DaysPattern) pattern;
-                            if (patternEntryIndex == 0) {
-                                if (dayOfWeek != null) {
-                                    // TODO Support a specific dayOfWeek too (not needed for competition)
-                                    throw new UnsupportedOperationException("On patternEntryIndex (" + patternEntryIndex
-                                            + ") of FreeBeforeWorkSequence pattern (" + pattern.getCode()
-                                            + ") the dayOfWeek should be (Any)."
-                                            + "\n None of the test data exhibits such a pattern.");
-                                }
-                                // castedPattern.setStartDayOfWeek(dayOfWeek);
-                            }
-                            if (courseType == null) {
-                                // TODO Support any courseType too (not needed for competition)
-                                throw new UnsupportedOperationException("On patternEntryIndex (" + patternEntryIndex
-                                        + ") of FreeBeforeWorkSequence pattern (" + pattern.getCode()
-                                        + ") the courseType should not be (Any)."
-                                        + "\n None of the test data exhibits such a pattern.");
-                            }
-                            switch (patternEntryIndex) {
-                                case 0:
-                                    castedPattern.setDayIndex0CourseType(courseType);
-                                    break;
-                                case 1:
-                                    castedPattern.setDayIndex1CourseType(courseType);
-                                    break;
-                                default:
-                                    throw new IllegalArgumentException("The patternEntryIndex ("
-                                            + patternEntryIndex + ") is not supported.");
-                            }
-                        } else if (pattern instanceof CourseType3DaysPattern) {
-                            CourseType3DaysPattern castedPattern = (CourseType3DaysPattern) pattern;
-                            if (patternEntryIndex == 0) {
-                                if (dayOfWeek != null) {
-                                    // TODO Support a specific dayOfWeek too (not needed for competition)
-                                    throw new UnsupportedOperationException("On patternEntryIndex (" + patternEntryIndex
-                                            + ") of FreeBeforeWorkSequence pattern (" + pattern.getCode()
-                                            + ") the dayOfWeek should be (Any)."
-                                            + "\n None of the test data exhibits such a pattern.");
-                                }
-                                // castedPattern.setStartDayOfWeek(dayOfWeek);
-                            }
-                            if (courseType == null) {
-                                // TODO Support any courseType too
-                                throw new UnsupportedOperationException("On patternEntryIndex (" + patternEntryIndex
-                                        + ") of FreeBeforeWorkSequence pattern (" + pattern.getCode()
-                                        + ") the courseType should not be (Any)."
-                                        + "\n None of the test data exhibits such a pattern.");
-                            }
-                            switch (patternEntryIndex) {
-                                case 0:
-                                    castedPattern.setDayIndex0CourseType(courseType);
-                                    break;
-                                case 1:
-                                    castedPattern.setDayIndex1CourseType(courseType);
-                                    break;
-                                case 2:
-                                    castedPattern.setDayIndex2CourseType(courseType);
-                                    break;
-                                default:
-                                    throw new IllegalArgumentException("The patternEntryIndex ("
-                                            + patternEntryIndex + ") is not supported.");
-                            }
-                        } else {
-                            throw new IllegalStateException("Unsupported patternClass (" + pattern.getClass() + ").");
-                        }
-                        patternEntryIndex++;
-                    }
-                    patternList.add(pattern);
-                    if (patternMap.containsKey(pattern.getCode())) {
-                        throw new IllegalArgumentException("There are 2 patterns with the same code ("
-                                + pattern.getCode() + ").");
-                    }
-                    patternMap.put(pattern.getCode(), pattern);
-                    id++;
-                }
-            }
-            nurseRoster.setPatternList(patternList);
-        }
-
         private void readContractList(NurseRoster nurseRoster, Element contractsElement) throws JDOMException {
             int contractLineTypeListSize = ContractLineType.values().length;
             List<Element> contractElementList = (List<Element>) contractsElement.getChildren();
-            List<Contract> contractList = new ArrayList<Contract>(contractElementList.size());
-            contractMap = new HashMap<String, Contract>(contractElementList.size());
+            List<Contract> contractList = new ArrayList<>(contractElementList.size());
+            contractMap = new HashMap<>(contractElementList.size());
             long id = 0L;
             List<ContractLine> contractLineList = new ArrayList<ContractLine>(
                     contractElementList.size() * contractLineTypeListSize);
             long contractLineId = 0L;
-            List<PatternContractLine> patternContractLineList = new ArrayList<PatternContractLine>(
-                    contractElementList.size() * 3);
             long patternContractLineId = 0L;
             for (Element element : contractElementList) {
                 assertElementName(element, "Contract");
@@ -514,59 +279,10 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                 contract.setDescription(element.getChild("Description").getText());
 
                 List<ContractLine> contractLineListOfContract = new ArrayList<ContractLine>(contractLineTypeListSize);
-                contractLineId = readBooleanContractLine(contract, contractLineList, contractLineListOfContract,
-                        contractLineId, element.getChild("SingleAssignmentPerDay"),
-                        ContractLineType.SINGLE_ASSIGNMENT_PER_DAY);
                 contractLineId = readMinMaxContractLine(contract, contractLineList, contractLineListOfContract,
                         contractLineId, element.getChild("MinNumAssignments"),
                         element.getChild("MaxNumAssignments"),
                         ContractLineType.TOTAL_ASSIGNMENTS);
-                contractLineId = readMinMaxContractLine(contract, contractLineList, contractLineListOfContract,
-                        contractLineId, element.getChild("MinConsecutiveWorkingDays"),
-                        element.getChild("MaxConsecutiveWorkingDays"),
-                        ContractLineType.CONSECUTIVE_WORKING_DAYS);
-                contractLineId = readMinMaxContractLine(contract, contractLineList, contractLineListOfContract,
-                        contractLineId, element.getChild("MinConsecutiveFreeDays"),
-                        element.getChild("MaxConsecutiveFreeDays"),
-                        ContractLineType.CONSECUTIVE_FREE_DAYS);
-                contractLineId = readMinMaxContractLine(contract, contractLineList, contractLineListOfContract,
-                        contractLineId, element.getChild("MinConsecutiveWorkingWeekends"),
-                        element.getChild("MaxConsecutiveWorkingWeekends"),
-                        ContractLineType.CONSECUTIVE_WORKING_WEEKENDS);
-                contractLineId = readMinMaxContractLine(contract, contractLineList, contractLineListOfContract,
-                        contractLineId, null,
-                        element.getChild("MaxWorkingWeekendsInFourWeeks"),
-                        ContractLineType.TOTAL_WORKING_WEEKENDS_IN_FOUR_WEEKS);
-                WeekendDefinition weekendDefinition = WeekendDefinition.valueOfCode(
-                        element.getChild("WeekendDefinition").getText());
-                contract.setWeekendDefinition(weekendDefinition);
-                contractLineId = readBooleanContractLine(contract, contractLineList, contractLineListOfContract,
-                        contractLineId, element.getChild("CompleteWeekends"),
-                        ContractLineType.COMPLETE_WEEKENDS);
-                contractLineId = readBooleanContractLine(contract, contractLineList, contractLineListOfContract,
-                        contractLineId, element.getChild("IdenticalCourseTypesDuringWeekend"),
-                        ContractLineType.IDENTICAL_COURSE_TYPES_DURING_WEEKEND);
-                contractLineId = readBooleanContractLine(contract, contractLineList, contractLineListOfContract,
-                        contractLineId, element.getChild("NoNightCourseBeforeFreeWeekend"),
-                        ContractLineType.NO_NIGHT_COURSE_BEFORE_FREE_WEEKEND);
-                contract.setContractLineList(contractLineListOfContract);
-
-                List<Element> unwantedPatternElementList = (List<Element>) element.getChild("UnwantedPatterns")
-                        .getChildren();
-                for (Element patternElement : unwantedPatternElementList) {
-                    assertElementName(patternElement, "Pattern");
-                    Pattern pattern = patternMap.get(patternElement.getText());
-                    if (pattern == null) {
-                        throw new IllegalArgumentException("The pattern (" + patternElement.getText()
-                                + ") of contract (" + contract.getCode() + ") does not exist.");
-                    }
-                    PatternContractLine patternContractLine = new PatternContractLine();
-                    patternContractLine.setId(patternContractLineId);
-                    patternContractLine.setContract(contract);
-                    patternContractLine.setPattern(pattern);
-                    patternContractLineList.add(patternContractLine);
-                    patternContractLineId++;
-                }
 
                 contractList.add(contract);
                 if (contractMap.containsKey(contract.getCode())) {
@@ -578,7 +294,6 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
             }
             nurseRoster.setContractList(contractList);
             nurseRoster.setContractLineList(contractLineList);
-            nurseRoster.setPatternContractLineList(patternContractLineList);
         }
 
         private long readBooleanContractLine(Contract contract, List<ContractLine> contractLineList,

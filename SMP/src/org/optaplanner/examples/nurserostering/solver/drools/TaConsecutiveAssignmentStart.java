@@ -24,7 +24,6 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.optaplanner.examples.nurserostering.domain.DayOfWeek;
 import org.optaplanner.examples.nurserostering.domain.Ta;
 import org.optaplanner.examples.nurserostering.domain.CourseDate;
-import org.optaplanner.examples.nurserostering.domain.WeekendDefinition;
 import org.optaplanner.examples.nurserostering.domain.contract.Contract;
 
 public class TaConsecutiveAssignmentStart implements Comparable<TaConsecutiveAssignmentStart>,
@@ -93,18 +92,6 @@ public class TaConsecutiveAssignmentStart implements Comparable<TaConsecutiveAss
 
     public int getCourseDateDayIndex() {
         return courseDate.getDayIndex();
-    }
-
-    public boolean isWeekendAndNotFirstDayOfWeekend() {
-        WeekendDefinition weekendDefinition = ta.getContract().getWeekendDefinition();
-        DayOfWeek dayOfWeek = courseDate.getDayOfWeek();
-        return weekendDefinition.isWeekend(dayOfWeek) && weekendDefinition.getFirstDayOfWeekend() != dayOfWeek;
-    }
-
-    public int getDistanceToFirstDayOfWeekend() {
-        WeekendDefinition weekendDefinition = ta.getContract().getWeekendDefinition();
-        DayOfWeek dayOfWeek = courseDate.getDayOfWeek();
-        return weekendDefinition.getFirstDayOfWeekend().getDistanceToNext(dayOfWeek);
     }
 
 }

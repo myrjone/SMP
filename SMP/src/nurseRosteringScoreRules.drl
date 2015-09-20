@@ -27,18 +27,11 @@ import org.optaplanner.examples.nurserostering.domain.NurseRosterParametrization
 import org.optaplanner.examples.nurserostering.domain.Course;
 import org.optaplanner.examples.nurserostering.domain.CourseDate;
 import org.optaplanner.examples.nurserostering.domain.CourseType;
-import org.optaplanner.examples.nurserostering.domain.WeekendDefinition;
-import org.optaplanner.examples.nurserostering.domain.pattern.FreeBefore2DaysWithAWorkDayPattern;
-import org.optaplanner.examples.nurserostering.domain.pattern.Pattern;
-import org.optaplanner.examples.nurserostering.domain.pattern.CourseType2DaysPattern;
-import org.optaplanner.examples.nurserostering.domain.pattern.CourseType3DaysPattern;
-import org.optaplanner.examples.nurserostering.domain.pattern.WorkBeforeFreeSequencePattern;
 import org.optaplanner.examples.nurserostering.domain.contract.Contract;
 import org.optaplanner.examples.nurserostering.domain.contract.BooleanContractLine;
 import org.optaplanner.examples.nurserostering.domain.contract.ContractLine;
 import org.optaplanner.examples.nurserostering.domain.contract.ContractLineType;
 import org.optaplanner.examples.nurserostering.domain.contract.MinMaxContractLine;
-import org.optaplanner.examples.nurserostering.domain.contract.PatternContractLine;
 import org.optaplanner.examples.nurserostering.domain.request.DayOffRequest;
 import org.optaplanner.examples.nurserostering.domain.request.DayOnRequest;
 import org.optaplanner.examples.nurserostering.domain.request.CourseOffRequest;
@@ -46,10 +39,7 @@ import org.optaplanner.examples.nurserostering.domain.request.CourseOnRequest;
 import org.optaplanner.examples.nurserostering.solver.drools.TaAssignmentTotal;
 import org.optaplanner.examples.nurserostering.solver.drools.TaConsecutiveAssignmentEnd;
 import org.optaplanner.examples.nurserostering.solver.drools.TaConsecutiveAssignmentStart;
-import org.optaplanner.examples.nurserostering.solver.drools.TaConsecutiveWeekendAssignmentEnd;
-import org.optaplanner.examples.nurserostering.solver.drools.TaConsecutiveWeekendAssignmentStart;
 import org.optaplanner.examples.nurserostering.solver.drools.TaFreeSequence;
-import org.optaplanner.examples.nurserostering.solver.drools.TaWeekendSequence;
 import org.optaplanner.examples.nurserostering.solver.drools.TaWorkSequence;
 
 global HardSoftScoreHolder scoreHolder;
@@ -72,15 +62,6 @@ global HardSoftScoreHolder scoreHolder;
 //        scoreHolder.addHardConstraintMatch(kcontext,
 //                - Math.abs($requiredTaSize - $totalTaSize.intValue());
 //end
-
-// a nurse can only work one course per day, i.e. no two course can be assigned to the same nurse on a day.
-rule "oneCoursePerDay"
-    when
-        $leftAssignment : CourseAssignment($leftId : id, $ta : ta, $courseDate : courseDate, ta != null)
-        $rightAssignment : CourseAssignment(ta == $ta, courseDate == $courseDate, id > $leftId)
-    then
-        scoreHolder.addHardConstraintMatch(kcontext, -1);
-end
 
 // ############################################################################
 // Soft constraints
@@ -177,43 +158,6 @@ rule "insertTaWorkSequence"
         insertLogical(new TaWorkSequence($ta, $firstDayIndex, $lastDayIndex));
 end
 
-// Minimum number of consecutive working days
-rule "minimumConsecutiveWorkingDays"
-    when
-        $contractLine : MinMaxContractLine(
-            contractLineType == ContractLineType.CONSECUTIVE_WORKING_DAYS, minimumEnabled == true,
-            $contract : contract, $minimumValue : minimumValue
-        )
-        $ta : Ta(contract == $contract)
-
-        $taWorkSequence : TaWorkSequence(
-            ta == $ta,
-            dayLength < $minimumValue,
-            $dayLength : dayLength
-        )
-    then
-        scoreHolder.addSoftConstraintMatch(kcontext, ($dayLength - $minimumValue) * $contractLine.getMinimumWeight());
-end
-
-// Maximum number of consecutive working days
-rule "maximumConsecutiveWorkingDays"
-    when
-        $contractLine : MinMaxContractLine(
-            contractLineType == ContractLineType.CONSECUTIVE_WORKING_DAYS, maximumEnabled == true,
-            $contract : contract, $maximumValue : maximumValue
-        )
-        $ta : Ta(contract == $contract)
-
-        $taWorkSequence : TaWorkSequence(
-            ta == $ta,
-            dayLength > $maximumValue,
-            $dayLength : dayLength
-        )
-    then
-        scoreHolder.addSoftConstraintMatch(kcontext, ($maximumValue - $dayLength) * $contractLine.getMaximumWeight());
-end
-
-
 rule "insertTaFreeSequence"
         salience 1 // Do these rules first (optional, for performance)
     when
@@ -283,190 +227,6 @@ rule "insertEntireTaFreeSequence"
         insertLogical(new TaFreeSequence($ta, $firstDayIndex, $lastDayIndex));
 end
 
-// Minimum number of consecutive free days
-rule "minimumConsecutiveFreeDays"
-    when
-        $contractLine : MinMaxContractLine(
-            contractLineType == ContractLineType.CONSECUTIVE_FREE_DAYS, minimumEnabled == true,
-            $contract : contract, $minimumValue : minimumValue
-        )
-        $ta : Ta(contract == $contract)
-
-        $taFreeSequence : TaFreeSequence(
-            ta == $ta,
-            dayLength < $minimumValue,
-            $dayLength : dayLength
-        )
-    then
-        scoreHolder.addSoftConstraintMatch(kcontext, ($dayLength - $minimumValue) * $contractLine.getMinimumWeight());
-end
-
-// Maximum number of consecutive free days
-rule "maximumConsecutiveFreeDays"
-    when
-        $contractLine : MinMaxContractLine(
-            contractLineType == ContractLineType.CONSECUTIVE_FREE_DAYS, maximumEnabled == true,
-            $contract : contract, $maximumValue : maximumValue
-        )
-        $ta : Ta(contract == $contract)
-
-        $taFreeSequence : TaFreeSequence(
-            ta == $ta,
-            dayLength > $maximumValue,
-            $dayLength : dayLength
-        )
-    then
-        scoreHolder.addSoftConstraintMatch(kcontext, ($maximumValue - $dayLength) * $contractLine.getMaximumWeight());
-end
-
-
-rule "insertTaConsecutiveWeekendAssignmentStart"
-        salience 2 // Do these rules first (optional, for performance)
-    when
-        CourseAssignment(
-            weekend == true,
-            $ta : ta, ta != null,
-            $weekendSundayIndex : weekendSundayIndex
-        )
-        // The first working weekend has no working weekend before it
-        not CourseAssignment(
-            weekend == true,
-            ta == $ta,
-            weekendSundayIndex == ($weekendSundayIndex - 7)
-        )
-    then
-        insertLogical(new TaConsecutiveWeekendAssignmentStart($ta, $weekendSundayIndex));
-end
-rule "insertTaConsecutiveWeekendAssignmentEnd"
-        salience 2 // Do these rules first (optional, for performance)
-    when
-        CourseAssignment(
-            weekend == true,
-            $ta : ta, ta != null,
-            $weekendSundayIndex : weekendSundayIndex
-        )
-        // The last working weekend has no working weekend after it
-        not CourseAssignment(
-            weekend == true,
-            ta == $ta,
-            weekendSundayIndex == ($weekendSundayIndex + 7)
-        )
-    then
-        insertLogical(new TaConsecutiveWeekendAssignmentEnd($ta, $weekendSundayIndex));
-end
-
-rule "insertTaWeekendSequence"
-    when
-        TaConsecutiveWeekendAssignmentStart(
-            $ta : ta,
-            $firstSundayIndex : sundayIndex
-        )
-
-        TaConsecutiveWeekendAssignmentEnd(
-            ta == $ta,
-            sundayIndex >= $firstSundayIndex,
-            $lastSundayIndex : sundayIndex
-        )
-
-        // There are no free weekends between the first and last weekend
-        not TaConsecutiveWeekendAssignmentEnd(
-            ta == $ta,
-            sundayIndex >= $firstSundayIndex && < $lastSundayIndex
-        )
-    then
-        insertLogical(new TaWeekendSequence($ta, $firstSundayIndex, $lastSundayIndex));
-end
-
-// Minimum number of consecutive working weekends
-rule "minimumConsecutiveWorkingWeekends"
-    when
-        $contractLine : MinMaxContractLine(
-            contractLineType == ContractLineType.CONSECUTIVE_WORKING_WEEKENDS, minimumEnabled == true,
-            $contract : contract, $minimumValue : minimumValue
-        )
-        $ta : Ta(contract == $contract)
-
-        $taWeekendSequence : TaWeekendSequence(
-            ta == $ta,
-            weekendLength < $minimumValue,
-            $weekendLength : weekendLength
-        )
-    then
-        scoreHolder.addSoftConstraintMatch(kcontext,
-                ($weekendLength - $minimumValue) * $contractLine.getMinimumWeight());
-end
-
-// Maximum number of consecutive working weekends
-rule "maximumConsecutiveWorkingWeekends"
-    when
-        $contractLine : MinMaxContractLine(
-            contractLineType == ContractLineType.CONSECUTIVE_WORKING_WEEKENDS, maximumEnabled == true,
-            $contract : contract, $maximumValue : maximumValue
-        )
-        $ta : Ta(contract == $contract)
-
-        $taWeekendSequence : TaWeekendSequence(
-            ta == $ta,
-            weekendLength > $maximumValue,
-            $weekendLength : weekendLength
-        )
-    then
-        scoreHolder.addSoftConstraintMatch(kcontext,
-                ($maximumValue - $weekendLength) * $contractLine.getMaximumWeight());
-end
-
-
-// Complete weekends
-rule "startOnNotFirstDayOfWeekend"
-    when
-        $contractLine : BooleanContractLine(
-            contractLineType == ContractLineType.COMPLETE_WEEKENDS, enabled == true,
-            $contract : contract
-        )
-        $taConsecutiveAssignmentStart : TaConsecutiveAssignmentStart(
-            weekendAndNotFirstDayOfWeekend == true,
-            contract == $contract,
-            $distanceToFirstDayOfWeekend : distanceToFirstDayOfWeekend
-        )
-    then
-        scoreHolder.addSoftConstraintMatch(kcontext, - $distanceToFirstDayOfWeekend * $contractLine.getWeight());
-end
-rule "endOnNotLastDayOfWeekend"
-    when
-        $contractLine : BooleanContractLine(
-            contractLineType == ContractLineType.COMPLETE_WEEKENDS, enabled == true,
-            $contract : contract
-        )
-        $taConsecutiveAssignmentEnd : TaConsecutiveAssignmentEnd(
-            weekendAndNotLastDayOfWeekend == true,
-            contract == $contract,
-            $distanceToLastDayOfWeekend : distanceToLastDayOfWeekend
-        )
-    then
-        scoreHolder.addSoftConstraintMatch(kcontext, - $distanceToLastDayOfWeekend * $contractLine.getWeight());
-end
-
-// Identical courseTypes during a weekend
-rule "identicalCourseTypesDuringWeekend"
-    when
-        $contractLine : BooleanContractLine(contractLineType == ContractLineType.IDENTICAL_COURSE_TYPES_DURING_WEEKEND,
-            enabled == true, $contract : contract)
-        $ta : Ta(contract == $contract, $weekendLength : weekendLength)
-        CourseDate(dayOfWeek == DayOfWeek.SUNDAY, $sundayIndex : dayIndex)
-        $courseType : CourseType()
-        $weekendAssignmentTotal : Number(intValue > 0 && < $weekendLength) from accumulate(
-            $assignment : CourseAssignment(
-                weekend == true,
-                weekendSundayIndex == $sundayIndex,
-                ta == $ta,
-                courseType == $courseType),
-            count($assignment)
-        )
-    then
-        scoreHolder.addSoftConstraintMatch(kcontext,
-                ($weekendAssignmentTotal.intValue() - $weekendLength) * $contractLine.getWeight());
-end
-
 // Requested day on/off
 rule "dayOffRequest"
     when
@@ -497,107 +257,4 @@ rule "courseOnRequest"
         not CourseAssignment(ta == $ta, course == $course)
     then
         scoreHolder.addSoftConstraintMatch(kcontext, - $weight);
-end
-
-// Unwanted patterns
-rule "unwantedPatternFreeBefore2DaysWithAWorkDayPattern"
-    when
-        $pattern : FreeBefore2DaysWithAWorkDayPattern(
-            $freeDayOfWeek : freeDayOfWeek
-        )
-        PatternContractLine(
-            pattern == $pattern, $contract : contract
-        )
-        CourseDate(dayOfWeek == $freeDayOfWeek, $freeDayIndex : dayIndex)
-        $ta : Ta(contract == $contract)
-
-        not CourseAssignment(
-            ta == $ta,
-            courseDateDayIndex == $freeDayIndex
-        )
-        exists CourseAssignment(
-            ta == $ta,
-            courseDateDayIndex == ($freeDayIndex + 1) || courseDateDayIndex == ($freeDayIndex + 2)
-        )
-    then
-        scoreHolder.addSoftConstraintMatch(kcontext, - $pattern.getWeight());
-end
-
-// TODO support WorkBeforeFreeSequencePattern too (not needed for competition)
-//rule "unwantedPatternWorkBeforeFreeSequencePattern"
-//    when
-//        $pattern : WorkBeforeFreeSequencePattern(
-//            $workDayOfWeek : workDayOfWeek,
-//            $workCourseType : workCourseType,
-//            $freeDayLength : freeDayLength
-//        )
-//        PatternContractLine(
-//            pattern == $pattern, $contract : contract
-//        )
-//
-//        CourseAssignment(
-//            ($workDayOfWeek == null) || (courseDateDayOfWeek == $workDayOfWeek),
-//            ($workCourseType == null) || (courseType == $workCourseType),
-//            contract == $contract,
-//            $ta : ta, $workDayIndex : courseDateDayIndex
-//        )
-//        TaFreeSequence(
-//            ta == $ta,
-//            firstDayIndex == ($workDayIndex + 1),
-//            dayLength >= $freeDayLength
-//        )
-//    then
-//        scoreHolder.addSoftConstraintMatch(kcontext, - $pattern.getWeight());
-//end
-rule "unwantedPatternCourseType2DaysPattern"
-    when
-        $pattern : CourseType2DaysPattern(
-            $dayIndex0CourseType : dayIndex0CourseType,
-            $dayIndex1CourseType : dayIndex1CourseType
-        )
-        PatternContractLine(
-            pattern == $pattern, $contract : contract
-        )
-
-        CourseAssignment(
-            courseType == $dayIndex0CourseType,
-            contract == $contract,
-            $ta : ta, $firstDayIndex : courseDateDayIndex
-        )
-        CourseAssignment(
-            ($dayIndex1CourseType == null) || (courseType == $dayIndex1CourseType),
-            ta == $ta,
-            courseDateDayIndex == ($firstDayIndex + 1)
-        )
-    then
-        scoreHolder.addSoftConstraintMatch(kcontext, - $pattern.getWeight());
-end
-rule "unwantedPatternCourseType3DaysPattern"
-    when
-        $pattern : CourseType3DaysPattern(
-            $dayIndex0CourseType : dayIndex0CourseType,
-            $dayIndex1CourseType : dayIndex1CourseType,
-            $dayIndex2CourseType : dayIndex2CourseType
-        )
-        PatternContractLine(
-            pattern == $pattern, $contract : contract
-        )
-
-        CourseAssignment(
-            courseType == $dayIndex0CourseType,
-            contract == $contract,
-            $ta : ta, $firstDayIndex : courseDateDayIndex
-        )
-        CourseAssignment(
-            courseType == $dayIndex1CourseType,
-            ta == $ta,
-            courseDateDayIndex == ($firstDayIndex + 1)
-        )
-        CourseAssignment(
-            courseType == $dayIndex2CourseType,
-            ta == $ta,
-            courseDateDayIndex == ($firstDayIndex + 2)
-        )
-    then
-        scoreHolder.addSoftConstraintMatch(kcontext, - $pattern.getWeight());
 end
