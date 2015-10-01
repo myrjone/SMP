@@ -44,14 +44,26 @@ global HardSoftScoreHolder scoreHolder;
 // Hard constraints
 // ############################################################################
 
-// a nurse can only work one course per day, i.e. no two course can be assigned to the same nurse on a day.
-rule "oneCoursePerDay"
+// A ta can't be assigned more than two courses in a single day
+rule "noMoreThanTwoCoursesPerDay"
     when
-        $leftAssignment : CourseAssignment($leftId : id, $ta : ta, $courseDate : courseDate, ta != null)
-        $rightAssignment : CourseAssignment(ta == $ta, courseDate == $courseDate, id > $leftId)
+        $firstAssignment : CourseAssignment($firstId : id, $ta : ta, $courseDate : courseDate, ta != null)
+        $secondAssignment : CourseAssignment($secondId : id, ta == $ta, courseDate == $courseDate, id != $firstId)
+        $thirdAssignment : CourseAssignment($thirdId : id, ta == $ta, courseDate == $courseDate, id != $firstId, id != $secondId)
     then
         scoreHolder.addHardConstraintMatch(kcontext, -1);
 end
+
+// Can't assist with more than one of the same courseType
+// on a single day
+rule "oneTypePerDay"
+    when
+        $left : CourseAssignment($id : id, $ta : ta, $courseDate : courseDate, $courseType : course.courseType, ta != null)
+        $right : CourseAssignment(ta == $ta, courseDate == $courseDate, course.courseType == $courseType, id > $id)
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -1);
+end
+
 
 // ############################################################################
 // Soft constraints
@@ -69,6 +81,15 @@ rule "insertTaAssignmentTotal"
         )
     then
         insertLogical(new TaAssignmentTotal($ta, $assignmentTotal.intValue()));
+end
+
+// A ta should only be assigned to one course per day
+rule "oneCoursePerDay"
+    when
+        $leftAssignment : CourseAssignment($leftId : id, $ta : ta, $courseDate : courseDate, ta != null)
+        $rightAssignment : CourseAssignment(ta == $ta, courseDate == $courseDate, id > $leftId)
+    then
+        scoreHolder.addSoftConstraintMatch(kcontext, -1);
 end
 
 // Minimum number of assignments
