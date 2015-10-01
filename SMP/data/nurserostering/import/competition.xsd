@@ -122,7 +122,7 @@
           <xs:sequence>
             <xs:element name="CourseTypeID" type="ID"/>
             <xs:element name="TaID" type="ID"/>
-            <xs:element name="Date" type="xs:date"/>
+            <xs:element name="Date" type="WeekDay"/>
           </xs:sequence>
           <xs:attribute name="weight" type="xs:nonNegativeInteger" use="required"/>
         </xs:complexType>
@@ -138,7 +138,7 @@
               <xs:element name="CourseTypeID" type="ID"/>
             </xs:choice>
             <xs:element name="TaID" type="ID"/>
-            <xs:element name="Date" type="xs:date"/>
+            <xs:element name="Date" type="WeekDay"/>
           </xs:sequence>
           <xs:attribute name="weight" type="xs:nonNegativeInteger" use="required"/>
         </xs:complexType>

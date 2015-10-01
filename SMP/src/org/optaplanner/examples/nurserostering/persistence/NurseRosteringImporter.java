@@ -86,9 +86,7 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
             nurseRoster.setId(0L);
             nurseRoster.setCode(schedulingPeriodElement.getAttribute("ID").getValue());
 
-            generateCourseDateList(nurseRoster,
-                    schedulingPeriodElement.getChild("StartDate"),
-                    schedulingPeriodElement.getChild("EndDate"));
+            generateCourseDateList(nurseRoster);
             generateNurseRosterInfo(nurseRoster);
             readCourseTypeList(nurseRoster, schedulingPeriodElement.getChild("CourseTypes"));
             generateCourseList(nurseRoster);
@@ -114,66 +112,24 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
             return nurseRoster;
         }
 
-        private void generateCourseDateList(NurseRoster nurseRoster,
-                Element startDateElement, Element endDateElement) throws JDOMException {
-            // Mimic JSR-310 LocalDate
-            TimeZone LOCAL_TIMEZONE = TimeZone.getTimeZone("GMT");
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeZone(LOCAL_TIMEZONE);
-            calendar.clear();
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            dateFormat.setCalendar(calendar);
-            Date startDate;
-            try {
-                startDate = dateFormat.parse(startDateElement.getText());
-            } catch (ParseException e) {
-                throw new IllegalArgumentException("Invalid startDate (" + startDateElement.getText() + ").", e);
-            }
-            calendar.setTime(startDate);
-            int startDayOfYear = calendar.get(Calendar.DAY_OF_YEAR);
-            int startYear = calendar.get(Calendar.YEAR);
-            Date endDate;
-            try {
-                endDate = dateFormat.parse(endDateElement.getText());
-            } catch (ParseException e) {
-                throw new IllegalArgumentException("Invalid endDate (" + endDateElement.getText() + ").", e);
-            }
-            calendar.setTime(endDate);
-            int endDayOfYear = calendar.get(Calendar.DAY_OF_YEAR);
-            int endYear = calendar.get(Calendar.YEAR);
-            int maxDayIndex = endDayOfYear - startDayOfYear;
-            if (startYear > endYear) {
-                throw new IllegalStateException("The startYear (" + startYear
-                        + " must be before endYear (" + endYear + ").");
-            }
-            if (startYear < endYear) {
-                int tmpYear = startYear;
-                calendar.setTime(startDate);
-                while (tmpYear < endYear) {
-                    maxDayIndex += calendar.getActualMaximum(Calendar.DAY_OF_YEAR);
-                    calendar.add(Calendar.YEAR, 1);
-                    tmpYear++;
-                }
-            }
-            int courseDateSize = maxDayIndex + 1;
+        private void generateCourseDateList(NurseRoster nurseRoster) {            
+            int courseDateSize = DayOfWeek.values().length;
             List<CourseDate> courseDateList = new ArrayList<>(courseDateSize);
             courseDateMap = new HashMap<>(courseDateSize);
             long id = 0L;
             int dayIndex = 0;
-            calendar.setTime(startDate);
-            for (int i = 0; i < courseDateSize; i++) {
+            for (DayOfWeek day : DayOfWeek.values()) {
                 CourseDate courseDate = new CourseDate();
                 courseDate.setId(id);
                 courseDate.setDayIndex(dayIndex);
-                String dateString = dateFormat.format(calendar.getTime());
+                String dateString = day.name();
                 courseDate.setDateString(dateString);
-                courseDate.setDayOfWeek(DayOfWeek.valueOfCalendar(calendar.get(Calendar.DAY_OF_WEEK)));
+                courseDate.setDayOfWeek(day);
                 courseDate.setCourseList(new ArrayList<Course>());
                 courseDateList.add(courseDate);
                 courseDateMap.put(dateString, courseDate);
                 id++;
                 dayIndex++;
-                calendar.add(Calendar.DAY_OF_YEAR, 1);
             }
             nurseRoster.setCourseDateList(courseDateList);
         }
@@ -509,8 +465,10 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                     courseOffRequest.setTa(ta);
 
                     Element dateElement = element.getChild("Date");
+                    
+                    DayOfWeek day = DayOfWeek.valueOfCode(dateElement.getText());
                     Element courseTypeElement = element.getChild("CourseTypeID");
-                    Course course = dateAndCourseTypeToCourseMap.get(Arrays.asList(dateElement.getText(), courseTypeElement.getText()));
+                    Course course = dateAndCourseTypeToCourseMap.get(Arrays.asList(day.name(), courseTypeElement.getText()));
                     if (course == null) {
                         throw new IllegalArgumentException("The date (" + dateElement.getText()
                                 + ") or the courseType (" + courseTypeElement.getText()
@@ -550,8 +508,9 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                     courseOnRequest.setTa(ta);
 
                     Element dateElement = element.getChild("Date");
+                    DayOfWeek day = DayOfWeek.valueOfCode(dateElement.getText());
                     Element courseTypeElement = element.getChild("CourseTypeID");
-                    Course course = dateAndCourseTypeToCourseMap.get(Arrays.asList(dateElement.getText(), courseTypeElement.getText()));
+                    Course course = dateAndCourseTypeToCourseMap.get(Arrays.asList(day.name(), courseTypeElement.getText()));
                     if (course == null) {
                         throw new IllegalArgumentException("The date (" + dateElement.getText()
                                 + ") or the courseType (" + courseTypeElement.getText()
