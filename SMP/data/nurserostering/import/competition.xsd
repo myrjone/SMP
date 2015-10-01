@@ -48,10 +48,6 @@
             <xs:element name="MaxNumAssignments" type="OnAndWeight" minOccurs="0"/>
             <xs:element name="MinNumAssignments" type="OnAndWeight" minOccurs="0"/>
             <!-- (Implemented in parser only) -->
-            <xs:element name="MaxConsecutiveWorkingDays" type="OnAndWeight" minOccurs="0"/>
-            <xs:element name="MinConsecutiveWorkingDays" type="OnAndWeight" minOccurs="0"/>
-            <xs:element name="MaxConsecutiveFreeDays" type="OnAndWeight" minOccurs="0"/>
-            <xs:element name="MinConsecutiveFreeDays" type="OnAndWeight" minOccurs="0"/>
             <!-- TODO remove this! -->
             <xs:element name="Description"/>
           </xs:all>
