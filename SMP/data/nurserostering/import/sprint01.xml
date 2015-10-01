@@ -21,6 +21,21 @@
       <EndTime>15:50:00</EndTime>
       <Description>CS444</Description>
     </Course>
+    <Course ID="00004">
+      <StartTime>14:00:00</StartTime>
+      <EndTime>15:50:00</EndTime>
+      <Description>CS555</Description>
+    </Course>
+    <Course ID="00005">
+      <StartTime>14:00:00</StartTime>
+      <EndTime>15:50:00</EndTime>
+      <Description>CS666</Description>
+    </Course>
+    <Course ID="00006">
+      <StartTime>14:00:00</StartTime>
+      <EndTime>15:50:00</EndTime>
+      <Description>CS777</Description>
+    </Course>
   </CourseTypes>
   <Contracts>
     <Contract ID="0">
@@ -81,31 +96,11 @@
       </Cover>
       <Cover>
         <Course>00001</Course>
-        <Preferred>2</Preferred>
-      </Cover>
-      <Cover>
-        <Course>00002</Course>
-        <Preferred>1</Preferred>
-      </Cover>
-      <Cover>
-        <Course>00003</Course>
         <Preferred>1</Preferred>
       </Cover>
     </DayOfWeekCover>
     <DayOfWeekCover>
       <Day>Tuesday</Day>
-      <Cover>
-        <Course>00000</Course>
-        <Preferred>2</Preferred>
-      </Cover>
-      <Cover>
-        <Course>00001</Course>
-        <Preferred>2</Preferred>
-      </Cover>
-      <Cover>
-        <Course>00002</Course>
-        <Preferred>1</Preferred>
-      </Cover>
       <Cover>
         <Course>00003</Course>
         <Preferred>1</Preferred>
@@ -114,95 +109,21 @@
     <DayOfWeekCover>
       <Day>Wednesday</Day>
       <Cover>
-        <Course>00000</Course>
-        <Preferred>2</Preferred>
-      </Cover>
-      <Cover>
-        <Course>00001</Course>
-        <Preferred>2</Preferred>
-      </Cover>
-      <Cover>
-        <Course>00002</Course>
-        <Preferred>1</Preferred>
-      </Cover>
-      <Cover>
-        <Course>00003</Course>
+        <Course>00004</Course>
         <Preferred>1</Preferred>
       </Cover>
     </DayOfWeekCover>
     <DayOfWeekCover>
       <Day>Thursday</Day>
       <Cover>
-        <Course>00000</Course>
+        <Course>00005</Course>
         <Preferred>2</Preferred>
-      </Cover>
-      <Cover>
-        <Course>00001</Course>
-        <Preferred>2</Preferred>
-      </Cover>
-      <Cover>
-        <Course>00002</Course>
-        <Preferred>1</Preferred>
-      </Cover>
-      <Cover>
-        <Course>00003</Course>
-        <Preferred>1</Preferred>
       </Cover>
     </DayOfWeekCover>
     <DayOfWeekCover>
       <Day>Friday</Day>
       <Cover>
-        <Course>00000</Course>
-        <Preferred>2</Preferred>
-      </Cover>
-      <Cover>
-        <Course>00001</Course>
-        <Preferred>2</Preferred>
-      </Cover>
-      <Cover>
-        <Course>00002</Course>
-        <Preferred>1</Preferred>
-      </Cover>
-      <Cover>
-        <Course>00003</Course>
-        <Preferred>1</Preferred>
-      </Cover>
-    </DayOfWeekCover>
-    <DayOfWeekCover>
-      <Day>Saturday</Day>
-      <Cover>
-        <Course>00000</Course>
-        <Preferred>2</Preferred>
-      </Cover>
-      <Cover>
-        <Course>00001</Course>
-        <Preferred>2</Preferred>
-      </Cover>
-      <Cover>
-        <Course>00002</Course>
-        <Preferred>1</Preferred>
-      </Cover>
-      <Cover>
-        <Course>00003</Course>
-        <Preferred>1</Preferred>
-      </Cover>
-    </DayOfWeekCover>
-    <DayOfWeekCover>
-      <Day>Sunday</Day>
-      <Cover>
-        <Course>00000</Course>
-        <Preferred>2</Preferred>
-      </Cover>
-      <Cover>
-        <Course>00001</Course>
-        <Preferred>2</Preferred>
-      </Cover>
-      <Cover>
-        <Course>00002</Course>
-        <Preferred>1</Preferred>
-      </Cover>
-      <Cover>
-        <Course>00003</Course>
+        <Course>00006</Course>
         <Preferred>1</Preferred>
       </Cover>
     </DayOfWeekCover>
@@ -216,42 +137,42 @@
     <CourseOff weight="1">
       <CourseTypeID>00001</CourseTypeID>
       <TaID>4</TaID>
-      <Date>Tuesday</Date>
+      <Date>Monday</Date>
     </CourseOff>
     <CourseOff weight="1">
       <CourseTypeID>00002</CourseTypeID>
       <TaID>5</TaID>
-      <Date>Wednesday</Date>
+      <Date>Tuesday</Date>
     </CourseOff>
     <CourseOff weight="1">
       <CourseTypeID>00003</CourseTypeID>
       <TaID>6</TaID>
-      <Date>Thursday</Date>
+      <Date>Wednesday</Date>
     </CourseOff>
     <CourseOff weight="1">
       <CourseTypeID>00001</CourseTypeID>
       <TaID>7</TaID>
-      <Date>Friday</Date>
+      <Date>Monday</Date>
     </CourseOff>
     <CourseOff weight="1">
-      <CourseTypeID>00000</CourseTypeID>
+      <CourseTypeID>00004</CourseTypeID>
       <TaID>8</TaID>
-      <Date>Saturday</Date>
+      <Date>Thursday</Date>
     </CourseOff>
     <CourseOff weight="1">
-      <CourseTypeID>00003</CourseTypeID>
+      <CourseTypeID>00005</CourseTypeID>
       <TaID>9</TaID>
-      <Date>Sunday</Date>
+      <Date>Friday</Date>
     </CourseOff>
     <CourseOff weight="1">
       <CourseTypeID>00002</CourseTypeID>
       <TaID>2</TaID>
-      <Date>Monday</Date>
+      <Date>Tuesday</Date>
     </CourseOff>
     <CourseOff weight="1">
       <CourseTypeID>00003</CourseTypeID>
       <TaID>3</TaID>
-      <Date>Tuesday</Date>
+      <Date>Wednesday</Date>
     </CourseOff>
   </CourseOffRequests>
 </SchedulingPeriod>
