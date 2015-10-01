@@ -70,6 +70,14 @@ rule "courseOffRequest"
         scoreHolder.addHardConstraintMatch(kcontext, - $weight);
 end
 
+// Same course, different days needs same TA
+rule "sameCourseDifferentDaySameTA"
+    when
+        $assignment : CourseAssignment($ta : ta, $courseDate : courseDate, $courseType : course.courseType, ta != null)
+        $result : CourseAssignment(ta != $ta, courseDate != $courseDate, course.courseType == $courseType)
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -1);
+end
 
 // ############################################################################
 // Soft constraints

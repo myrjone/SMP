@@ -102,6 +102,10 @@
     <DayOfWeekCover>
       <Day>Tuesday</Day>
       <Cover>
+        <Course>00001</Course>
+        <Preferred>1</Preferred>
+      </Cover>
+      <Cover>
         <Course>00003</Course>
         <Preferred>1</Preferred>
       </Cover>
