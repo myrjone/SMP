@@ -15,8 +15,6 @@
         <xs:element name="Contracts" type="Contracts"/>
         <xs:element name="Tas" type="Tas"/>
         <xs:element name="CoverRequirements" type="CoverRequirements"/>
-        <xs:element name="DayOffRequests" type="DayOffRequests" minOccurs="0"/>
-        <xs:element name="DayOnRequests" type="DayOnRequests" minOccurs="0"/>
         <xs:element name="CourseOffRequests" type="CourseOffRequests" minOccurs="0"/>
         <xs:element name="CourseOnRequests" type="CourseOnRequests" minOccurs="0"/>
       </xs:sequence>
@@ -115,32 +113,6 @@
         <xs:element name="Course" type="ID"/>
       </xs:choice>
       <xs:element name="Preferred" type="xs:nonNegativeInteger" minOccurs="0"/>
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="DayOffRequests">
-    <xs:sequence>
-      <xs:element name="DayOff" minOccurs="0" maxOccurs="unbounded">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element name="TaID" type="ID"/>
-            <xs:element name="Date" type="xs:date"/>
-          </xs:sequence>
-          <xs:attribute name="weight" type="xs:nonNegativeInteger" use="required"/>
-        </xs:complexType>
-      </xs:element>
-    </xs:sequence>
-  </xs:complexType>
-  <xs:complexType name="DayOnRequests">
-    <xs:sequence>
-      <xs:element name="DayOn" minOccurs="0" maxOccurs="unbounded">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element name="TaID" type="ID"/>
-            <xs:element name="Date" type="xs:date"/>
-          </xs:sequence>
-          <xs:attribute name="weight" type="xs:nonNegativeInteger" use="required"/>
-        </xs:complexType>
-      </xs:element>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="CourseOffRequests">

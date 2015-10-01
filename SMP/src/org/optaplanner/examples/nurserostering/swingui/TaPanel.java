@@ -132,13 +132,6 @@ public class TaPanel extends JPanel {
         for (CourseDate courseDate : courseDateList) {
             JPanel courseDatePanel = new JPanel(new GridLayout(1, 0));
             Color backgroundColor = courseDatePanel.getBackground();
-            if (ta != null) {
-                if (ta.getDayOffRequestMap().containsKey(courseDate)) {
-                    backgroundColor = TangoColorFactory.ALUMINIUM_4;
-                } else if (ta.getDayOnRequestMap().containsKey(courseDate)) {
-                    backgroundColor = TangoColorFactory.SCARLET_1;
-                }
-            }
             courseDatePanel.setBackground(backgroundColor);
             boolean inPlanningWindow = nurseRosteringPanel.getNurseRoster().getNurseRosterParametrization()
                     .isInPlanningWindow(courseDate);
@@ -190,8 +183,7 @@ public class TaPanel extends JPanel {
         courseAssignmentButton.setEnabled(coursePanel.isEnabled());
         courseAssignmentButton.setMargin(new Insets(0, 0, 0, 0));
         if (ta != null) {
-            if (ta.getDayOffRequestMap().containsKey(course.getCourseDate())
-                    || ta.getCourseOffRequestMap().containsKey(course)) {
+            if (ta.getCourseOffRequestMap().containsKey(course)) {
                 courseAssignmentButton.setForeground(TangoColorFactory.SCARLET_1);
             }
         }

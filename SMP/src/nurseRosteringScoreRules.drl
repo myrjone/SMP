@@ -32,8 +32,6 @@ import org.optaplanner.examples.nurserostering.domain.contract.BooleanContractLi
 import org.optaplanner.examples.nurserostering.domain.contract.ContractLine;
 import org.optaplanner.examples.nurserostering.domain.contract.ContractLineType;
 import org.optaplanner.examples.nurserostering.domain.contract.MinMaxContractLine;
-import org.optaplanner.examples.nurserostering.domain.request.DayOffRequest;
-import org.optaplanner.examples.nurserostering.domain.request.DayOnRequest;
 import org.optaplanner.examples.nurserostering.domain.request.CourseOffRequest;
 import org.optaplanner.examples.nurserostering.domain.request.CourseOnRequest;
 import org.optaplanner.examples.nurserostering.solver.drools.TaAssignmentTotal;
@@ -116,23 +114,6 @@ rule "maximumTotalAssignments"
             $ta : ta, $total : total)
     then
         scoreHolder.addSoftConstraintMatch(kcontext, ($maximumValue - $total) * $contractLine.getMaximumWeight());
-end
-
-
-// Requested day on/off
-rule "dayOffRequest"
-    when
-        $dayOffRequest : DayOffRequest($ta : ta, $courseDate : courseDate, $weight : weight)
-        $assignment : CourseAssignment(ta == $ta, courseDate == $courseDate)
-    then
-        scoreHolder.addSoftConstraintMatch(kcontext, - $weight);
-end
-rule "dayOnRequest"
-    when
-        $dayOnRequest : DayOnRequest($ta : ta, $courseDate : courseDate, $weight : weight)
-        not CourseAssignment(ta == $ta, courseDate == $courseDate)
-    then
-        scoreHolder.addSoftConstraintMatch(kcontext, - $weight);
 end
 
 // Requested course on/off

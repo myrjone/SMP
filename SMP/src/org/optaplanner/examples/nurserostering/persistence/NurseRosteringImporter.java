@@ -49,8 +49,6 @@ import org.optaplanner.examples.nurserostering.domain.contract.Contract;
 import org.optaplanner.examples.nurserostering.domain.contract.ContractLine;
 import org.optaplanner.examples.nurserostering.domain.contract.ContractLineType;
 import org.optaplanner.examples.nurserostering.domain.contract.MinMaxContractLine;
-import org.optaplanner.examples.nurserostering.domain.request.DayOffRequest;
-import org.optaplanner.examples.nurserostering.domain.request.DayOnRequest;
 import org.optaplanner.examples.nurserostering.domain.request.CourseOffRequest;
 import org.optaplanner.examples.nurserostering.domain.request.CourseOnRequest;
 
@@ -97,8 +95,6 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
             readContractList(nurseRoster, schedulingPeriodElement.getChild("Contracts"));
             readTaList(nurseRoster, schedulingPeriodElement.getChild("Tas"));
             readRequiredTaSizes(nurseRoster, schedulingPeriodElement.getChild("CoverRequirements"));
-            readDayOffRequestList(nurseRoster, schedulingPeriodElement.getChild("DayOffRequests"));
-            readDayOnRequestList(nurseRoster, schedulingPeriodElement.getChild("DayOnRequests"));
             readCourseOffRequestList(nurseRoster, schedulingPeriodElement.getChild("CourseOffRequests"));
             readCourseOnRequestList(nurseRoster, schedulingPeriodElement.getChild("CourseOnRequests"));
             createCourseAssignmentList(nurseRoster);
@@ -113,8 +109,7 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                     nurseRoster.getTaList().size(),
                     nurseRoster.getCourseDateList().size(),
                     nurseRoster.getCourseAssignmentList().size(),
-                    nurseRoster.getDayOffRequestList().size() + nurseRoster.getDayOnRequestList().size()
-                            + nurseRoster.getCourseOffRequestList().size() + nurseRoster.getCourseOnRequestList().size(),
+                    nurseRoster.getCourseOffRequestList().size() + nurseRoster.getCourseOnRequestList().size(),
                     getFlooredPossibleSolutionSize(possibleSolutionSize));
             return nurseRoster;
         }
@@ -421,8 +416,6 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                 }
                 ta.setContract(contract);
                 int estimatedRequestSize = (courseDateMap.size() / taElementList.size()) + 1;
-                ta.setDayOffRequestMap(new HashMap<CourseDate, DayOffRequest>(estimatedRequestSize));
-                ta.setDayOnRequestMap(new HashMap<CourseDate, DayOnRequest>(estimatedRequestSize));
                 ta.setCourseOffRequestMap(new HashMap<Course, CourseOffRequest>(estimatedRequestSize));
                 ta.setCourseOnRequestMap(new HashMap<Course, CourseOnRequest>(estimatedRequestSize));
 
@@ -492,84 +485,6 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                     throw new IllegalArgumentException("Unknown cover entity (" + element.getName() + ").");
                 }
             }
-        }
-
-        private void readDayOffRequestList(NurseRoster nurseRoster, Element dayOffRequestsElement) throws JDOMException {
-            List<DayOffRequest> dayOffRequestList;
-            if (dayOffRequestsElement == null) {
-                dayOffRequestList = Collections.emptyList();
-            } else {
-                List<Element> dayOffElementList = (List<Element>) dayOffRequestsElement.getChildren();
-                dayOffRequestList = new ArrayList<DayOffRequest>(dayOffElementList.size());
-                long id = 0L;
-                for (Element element : dayOffElementList) {
-                    assertElementName(element, "DayOff");
-                    DayOffRequest dayOffRequest = new DayOffRequest();
-                    dayOffRequest.setId(id);
-
-                    Element taElement = element.getChild("TaID");
-                    Ta ta = taMap.get(taElement.getText());
-                    if (ta == null) {
-                        throw new IllegalArgumentException("The courseDate (" + taElement.getText()
-                                + ") of dayOffRequest (" + dayOffRequest + ") does not exist.");
-                    }
-                    dayOffRequest.setTa(ta);
-
-                    Element dateElement = element.getChild("Date");
-                    CourseDate courseDate = courseDateMap.get(dateElement.getText());
-                    if (courseDate == null) {
-                        throw new IllegalArgumentException("The date (" + dateElement.getText()
-                                + ") of dayOffRequest (" + dayOffRequest + ") does not exist.");
-                    }
-                    dayOffRequest.setCourseDate(courseDate);
-
-                    dayOffRequest.setWeight(element.getAttribute("weight").getIntValue());
-
-                    dayOffRequestList.add(dayOffRequest);
-                    ta.getDayOffRequestMap().put(courseDate, dayOffRequest);
-                    id++;
-                }
-            }
-            nurseRoster.setDayOffRequestList(dayOffRequestList);
-        }
-
-        private void readDayOnRequestList(NurseRoster nurseRoster, Element dayOnRequestsElement) throws JDOMException {
-            List<DayOnRequest> dayOnRequestList;
-            if (dayOnRequestsElement == null) {
-                dayOnRequestList = Collections.emptyList();
-            } else {
-                List<Element> dayOnElementList = (List<Element>) dayOnRequestsElement.getChildren();
-                dayOnRequestList = new ArrayList<DayOnRequest>(dayOnElementList.size());
-                long id = 0L;
-                for (Element element : dayOnElementList) {
-                    assertElementName(element, "DayOn");
-                    DayOnRequest dayOnRequest = new DayOnRequest();
-                    dayOnRequest.setId(id);
-
-                    Element taElement = element.getChild("TaID");
-                    Ta ta = taMap.get(taElement.getText());
-                    if (ta == null) {
-                        throw new IllegalArgumentException("The courseDate (" + taElement.getText()
-                                + ") of dayOnRequest (" + dayOnRequest + ") does not exist.");
-                    }
-                    dayOnRequest.setTa(ta);
-
-                    Element dateElement = element.getChild("Date");
-                    CourseDate courseDate = courseDateMap.get(dateElement.getText());
-                    if (courseDate == null) {
-                        throw new IllegalArgumentException("The date (" + dateElement.getText()
-                                + ") of dayOnRequest (" + dayOnRequest + ") does not exist.");
-                    }
-                    dayOnRequest.setCourseDate(courseDate);
-
-                    dayOnRequest.setWeight(element.getAttribute("weight").getIntValue());
-
-                    dayOnRequestList.add(dayOnRequest);
-                    ta.getDayOnRequestMap().put(courseDate, dayOnRequest);
-                    id++;
-                }
-            }
-            nurseRoster.setDayOnRequestList(dayOnRequestList);
         }
 
         private void readCourseOffRequestList(NurseRoster nurseRoster, Element courseOffRequestsElement) throws JDOMException {

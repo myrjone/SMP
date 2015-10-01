@@ -22,8 +22,6 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.optaplanner.examples.common.domain.AbstractPersistable;
 import org.optaplanner.examples.common.swingui.components.Labeled;
 import org.optaplanner.examples.nurserostering.domain.contract.Contract;
-import org.optaplanner.examples.nurserostering.domain.request.DayOffRequest;
-import org.optaplanner.examples.nurserostering.domain.request.DayOnRequest;
 import org.optaplanner.examples.nurserostering.domain.request.CourseOffRequest;
 import org.optaplanner.examples.nurserostering.domain.request.CourseOnRequest;
 
@@ -34,8 +32,6 @@ public class Ta extends AbstractPersistable implements Labeled {
     private String name;
     private Contract contract;
 
-    private Map<CourseDate, DayOffRequest> dayOffRequestMap;
-    private Map<CourseDate, DayOnRequest> dayOnRequestMap;
     private Map<Course, CourseOffRequest> courseOffRequestMap;
     private Map<Course, CourseOnRequest> courseOnRequestMap;
 
@@ -61,22 +57,6 @@ public class Ta extends AbstractPersistable implements Labeled {
 
     public void setContract(Contract contract) {
         this.contract = contract;
-    }
-
-    public Map<CourseDate, DayOffRequest> getDayOffRequestMap() {
-        return dayOffRequestMap;
-    }
-
-    public void setDayOffRequestMap(Map<CourseDate, DayOffRequest> dayOffRequestMap) {
-        this.dayOffRequestMap = dayOffRequestMap;
-    }
-
-    public Map<CourseDate, DayOnRequest> getDayOnRequestMap() {
-        return dayOnRequestMap;
-    }
-
-    public void setDayOnRequestMap(Map<CourseDate, DayOnRequest> dayOnRequestMap) {
-        this.dayOnRequestMap = dayOnRequestMap;
     }
 
     public Map<Course, CourseOffRequest> getCourseOffRequestMap() {

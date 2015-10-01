@@ -31,8 +31,6 @@ import org.optaplanner.core.impl.score.buildin.hardsoft.HardSoftScoreDefinition;
 import org.optaplanner.examples.common.domain.AbstractPersistable;
 import org.optaplanner.examples.nurserostering.domain.contract.Contract;
 import org.optaplanner.examples.nurserostering.domain.contract.ContractLine;
-import org.optaplanner.examples.nurserostering.domain.request.DayOffRequest;
-import org.optaplanner.examples.nurserostering.domain.request.DayOnRequest;
 import org.optaplanner.examples.nurserostering.domain.request.CourseOffRequest;
 import org.optaplanner.examples.nurserostering.domain.request.CourseOnRequest;
 import org.optaplanner.persistence.xstream.impl.score.XStreamScoreConverter;
@@ -50,8 +48,6 @@ public class NurseRoster extends AbstractPersistable implements Solution<HardSof
     private List<Ta> taList;
     private List<CourseDate> courseDateList;
     private List<Course> courseList;
-    private List<DayOffRequest> dayOffRequestList;
-    private List<DayOnRequest> dayOnRequestList;
     private List<CourseOffRequest> courseOffRequestList;
     private List<CourseOnRequest> courseOnRequestList;
 
@@ -125,22 +121,6 @@ public class NurseRoster extends AbstractPersistable implements Solution<HardSof
         this.courseList = courseList;
     }
 
-    public List<DayOffRequest> getDayOffRequestList() {
-        return dayOffRequestList;
-    }
-
-    public void setDayOffRequestList(List<DayOffRequest> dayOffRequestList) {
-        this.dayOffRequestList = dayOffRequestList;
-    }
-
-    public List<DayOnRequest> getDayOnRequestList() {
-        return dayOnRequestList;
-    }
-
-    public void setDayOnRequestList(List<DayOnRequest> dayOnRequestList) {
-        this.dayOnRequestList = dayOnRequestList;
-    }
-
     public List<CourseOffRequest> getCourseOffRequestList() {
         return courseOffRequestList;
     }
@@ -187,8 +167,6 @@ public class NurseRoster extends AbstractPersistable implements Solution<HardSof
         facts.addAll(taList);
         facts.addAll(courseDateList);
         facts.addAll(courseList);
-        facts.addAll(dayOffRequestList);
-        facts.addAll(dayOnRequestList);
         facts.addAll(courseOffRequestList);
         facts.addAll(courseOnRequestList);
         // Do not add the planning entity's (courseAssignmentList) because that will be done automatically
