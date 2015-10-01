@@ -28,8 +28,8 @@
     <Contract ID="0">
       <Description>Standard TA Contract</Description>
       <SingleAssignmentPerDay weight="1">true</SingleAssignmentPerDay>
-      <MaxNumAssignments on="1" weight="1">16</MaxNumAssignments>
-      <MinNumAssignments on="1" weight="1">9</MinNumAssignments>
+      <MaxNumAssignments on="1" weight="1">5</MaxNumAssignments>
+      <MinNumAssignments on="1" weight="1">1</MinNumAssignments>
     </Contract>
   </Contracts>
   <Tas>
