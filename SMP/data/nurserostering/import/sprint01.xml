@@ -41,7 +41,7 @@
     <Contract ID="0">
       <Description>Standard TA Contract</Description>
       <SingleAssignmentPerDay weight="1">true</SingleAssignmentPerDay>
-      <MaxNumAssignments on="1" weight="1">5</MaxNumAssignments>
+      <MaxNumAssignments on="1" weight="1">2</MaxNumAssignments>
       <MinNumAssignments on="1" weight="1">1</MinNumAssignments>
     </Contract>
   </Contracts>
@@ -175,4 +175,11 @@
       <Date>Wednesday</Date>
     </CourseOff>
   </CourseOffRequests>
+  <CourseOnRequests>
+      <CourseOn weight="1">
+          <CourseTypeID>00001</CourseTypeID>
+          <TaID>0</TaID>
+          <Date>Monday</Date>
+    </CourseOn>
+  </CourseOnRequests>
 </SchedulingPeriod>
