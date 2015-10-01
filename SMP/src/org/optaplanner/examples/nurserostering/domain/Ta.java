@@ -96,7 +96,7 @@ public class Ta extends AbstractPersistable implements Labeled {
     }
 
     public String getLabel() {
-        return "Ta " + name;
+        return name;
     }
 
 }
