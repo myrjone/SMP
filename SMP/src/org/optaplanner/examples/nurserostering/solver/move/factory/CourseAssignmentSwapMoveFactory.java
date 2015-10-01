@@ -25,23 +25,15 @@ import org.optaplanner.core.impl.heuristic.move.Move;
 import org.optaplanner.core.impl.heuristic.selector.move.factory.MoveListFactory;
 import org.optaplanner.examples.nurserostering.domain.NurseRoster;
 import org.optaplanner.examples.nurserostering.domain.CourseAssignment;
-import org.optaplanner.examples.nurserostering.domain.solver.MovableCourseAssignmentSelectionFilter;
 import org.optaplanner.examples.nurserostering.solver.move.CourseAssignmentSwapMove;
 
 public class CourseAssignmentSwapMoveFactory implements MoveListFactory<NurseRoster> {
-
-    private MovableCourseAssignmentSelectionFilter filter = new MovableCourseAssignmentSelectionFilter();
 
     public List<Move> createMoveList(NurseRoster nurseRoster) {
         // Filter out every immovable CourseAssignment
         List<CourseAssignment> courseAssignmentList = new ArrayList<CourseAssignment>(
                 nurseRoster.getCourseAssignmentList());
-        for (Iterator<CourseAssignment> it = courseAssignmentList.iterator(); it.hasNext(); ) {
-            CourseAssignment courseAssignment = it.next();
-            if (!filter.accept(nurseRoster, courseAssignment)) {
-                it.remove();
-            }
-        }
+
         List<Move> moveList = new ArrayList<Move>();
         for (ListIterator<CourseAssignment> leftIt = courseAssignmentList.listIterator(); leftIt.hasNext();) {
             CourseAssignment leftCourseAssignment = leftIt.next();

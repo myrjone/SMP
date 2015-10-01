@@ -41,7 +41,6 @@ public class NurseRoster extends AbstractPersistable implements Solution<HardSof
 
     private String code;
 
-    private NurseRosterParametrization nurseRosterParametrization;
     private List<CourseType> courseTypeList;
     private List<Contract> contractList;
     private List<ContractLine> contractLineList;
@@ -62,14 +61,6 @@ public class NurseRoster extends AbstractPersistable implements Solution<HardSof
 
     public void setCode(String code) {
         this.code = code;
-    }
-
-    public NurseRosterParametrization getNurseRosterParametrization() {
-        return nurseRosterParametrization;
-    }
-
-    public void setNurseRosterParametrization(NurseRosterParametrization nurseRosterParametrization) {
-        this.nurseRosterParametrization = nurseRosterParametrization;
     }
 
     public List<CourseType> getCourseTypeList() {
@@ -160,7 +151,6 @@ public class NurseRoster extends AbstractPersistable implements Solution<HardSof
 
     public Collection<? extends Object> getProblemFacts() {
         List<Object> facts = new ArrayList<Object>();
-        facts.add(nurseRosterParametrization);
         facts.addAll(courseTypeList);
         facts.addAll(contractList);
         facts.addAll(contractLineList);

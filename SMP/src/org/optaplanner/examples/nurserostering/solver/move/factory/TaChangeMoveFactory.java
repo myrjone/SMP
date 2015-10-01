@@ -24,21 +24,16 @@ import org.optaplanner.core.impl.heuristic.selector.move.factory.MoveListFactory
 import org.optaplanner.examples.nurserostering.domain.Ta;
 import org.optaplanner.examples.nurserostering.domain.NurseRoster;
 import org.optaplanner.examples.nurserostering.domain.CourseAssignment;
-import org.optaplanner.examples.nurserostering.domain.solver.MovableCourseAssignmentSelectionFilter;
 import org.optaplanner.examples.nurserostering.solver.move.TaChangeMove;
 
 public class TaChangeMoveFactory implements MoveListFactory<NurseRoster> {
-
-    private MovableCourseAssignmentSelectionFilter filter = new MovableCourseAssignmentSelectionFilter();
 
     public List<Move> createMoveList(NurseRoster nurseRoster) {
         List<Move> moveList = new ArrayList<Move>();
         List<Ta> taList = nurseRoster.getTaList();
         for (CourseAssignment courseAssignment : nurseRoster.getCourseAssignmentList()) {
-            if (filter.accept(nurseRoster, courseAssignment)) {
-                for (Ta ta : taList) {
-                    moveList.add(new TaChangeMove(courseAssignment, ta));
-                }
+            for (Ta ta : taList) {
+                moveList.add(new TaChangeMove(courseAssignment, ta));
             }
         }
         return moveList;

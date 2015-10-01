@@ -44,7 +44,6 @@ import org.optaplanner.core.impl.solver.ProblemFactChange;
 import org.optaplanner.examples.common.swingui.SolutionPanel;
 import org.optaplanner.examples.nurserostering.domain.Ta;
 import org.optaplanner.examples.nurserostering.domain.NurseRoster;
-import org.optaplanner.examples.nurserostering.domain.NurseRosterParametrization;
 import org.optaplanner.examples.nurserostering.domain.Course;
 import org.optaplanner.examples.nurserostering.domain.CourseAssignment;
 import org.optaplanner.examples.nurserostering.domain.CourseDate;
@@ -58,8 +57,6 @@ public class NurseRosteringPanel extends SolutionPanel {
 
     private JPanel taListPanel;
 
-    private JTextField planningWindowStartField;
-    private AbstractAction advancePlanningWindowStartAction;
     private TaPanel unassignedPanel;
     private Map<Ta, TaPanel> taToPanelMap;
 
@@ -89,20 +86,6 @@ public class NurseRosteringPanel extends SolutionPanel {
 
     private JPanel createHeaderPanel() {
         JPanel headerPanel = new JPanel(new BorderLayout(20, 0));
-        JPanel planningWindowPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        planningWindowPanel.add(new JLabel("Planning window start:"));
-        planningWindowStartField = new JTextField(10);
-        planningWindowStartField.setEditable(false);
-        planningWindowPanel.add(planningWindowStartField);
-        advancePlanningWindowStartAction = new AbstractAction("Advance 1 day into the future") {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                advancePlanningWindowStart();
-            }
-        };
-        advancePlanningWindowStartAction.setEnabled(false);
-        planningWindowPanel.add(new JButton(advancePlanningWindowStartAction));
-        headerPanel.add(planningWindowPanel, BorderLayout.WEST);
         JLabel courseTypeExplanation = new JLabel("E = Early course, L = Late course, ...");
         headerPanel.add(courseTypeExplanation, BorderLayout.CENTER);
         return headerPanel;
@@ -141,8 +124,6 @@ public class NurseRosteringPanel extends SolutionPanel {
         List<Course> courseList = nurseRoster.getCourseList();
         unassignedPanel.setCourseDateListAndCourseList(courseDateList, courseList);
         updatePanel(nurseRoster);
-        advancePlanningWindowStartAction.setEnabled(true);
-        planningWindowStartField.setText(nurseRoster.getNurseRosterParametrization().getPlanningWindowStart().getLabel());
     }
 
     @Override
@@ -175,74 +156,6 @@ public class NurseRosteringPanel extends SolutionPanel {
         for (TaPanel taPanel : taToPanelMap.values()) {
             taPanel.update();
         }
-    }
-
-    private void advancePlanningWindowStart() {
-        logger.info("Advancing planningWindowStart.");
-        if (solutionBusiness.isSolving()) {
-            JOptionPane.showMessageDialog(this.getTopLevelAncestor(),
-                    "The GUI does not support this action yet during solving.\nOptaPlanner itself does support it.\n"
-                    + "\nTerminate solving first and try again.",
-                    "Unsupported in GUI", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        doProblemFactChange(new ProblemFactChange() {
-            public void doChange(ScoreDirector scoreDirector) {
-                NurseRoster nurseRoster = (NurseRoster) scoreDirector.getWorkingSolution();
-                NurseRosterParametrization nurseRosterParametrization = nurseRoster.getNurseRosterParametrization();
-                List<CourseDate> courseDateList = nurseRoster.getCourseDateList();
-                CourseDate planningWindowStart = nurseRosterParametrization.getPlanningWindowStart();
-                int windowStartIndex = courseDateList.indexOf(planningWindowStart);
-                if (windowStartIndex < 0) {
-                    throw new IllegalStateException("The planningWindowStart ("
-                            + planningWindowStart + ") must be in the courseDateList ("
-                            + courseDateList +").");
-                }
-                CourseDate oldLastCourseDate = courseDateList.get(courseDateList.size() - 1);
-                CourseDate newCourseDate = new CourseDate();
-                newCourseDate.setId(oldLastCourseDate.getId() + 1L);
-                newCourseDate.setDayIndex(oldLastCourseDate.getDayIndex() + 1);
-                newCourseDate.setDateString(oldLastCourseDate.determineNextDateString());
-                newCourseDate.setDayOfWeek(oldLastCourseDate.getDayOfWeek().determineNextDayOfWeek());
-                List<Course> refCourseList = planningWindowStart.getCourseList();
-                List<Course> newCourseList = new ArrayList<Course>(refCourseList.size());
-                newCourseDate.setCourseList(newCourseList);
-                nurseRoster.getCourseDateList().add(newCourseDate);
-                scoreDirector.afterProblemFactAdded(newCourseDate);
-                Course oldLastCourse = nurseRoster.getCourseList().get(nurseRoster.getCourseList().size() - 1);
-                long courseId = oldLastCourse.getId() + 1L;
-                int courseIndex = oldLastCourse.getIndex() + 1;
-                long courseAssignmentId = nurseRoster.getCourseAssignmentList().get(
-                        nurseRoster.getCourseAssignmentList().size() - 1).getId() + 1L;
-                for (Course refCourse : refCourseList) {
-                    Course newCourse = new Course();
-                    newCourse.setId(courseId);
-                    courseId++;
-                    newCourse.setCourseDate(newCourseDate);
-                    newCourse.setCourseType(refCourse.getCourseType());
-                    newCourse.setIndex(courseIndex);
-                    courseIndex++;
-                    newCourse.setRequiredTaSize(refCourse.getRequiredTaSize());
-                    newCourseList.add(newCourse);
-                    nurseRoster.getCourseList().add(newCourse);
-                    scoreDirector.afterProblemFactAdded(newCourse);
-                    for (int indexInCourse = 0; indexInCourse < newCourse.getRequiredTaSize(); indexInCourse++) {
-                        CourseAssignment newCourseAssignment = new CourseAssignment();
-                        newCourseAssignment.setId(courseAssignmentId);
-                        courseAssignmentId++;
-                        newCourseAssignment.setCourse(newCourse);
-                        newCourseAssignment.setIndexInCourse(indexInCourse);
-                        nurseRoster.getCourseAssignmentList().add(newCourseAssignment);
-                        scoreDirector.afterEntityAdded(newCourseAssignment);
-                    }
-                }
-                windowStartIndex++;
-                CourseDate newPlanningWindowStart = courseDateList.get(windowStartIndex);
-                nurseRosterParametrization.setPlanningWindowStart(newPlanningWindowStart);
-                nurseRosterParametrization.setLastCourseDate(newCourseDate);
-                scoreDirector.afterProblemFactChanged(nurseRosterParametrization);
-            }
-        }, true);
     }
 
     public void deleteTa(final Ta ta) {

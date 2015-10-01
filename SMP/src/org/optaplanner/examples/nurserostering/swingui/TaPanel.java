@@ -133,11 +133,9 @@ public class TaPanel extends JPanel {
             JPanel courseDatePanel = new JPanel(new GridLayout(1, 0));
             Color backgroundColor = courseDatePanel.getBackground();
             courseDatePanel.setBackground(backgroundColor);
-            boolean inPlanningWindow = nurseRosteringPanel.getNurseRoster().getNurseRosterParametrization()
-                    .isInPlanningWindow(courseDate);
-            courseDatePanel.setEnabled(inPlanningWindow);
+            courseDatePanel.setEnabled(true);
             courseDatePanel.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createLineBorder(inPlanningWindow ? TangoColorFactory.ALUMINIUM_6 : TangoColorFactory.ALUMINIUM_3),
+                    BorderFactory.createLineBorder(TangoColorFactory.ALUMINIUM_6),
                     BorderFactory.createEmptyBorder(2, 2, 2, 2)));
             courseDatePanelMap.put(courseDate, courseDatePanel);
             if (ta == null) {

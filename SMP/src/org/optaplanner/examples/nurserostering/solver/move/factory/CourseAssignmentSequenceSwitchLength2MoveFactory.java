@@ -29,13 +29,10 @@ import org.optaplanner.core.impl.heuristic.selector.move.factory.MoveListFactory
 import org.optaplanner.examples.nurserostering.domain.Ta;
 import org.optaplanner.examples.nurserostering.domain.NurseRoster;
 import org.optaplanner.examples.nurserostering.domain.CourseAssignment;
-import org.optaplanner.examples.nurserostering.domain.solver.MovableCourseAssignmentSelectionFilter;
 import org.optaplanner.examples.nurserostering.solver.drools.TaWorkSequence;
 import org.optaplanner.examples.nurserostering.solver.move.TaChangeMove;
 
 public class CourseAssignmentSequenceSwitchLength2MoveFactory implements MoveListFactory<NurseRoster> {
-
-    private MovableCourseAssignmentSelectionFilter filter = new MovableCourseAssignmentSelectionFilter();
 
     public List<Move> createMoveList(NurseRoster nurseRoster) {
         List<Ta> taList = nurseRoster.getTaList();
@@ -43,12 +40,6 @@ public class CourseAssignmentSequenceSwitchLength2MoveFactory implements MoveLis
         // Filter out every immovable CourseAssignment
         List<CourseAssignment> courseAssignmentList = new ArrayList<CourseAssignment>(
                 nurseRoster.getCourseAssignmentList());
-        for (Iterator<CourseAssignment> it = courseAssignmentList.iterator(); it.hasNext(); ) {
-            CourseAssignment courseAssignment = it.next();
-            if (!filter.accept(nurseRoster, courseAssignment)) {
-                it.remove();
-            }
-        }
 
         // Hash the assignments per ta
         Map<Ta, List<AssignmentSequence>> taToAssignmentSequenceListMap

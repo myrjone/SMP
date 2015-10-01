@@ -39,7 +39,6 @@ import org.optaplanner.examples.common.persistence.AbstractXmlSolutionImporter;
 import org.optaplanner.examples.nurserostering.domain.DayOfWeek;
 import org.optaplanner.examples.nurserostering.domain.Ta;
 import org.optaplanner.examples.nurserostering.domain.NurseRoster;
-import org.optaplanner.examples.nurserostering.domain.NurseRosterParametrization;
 import org.optaplanner.examples.nurserostering.domain.Course;
 import org.optaplanner.examples.nurserostering.domain.CourseAssignment;
 import org.optaplanner.examples.nurserostering.domain.CourseDate;
@@ -87,7 +86,6 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
             nurseRoster.setCode(schedulingPeriodElement.getAttribute("ID").getValue());
 
             generateCourseDateList(nurseRoster);
-            generateNurseRosterInfo(nurseRoster);
             readCourseTypeList(nurseRoster, schedulingPeriodElement.getChild("CourseTypes"));
             generateCourseList(nurseRoster);
             readContractList(nurseRoster, schedulingPeriodElement.getChild("Contracts"));
@@ -132,15 +130,6 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                 dayIndex++;
             }
             nurseRoster.setCourseDateList(courseDateList);
-        }
-
-        private void generateNurseRosterInfo(NurseRoster nurseRoster) {
-            List<CourseDate> courseDateList = nurseRoster.getCourseDateList();
-            NurseRosterParametrization nurseRosterParametrization = new NurseRosterParametrization();
-            nurseRosterParametrization.setFirstCourseDate(courseDateList.get(0));
-            nurseRosterParametrization.setLastCourseDate(courseDateList.get(courseDateList.size() - 1));
-            nurseRosterParametrization.setPlanningWindowStart(courseDateList.get(0));
-            nurseRoster.setNurseRosterParametrization(nurseRosterParametrization);
         }
 
         private void readCourseTypeList(NurseRoster nurseRoster, Element courseTypesElement) throws JDOMException {
