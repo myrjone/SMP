@@ -3,25 +3,25 @@
   <StartDate>2010-01-01</StartDate>
   <EndDate>2010-01-28</EndDate>
   <CourseTypes>
-    <Course ID="E">
-      <StartTime>06:30:00</StartTime>
-      <EndTime>14:30:00</EndTime>
-      <Description>Early</Description>
+    <Course ID="00000">
+      <StartTime>08:00:00</StartTime>
+      <EndTime>09:50:00</EndTime>
+      <Description>CS111</Description>
     </Course>
-    <Course ID="L">
-      <StartTime>14:30:00</StartTime>
-      <EndTime>22:30:00</EndTime>
-      <Description>Late</Description>
+    <Course ID="00001">
+      <StartTime>10:00:00</StartTime>
+      <EndTime>11:50:00</EndTime>
+      <Description>CS222</Description>
     </Course>
-    <Course ID="D">
-      <StartTime>08:30:00</StartTime>
-      <EndTime>16:30:00</EndTime>
-      <Description>Day shift</Description>
+    <Course ID="00002">
+      <StartTime>12:00:00</StartTime>
+      <EndTime>13:50:00</EndTime>
+      <Description>CS333</Description>
     </Course>
-    <Course ID="N">
-      <StartTime>22:30:00</StartTime>
-      <EndTime>06:30:00</EndTime>
-      <Description>Night</Description>
+    <Course ID="00003">
+      <StartTime>14:00:00</StartTime>
+      <EndTime>15:50:00</EndTime>
+      <Description>CS444</Description>
     </Course>
   </CourseTypes>
   <Contracts>
@@ -69,176 +69,176 @@
   <Tas>
     <Ta ID="0">
       <ContractID>0</ContractID>
-      <Name>0</Name>
+      <Name>Furlow, Scott</Name>
     </Ta>
     <Ta ID="1">
       <ContractID>0</ContractID>
-      <Name>1</Name>
+      <Name>Peterson, Luke</Name>
     </Ta>
     <Ta ID="2">
       <ContractID>0</ContractID>
-      <Name>2</Name>
+      <Name>Hooper, Alex</Name>
     </Ta>
     <Ta ID="3">
       <ContractID>0</ContractID>
-      <Name>3</Name>
+      <Name>Jones, Myron</Name>
     </Ta>
     <Ta ID="4">
       <ContractID>1</ContractID>
-      <Name>4</Name>
+      <Name>Bouvier, Dennis</Name>
     </Ta>
     <Ta ID="5">
       <ContractID>1</ContractID>
-      <Name>5</Name>
+      <Name>White, William</Name>
     </Ta>
     <Ta ID="6">
       <ContractID>2</ContractID>
-      <Name>6</Name>
+      <Name>Crk, Igor</Name>
     </Ta>
     <Ta ID="7">
       <ContractID>2</ContractID>
-      <Name>7</Name>
+      <Name>Yu, William</Name>
     </Ta>
     <Ta ID="8">
       <ContractID>3</ContractID>
-      <Name>8</Name>
+      <Name>Mayer, Gary</Name>
     </Ta>
     <Ta ID="9">
       <ContractID>3</ContractID>
-      <Name>9</Name>
+      <Name>Gamage, Thosita</Name>
     </Ta>
   </Tas>
   <CoverRequirements>
     <DayOfWeekCover>
       <Day>Monday</Day>
       <Cover>
-        <Course>E</Course>
+        <Course>00000</Course>
         <Preferred>2</Preferred>
       </Cover>
       <Cover>
-        <Course>L</Course>
+        <Course>00001</Course>
         <Preferred>2</Preferred>
       </Cover>
       <Cover>
-        <Course>D</Course>
+        <Course>00002</Course>
         <Preferred>1</Preferred>
       </Cover>
       <Cover>
-        <Course>N</Course>
+        <Course>00003</Course>
         <Preferred>1</Preferred>
       </Cover>
     </DayOfWeekCover>
     <DayOfWeekCover>
       <Day>Tuesday</Day>
       <Cover>
-        <Course>E</Course>
+        <Course>00000</Course>
         <Preferred>2</Preferred>
       </Cover>
       <Cover>
-        <Course>L</Course>
+        <Course>00001</Course>
         <Preferred>2</Preferred>
       </Cover>
       <Cover>
-        <Course>D</Course>
+        <Course>00002</Course>
         <Preferred>1</Preferred>
       </Cover>
       <Cover>
-        <Course>N</Course>
+        <Course>00003</Course>
         <Preferred>1</Preferred>
       </Cover>
     </DayOfWeekCover>
     <DayOfWeekCover>
       <Day>Wednesday</Day>
       <Cover>
-        <Course>E</Course>
+        <Course>00000</Course>
         <Preferred>2</Preferred>
       </Cover>
       <Cover>
-        <Course>L</Course>
+        <Course>00001</Course>
         <Preferred>2</Preferred>
       </Cover>
       <Cover>
-        <Course>D</Course>
+        <Course>00002</Course>
         <Preferred>1</Preferred>
       </Cover>
       <Cover>
-        <Course>N</Course>
+        <Course>00003</Course>
         <Preferred>1</Preferred>
       </Cover>
     </DayOfWeekCover>
     <DayOfWeekCover>
       <Day>Thursday</Day>
       <Cover>
-        <Course>E</Course>
+        <Course>00000</Course>
         <Preferred>2</Preferred>
       </Cover>
       <Cover>
-        <Course>L</Course>
+        <Course>00001</Course>
         <Preferred>2</Preferred>
       </Cover>
       <Cover>
-        <Course>D</Course>
+        <Course>00002</Course>
         <Preferred>1</Preferred>
       </Cover>
       <Cover>
-        <Course>N</Course>
+        <Course>00003</Course>
         <Preferred>1</Preferred>
       </Cover>
     </DayOfWeekCover>
     <DayOfWeekCover>
       <Day>Friday</Day>
       <Cover>
-        <Course>E</Course>
+        <Course>00000</Course>
         <Preferred>2</Preferred>
       </Cover>
       <Cover>
-        <Course>L</Course>
+        <Course>00001</Course>
         <Preferred>2</Preferred>
       </Cover>
       <Cover>
-        <Course>D</Course>
+        <Course>00002</Course>
         <Preferred>1</Preferred>
       </Cover>
       <Cover>
-        <Course>N</Course>
+        <Course>00003</Course>
         <Preferred>1</Preferred>
       </Cover>
     </DayOfWeekCover>
     <DayOfWeekCover>
       <Day>Saturday</Day>
       <Cover>
-        <Course>E</Course>
+        <Course>00000</Course>
+        <Preferred>2</Preferred>
+      </Cover>
+      <Cover>
+        <Course>00001</Course>
+        <Preferred>2</Preferred>
+      </Cover>
+      <Cover>
+        <Course>00002</Course>
         <Preferred>1</Preferred>
       </Cover>
       <Cover>
-        <Course>L</Course>
-        <Preferred>1</Preferred>
-      </Cover>
-      <Cover>
-        <Course>D</Course>
-        <Preferred>1</Preferred>
-      </Cover>
-      <Cover>
-        <Course>N</Course>
+        <Course>00003</Course>
         <Preferred>1</Preferred>
       </Cover>
     </DayOfWeekCover>
     <DayOfWeekCover>
       <Day>Sunday</Day>
       <Cover>
-        <Course>E</Course>
+        <Course>00000</Course>
+        <Preferred>2</Preferred>
+      </Cover>
+      <Cover>
+        <Course>00001</Course>
+        <Preferred>2</Preferred>
+      </Cover>
+      <Cover>
+        <Course>00002</Course>
         <Preferred>1</Preferred>
       </Cover>
       <Cover>
-        <Course>L</Course>
-        <Preferred>1</Preferred>
-      </Cover>
-      <Cover>
-        <Course>D</Course>
-        <Preferred>1</Preferred>
-      </Cover>
-      <Cover>
-        <Course>N</Course>
+        <Course>00003</Course>
         <Preferred>1</Preferred>
       </Cover>
     </DayOfWeekCover>
@@ -647,254 +647,49 @@
   </DayOffRequests>
   <CourseOffRequests>
     <CourseOff weight="1">
-      <CourseTypeID>E</CourseTypeID>
+      <CourseTypeID>00000</CourseTypeID>
       <TaID>0</TaID>
       <Date>2010-01-03</Date>
     </CourseOff>
     <CourseOff weight="1">
-      <CourseTypeID>L</CourseTypeID>
-      <TaID>0</TaID>
+      <CourseTypeID>00001</CourseTypeID>
+      <TaID>4</TaID>
       <Date>2010-01-13</Date>
     </CourseOff>
     <CourseOff weight="1">
-      <CourseTypeID>N</CourseTypeID>
-      <TaID>0</TaID>
+      <CourseTypeID>00002</CourseTypeID>
+      <TaID>5</TaID>
       <Date>2010-01-12</Date>
     </CourseOff>
     <CourseOff weight="1">
-      <CourseTypeID>L</CourseTypeID>
-      <TaID>0</TaID>
+      <CourseTypeID>00003</CourseTypeID>
+      <TaID>6</TaID>
       <Date>2010-01-04</Date>
     </CourseOff>
     <CourseOff weight="1">
-      <CourseTypeID>D</CourseTypeID>
-      <TaID>0</TaID>
+      <CourseTypeID>00001</CourseTypeID>
+      <TaID>7</TaID>
       <Date>2010-01-02</Date>
     </CourseOff>
     <CourseOff weight="1">
-      <CourseTypeID>N</CourseTypeID>
-      <TaID>1</TaID>
+      <CourseTypeID>00000</CourseTypeID>
+      <TaID>8</TaID>
       <Date>2010-01-18</Date>
     </CourseOff>
     <CourseOff weight="1">
-      <CourseTypeID>N</CourseTypeID>
-      <TaID>1</TaID>
+      <CourseTypeID>00003</CourseTypeID>
+      <TaID>9</TaID>
       <Date>2010-01-09</Date>
     </CourseOff>
     <CourseOff weight="1">
-      <CourseTypeID>L</CourseTypeID>
-      <TaID>1</TaID>
+      <CourseTypeID>00002</CourseTypeID>
+      <TaID>2</TaID>
       <Date>2010-01-27</Date>
     </CourseOff>
     <CourseOff weight="1">
-      <CourseTypeID>L</CourseTypeID>
-      <TaID>1</TaID>
+      <CourseTypeID>00003</CourseTypeID>
+      <TaID>3</TaID>
       <Date>2010-01-08</Date>
-    </CourseOff>
-    <CourseOff weight="1">
-      <CourseTypeID>N</CourseTypeID>
-      <TaID>1</TaID>
-      <Date>2010-01-19</Date>
-    </CourseOff>
-    <CourseOff weight="1">
-      <CourseTypeID>L</CourseTypeID>
-      <TaID>2</TaID>
-      <Date>2010-01-27</Date>
-    </CourseOff>
-    <CourseOff weight="1">
-      <CourseTypeID>N</CourseTypeID>
-      <TaID>2</TaID>
-      <Date>2010-01-09</Date>
-    </CourseOff>
-    <CourseOff weight="1">
-      <CourseTypeID>L</CourseTypeID>
-      <TaID>2</TaID>
-      <Date>2010-01-24</Date>
-    </CourseOff>
-    <CourseOff weight="1">
-      <CourseTypeID>D</CourseTypeID>
-      <TaID>2</TaID>
-      <Date>2010-01-11</Date>
-    </CourseOff>
-    <CourseOff weight="1">
-      <CourseTypeID>L</CourseTypeID>
-      <TaID>2</TaID>
-      <Date>2010-01-17</Date>
-    </CourseOff>
-    <CourseOff weight="1">
-      <CourseTypeID>E</CourseTypeID>
-      <TaID>3</TaID>
-      <Date>2010-01-11</Date>
-    </CourseOff>
-    <CourseOff weight="1">
-      <CourseTypeID>D</CourseTypeID>
-      <TaID>3</TaID>
-      <Date>2010-01-19</Date>
-    </CourseOff>
-    <CourseOff weight="1">
-      <CourseTypeID>E</CourseTypeID>
-      <TaID>3</TaID>
-      <Date>2010-01-13</Date>
-    </CourseOff>
-    <CourseOff weight="1">
-      <CourseTypeID>E</CourseTypeID>
-      <TaID>3</TaID>
-      <Date>2010-01-10</Date>
-    </CourseOff>
-    <CourseOff weight="1">
-      <CourseTypeID>E</CourseTypeID>
-      <TaID>3</TaID>
-      <Date>2010-01-01</Date>
-    </CourseOff>
-    <CourseOff weight="1">
-      <CourseTypeID>E</CourseTypeID>
-      <TaID>4</TaID>
-      <Date>2010-01-01</Date>
-    </CourseOff>
-    <CourseOff weight="1">
-      <CourseTypeID>E</CourseTypeID>
-      <TaID>4</TaID>
-      <Date>2010-01-21</Date>
-    </CourseOff>
-    <CourseOff weight="1">
-      <CourseTypeID>E</CourseTypeID>
-      <TaID>4</TaID>
-      <Date>2010-01-25</Date>
-    </CourseOff>
-    <CourseOff weight="1">
-      <CourseTypeID>D</CourseTypeID>
-      <TaID>4</TaID>
-      <Date>2010-01-17</Date>
-    </CourseOff>
-    <CourseOff weight="1">
-      <CourseTypeID>E</CourseTypeID>
-      <TaID>4</TaID>
-      <Date>2010-01-22</Date>
-    </CourseOff>
-    <CourseOff weight="1">
-      <CourseTypeID>E</CourseTypeID>
-      <TaID>5</TaID>
-      <Date>2010-01-05</Date>
-    </CourseOff>
-    <CourseOff weight="1">
-      <CourseTypeID>L</CourseTypeID>
-      <TaID>5</TaID>
-      <Date>2010-01-13</Date>
-    </CourseOff>
-    <CourseOff weight="1">
-      <CourseTypeID>L</CourseTypeID>
-      <TaID>5</TaID>
-      <Date>2010-01-20</Date>
-    </CourseOff>
-    <CourseOff weight="1">
-      <CourseTypeID>E</CourseTypeID>
-      <TaID>5</TaID>
-      <Date>2010-01-04</Date>
-    </CourseOff>
-    <CourseOff weight="1">
-      <CourseTypeID>D</CourseTypeID>
-      <TaID>5</TaID>
-      <Date>2010-01-05</Date>
-    </CourseOff>
-    <CourseOff weight="1">
-      <CourseTypeID>E</CourseTypeID>
-      <TaID>6</TaID>
-      <Date>2010-01-27</Date>
-    </CourseOff>
-    <CourseOff weight="1">
-      <CourseTypeID>D</CourseTypeID>
-      <TaID>6</TaID>
-      <Date>2010-01-14</Date>
-    </CourseOff>
-    <CourseOff weight="1">
-      <CourseTypeID>E</CourseTypeID>
-      <TaID>6</TaID>
-      <Date>2010-01-18</Date>
-    </CourseOff>
-    <CourseOff weight="1">
-      <CourseTypeID>L</CourseTypeID>
-      <TaID>6</TaID>
-      <Date>2010-01-15</Date>
-    </CourseOff>
-    <CourseOff weight="1">
-      <CourseTypeID>D</CourseTypeID>
-      <TaID>6</TaID>
-      <Date>2010-01-03</Date>
-    </CourseOff>
-    <CourseOff weight="1">
-      <CourseTypeID>L</CourseTypeID>
-      <TaID>7</TaID>
-      <Date>2010-01-18</Date>
-    </CourseOff>
-    <CourseOff weight="1">
-      <CourseTypeID>L</CourseTypeID>
-      <TaID>7</TaID>
-      <Date>2010-01-07</Date>
-    </CourseOff>
-    <CourseOff weight="1">
-      <CourseTypeID>L</CourseTypeID>
-      <TaID>7</TaID>
-      <Date>2010-01-10</Date>
-    </CourseOff>
-    <CourseOff weight="1">
-      <CourseTypeID>N</CourseTypeID>
-      <TaID>7</TaID>
-      <Date>2010-01-18</Date>
-    </CourseOff>
-    <CourseOff weight="1">
-      <CourseTypeID>D</CourseTypeID>
-      <TaID>7</TaID>
-      <Date>2010-01-13</Date>
-    </CourseOff>
-    <CourseOff weight="1">
-      <CourseTypeID>E</CourseTypeID>
-      <TaID>8</TaID>
-      <Date>2010-01-17</Date>
-    </CourseOff>
-    <CourseOff weight="1">
-      <CourseTypeID>N</CourseTypeID>
-      <TaID>8</TaID>
-      <Date>2010-01-12</Date>
-    </CourseOff>
-    <CourseOff weight="1">
-      <CourseTypeID>N</CourseTypeID>
-      <TaID>8</TaID>
-      <Date>2010-01-28</Date>
-    </CourseOff>
-    <CourseOff weight="1">
-      <CourseTypeID>E</CourseTypeID>
-      <TaID>8</TaID>
-      <Date>2010-01-23</Date>
-    </CourseOff>
-    <CourseOff weight="1">
-      <CourseTypeID>E</CourseTypeID>
-      <TaID>8</TaID>
-      <Date>2010-01-27</Date>
-    </CourseOff>
-    <CourseOff weight="1">
-      <CourseTypeID>N</CourseTypeID>
-      <TaID>9</TaID>
-      <Date>2010-01-01</Date>
-    </CourseOff>
-    <CourseOff weight="1">
-      <CourseTypeID>L</CourseTypeID>
-      <TaID>9</TaID>
-      <Date>2010-01-21</Date>
-    </CourseOff>
-    <CourseOff weight="1">
-      <CourseTypeID>N</CourseTypeID>
-      <TaID>9</TaID>
-      <Date>2010-01-10</Date>
-    </CourseOff>
-    <CourseOff weight="1">
-      <CourseTypeID>N</CourseTypeID>
-      <TaID>9</TaID>
-      <Date>2010-01-21</Date>
-    </CourseOff>
-    <CourseOff weight="1">
-      <CourseTypeID>L</CourseTypeID>
-      <TaID>9</TaID>
-      <Date>2010-01-25</Date>
     </CourseOff>
   </CourseOffRequests>
 </SchedulingPeriod>
