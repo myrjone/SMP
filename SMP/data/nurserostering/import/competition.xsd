@@ -9,8 +9,6 @@
   <xs:element name="SchedulingPeriod">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="StartDate" type="xs:date"/>
-        <xs:element name="EndDate" type="xs:date"/>
         <xs:element name="CourseTypes" type="CourseTypes"/>
         <xs:element name="Contracts" type="Contracts"/>
         <xs:element name="Tas" type="Tas"/>

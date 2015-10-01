@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <SchedulingPeriod ID="sprint01" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="competition.xsd">
-  <StartDate>2010-01-01</StartDate>
-  <EndDate>2010-01-28</EndDate>
   <CourseTypes>
     <Course ID="00000">
       <StartTime>08:00:00</StartTime>
