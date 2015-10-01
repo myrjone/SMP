@@ -61,6 +61,15 @@ rule "oneTypePerDay"
         scoreHolder.addHardConstraintMatch(kcontext, -1);
 end
 
+// Unavailability is a top priority
+rule "courseOffRequest"
+    when
+        $courseOffRequest : CourseOffRequest($ta : ta, $course : course, $weight : weight)
+        $assignment : CourseAssignment(ta == $ta, course == $course)
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, - $weight);
+end
+
 
 // ############################################################################
 // Soft constraints
@@ -115,14 +124,8 @@ rule "maximumTotalAssignments"
         scoreHolder.addSoftConstraintMatch(kcontext, ($maximumValue - $total) * $contractLine.getMaximumWeight());
 end
 
-// Requested course on/off
-rule "courseOffRequest"
-    when
-        $courseOffRequest : CourseOffRequest($ta : ta, $course : course, $weight : weight)
-        $assignment : CourseAssignment(ta == $ta, course == $course)
-    then
-        scoreHolder.addSoftConstraintMatch(kcontext, - $weight);
-end
+// Requested course on
+
 rule "courseOnRequest"
     when
         $courseOnRequest : CourseOnRequest($ta : ta, $course : course, $weight : weight)
