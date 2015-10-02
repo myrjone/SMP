@@ -30,9 +30,18 @@ public class Ta extends AbstractPersistable implements Labeled {
     private String code;
     private String name;
     private Contract contract;
+    private String email;
 
     private Map<Course, CourseOffRequest> courseOffRequestMap;
     private Map<Course, CourseOnRequest> courseOnRequestMap;
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public String getCode() {
         return code;

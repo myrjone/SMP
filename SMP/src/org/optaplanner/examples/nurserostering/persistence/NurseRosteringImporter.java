@@ -355,6 +355,7 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                 ta.setId(id);
                 ta.setCode(element.getAttribute("ID").getValue());
                 ta.setName(element.getChild("Name").getText());
+                ta.setEmail(element.getChild("Email").getText());
                 Element contractElement = element.getChild("ContractID");
                 Contract contract = contractMap.get(contractElement.getText());
                 if (contract == null) {

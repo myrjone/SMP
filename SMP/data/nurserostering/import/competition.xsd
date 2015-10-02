@@ -63,7 +63,7 @@
           <xs:all>
             <xs:element name="ContractID" type="ID"/>
             <xs:element name="Name" type="xs:string" minOccurs="0"/>
-            </xs:element>
+            <xs:element name="Email" type="xs:string" minOccurs="0"/>
           </xs:all>
           <xs:attribute name="ID" type="ID" use="required"/>
         </xs:complexType>
