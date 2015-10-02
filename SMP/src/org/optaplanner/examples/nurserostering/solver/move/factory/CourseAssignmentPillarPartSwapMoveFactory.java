@@ -38,12 +38,12 @@ public class CourseAssignmentPillarPartSwapMoveFactory implements MoveListFactor
         List<Ta> taList = nurseRoster.getTaList();
         // This code assumes the courseAssignmentList is sorted
         // Filter out every immovable CourseAssignment
-        List<CourseAssignment> courseAssignmentList = new ArrayList<CourseAssignment>(
+        List<CourseAssignment> courseAssignmentList = new ArrayList<>(
                 nurseRoster.getCourseAssignmentList());
 
         // Hash the assignments per ta
         Map<Ta, List<AssignmentSequence>> taToAssignmentSequenceListMap
-                = new HashMap<Ta, List<AssignmentSequence>>(taList.size());
+                = new HashMap<>(taList.size());
         int assignmentSequenceCapacity = nurseRoster.getCourseDateList().size() + 1 / 2;
         for (Ta ta : taList) {
             taToAssignmentSequenceListMap.put(ta,
@@ -68,7 +68,7 @@ public class CourseAssignmentPillarPartSwapMoveFactory implements MoveListFactor
         }
 
         // The create the move list
-        List<Move> moveList = new ArrayList<Move>();
+        List<Move> moveList = new ArrayList<>();
         // For every 2 distinct tas
         for (ListIterator<Ta> leftTaIt = taList.listIterator(); leftTaIt.hasNext();) {
             Ta leftTa = leftTaIt.next();
@@ -87,7 +87,7 @@ public class CourseAssignmentPillarPartSwapMoveFactory implements MoveListFactor
                     AssignmentSequence pillarPartAssignmentSequence = lowestIt.next();
                     // Note: the initialCapacity is probably to high,
                     // which is bad for memory, but the opposite is bad for performance (which is worse)
-                    List<Move> moveListByPillarPartDuo = new ArrayList<Move>(
+                    List<Move> moveListByPillarPartDuo = new ArrayList<>(
                             leftAssignmentSequenceList.size() + rightAssignmentSequenceList.size());
                     int lastDayIndex = pillarPartAssignmentSequence.getLastDayIndex();
                     Ta otherTa;
@@ -140,7 +140,7 @@ public class CourseAssignmentPillarPartSwapMoveFactory implements MoveListFactor
 
         private AssignmentSequence(Ta ta, CourseAssignment courseAssignment) {
             this.ta = ta;
-            courseAssignmentList = new ArrayList<CourseAssignment>();
+            courseAssignmentList = new ArrayList<>();
             courseAssignmentList.add(courseAssignment);
             firstDayIndex = courseAssignment.getCourseDateDayIndex();
             lastDayIndex = firstDayIndex;

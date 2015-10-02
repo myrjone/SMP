@@ -90,7 +90,7 @@ public class NurseRosteringPanel extends SolutionPanel {
         unassignedPanel = new TaPanel(this, Collections.<CourseDate>emptyList(), Collections.<Course>emptyList(),
                 null);
         taListPanel.add(unassignedPanel);
-        taToPanelMap = new LinkedHashMap<Ta, TaPanel>();
+        taToPanelMap = new LinkedHashMap<>();
         taToPanelMap.put(null, unassignedPanel);
     }
 
@@ -124,7 +124,7 @@ public class NurseRosteringPanel extends SolutionPanel {
         NurseRoster nurseRoster = (NurseRoster) solution;
         List<CourseDate> courseDateList = nurseRoster.getCourseDateList();
         List<Course> courseList = nurseRoster.getCourseList();
-        Set<Ta> deadTaSet = new LinkedHashSet<Ta>(taToPanelMap.keySet());
+        Set<Ta> deadTaSet = new LinkedHashSet<>(taToPanelMap.keySet());
         deadTaSet.remove(null);
         for (Ta ta : nurseRoster.getTaList()) {
             deadTaSet.remove(ta);
@@ -166,7 +166,7 @@ public class NurseRosteringPanel extends SolutionPanel {
                 }
                 // A SolutionCloner does not clone problem fact lists (such as taList)
                 // Shallow clone the taList so only workingSolution is affected, not bestSolution or guiSolution
-                nurseRoster.setTaList(new ArrayList<Ta>(nurseRoster.getTaList()));
+                nurseRoster.setTaList(new ArrayList<>(nurseRoster.getTaList()));
                 // Remove it the planning fact itself
                 for (Iterator<Ta> it = nurseRoster.getTaList().iterator(); it.hasNext(); ) {
                     Ta workingTa = it.next();

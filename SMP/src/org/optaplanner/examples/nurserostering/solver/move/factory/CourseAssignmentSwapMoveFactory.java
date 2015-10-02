@@ -29,10 +29,10 @@ public class CourseAssignmentSwapMoveFactory implements MoveListFactory<NurseRos
 
     public List<Move> createMoveList(NurseRoster nurseRoster) {
         // Filter out every immovable CourseAssignment
-        List<CourseAssignment> courseAssignmentList = new ArrayList<CourseAssignment>(
+        List<CourseAssignment> courseAssignmentList = new ArrayList<>(
                 nurseRoster.getCourseAssignmentList());
 
-        List<Move> moveList = new ArrayList<Move>();
+        List<Move> moveList = new ArrayList<>();
         for (ListIterator<CourseAssignment> leftIt = courseAssignmentList.listIterator(); leftIt.hasNext();) {
             CourseAssignment leftCourseAssignment = leftIt.next();
             for (ListIterator<CourseAssignment> rightIt = courseAssignmentList.listIterator(leftIt.nextIndex()); rightIt.hasNext();) {

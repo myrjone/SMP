@@ -200,7 +200,7 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
             List<Contract> contractList = new ArrayList<>(contractElementList.size());
             contractMap = new HashMap<>(contractElementList.size());
             long id = 0L;
-            List<ContractLine> contractLineList = new ArrayList<ContractLine>(
+            List<ContractLine> contractLineList = new ArrayList<>(
                     contractElementList.size() * contractLineTypeListSize);
             long contractLineId = 0L;
             long patternContractLineId = 0L;
@@ -211,7 +211,7 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                 contract.setCode(element.getAttribute("ID").getValue());
                 contract.setDescription(element.getChild("Description").getText());
 
-                List<ContractLine> contractLineListOfContract = new ArrayList<ContractLine>(contractLineTypeListSize);
+                List<ContractLine> contractLineListOfContract = new ArrayList<>(contractLineTypeListSize);
                 contractLineId = readMinMaxContractLine(contract, contractLineList, contractLineListOfContract,
                         contractLineId, element.getChild("MinNumAssignments"),
                         element.getChild("MaxNumAssignments"),
@@ -337,8 +337,8 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
 
         private void readTaList(NurseRoster nurseRoster, Element tasElement) throws JDOMException {
             List<Element> taElementList = (List<Element>) tasElement.getChildren();
-            List<Ta> taList = new ArrayList<Ta>(taElementList.size());
-            taMap = new HashMap<String, Ta>(taElementList.size());
+            List<Ta> taList = new ArrayList<>(taElementList.size());
+            taMap = new HashMap<>(taElementList.size());
             long id = 0L;
             for (Element element : taElementList) {
                 assertElementName(element, "Ta");
@@ -431,7 +431,7 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                 courseOffRequestList = Collections.emptyList();
             } else {
                 List<Element> courseOffElementList = (List<Element>) courseOffRequestsElement.getChildren();
-                courseOffRequestList = new ArrayList<CourseOffRequest>(courseOffElementList.size());
+                courseOffRequestList = new ArrayList<>(courseOffElementList.size());
                 long id = 0L;
                 for (Element element : courseOffElementList) {
                     assertElementName(element, "CourseOff");
@@ -474,7 +474,7 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                 courseOnRequestList = Collections.emptyList();
             } else {
                 List<Element> courseOnElementList = (List<Element>) courseOnRequestsElement.getChildren();
-                courseOnRequestList = new ArrayList<CourseOnRequest>(courseOnElementList.size());
+                courseOnRequestList = new ArrayList<>(courseOnElementList.size());
                 long id = 0L;
                 for (Element element : courseOnElementList) {
                     assertElementName(element, "CourseOn");
@@ -512,7 +512,7 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
 
         private void createCourseAssignmentList(NurseRoster nurseRoster) {
             List<Course> courseList = nurseRoster.getCourseList();
-            List<CourseAssignment> courseAssignmentList = new ArrayList<CourseAssignment>(courseList.size());
+            List<CourseAssignment> courseAssignmentList = new ArrayList<>(courseList.size());
             long id = 0L;
             for (Course course : courseList) {
                 for (int i = 0; i < course.getRequiredTaSize(); i++) {

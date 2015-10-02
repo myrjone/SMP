@@ -36,12 +36,12 @@ public class CourseAssignmentSequenceSwitchLength3MoveFactory implements MoveLis
         List<Ta> taList = nurseRoster.getTaList();
         // This code assumes the courseAssignmentList is sorted
         // Filter out every immovable CourseAssignment
-        List<CourseAssignment> courseAssignmentList = new ArrayList<CourseAssignment>(
+        List<CourseAssignment> courseAssignmentList = new ArrayList<>(
                 nurseRoster.getCourseAssignmentList());
 
         // Hash the assignments per ta
         Map<Ta, List<AssignmentSequence>> taToAssignmentSequenceListMap
-                = new HashMap<Ta, List<AssignmentSequence>>(taList.size());
+                = new HashMap<>(taList.size());
         int assignmentSequenceCapacity = nurseRoster.getCourseDateList().size() + 1 / 2;
         for (Ta ta : taList) {
             taToAssignmentSequenceListMap.put(ta,
@@ -66,7 +66,7 @@ public class CourseAssignmentSequenceSwitchLength3MoveFactory implements MoveLis
         }
 
         // The create the move list
-        List<Move> moveList = new ArrayList<Move>();
+        List<Move> moveList = new ArrayList<>();
         // For every 2 distinct tas
         for (ListIterator<Ta> leftTaIt = taList.listIterator(); leftTaIt.hasNext();) {
             Ta leftTa = leftTaIt.next();
@@ -87,7 +87,7 @@ public class CourseAssignmentSequenceSwitchLength3MoveFactory implements MoveLis
                             List<CourseAssignment> rightCourseAssignmentList = rightAssignmentSequence.getCourseAssignmentList();
                             for (int rightIndex = 0; rightIndex <= rightCourseAssignmentList.size() - SWITCH_LENGTH; rightIndex++) {
 
-                                List<Move> subMoveList = new ArrayList<Move>(SWITCH_LENGTH * 2);
+                                List<Move> subMoveList = new ArrayList<>(SWITCH_LENGTH * 2);
                                 for (CourseAssignment leftCourseAssignment : leftCourseAssignmentList
                                         .subList(leftIndex, leftIndex + SWITCH_LENGTH)) {
                                     subMoveList.add(new TaChangeMove(leftCourseAssignment, rightTa));
@@ -116,7 +116,7 @@ public class CourseAssignmentSequenceSwitchLength3MoveFactory implements MoveLis
         private int lastDayIndex;
 
         private AssignmentSequence(CourseAssignment courseAssignment) {
-            courseAssignmentList = new ArrayList<CourseAssignment>();
+            courseAssignmentList = new ArrayList<>();
             courseAssignmentList.add(courseAssignment);
             firstDayIndex = courseAssignment.getCourseDateDayIndex();
             lastDayIndex = firstDayIndex;

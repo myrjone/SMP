@@ -178,14 +178,14 @@ public class SolutionBusiness {
     }
 
     public List<File> getUnsolvedFileList() {
-        List<File> fileList = new ArrayList<File>(
+        List<File> fileList = new ArrayList<>(
                 FileUtils.listFiles(unsolvedDataDir, new String[]{solutionDao.getFileExtension()} , true));
         Collections.sort(fileList, FILE_COMPARATOR);
         return fileList;
     }
 
     public List<File> getSolvedFileList() {
-        List<File> fileList = new ArrayList<File>(
+        List<File> fileList = new ArrayList<>(
                 FileUtils.listFiles(solvedDataDir, new String[]{solutionDao.getFileExtension()} , true));
         Collections.sort(fileList, FILE_COMPARATOR);
         return fileList;
@@ -239,7 +239,7 @@ public class SolutionBusiness {
     }
 
     public List<ConstraintMatchTotal> getConstraintMatchTotalList() {
-        List<ConstraintMatchTotal> constraintMatchTotalList = new ArrayList<ConstraintMatchTotal>(
+        List<ConstraintMatchTotal> constraintMatchTotalList = new ArrayList<>(
                 guiScoreDirector.getConstraintMatchTotals());
         Collections.sort(constraintMatchTotalList);
         return constraintMatchTotalList;

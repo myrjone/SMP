@@ -60,7 +60,7 @@ public class TaPanel extends JPanel {
     private Map<Course, JPanel> coursePanelMap;
     private JLabel numberOfCourseAssignmentsLabel;
 
-    private Map<CourseAssignment, JButton> courseAssignmentButtonMap = new HashMap<CourseAssignment, JButton> ();
+    private Map<CourseAssignment, JButton> courseAssignmentButtonMap = new HashMap<> ();
 
     public TaPanel(NurseRosteringPanel nurseRosteringPanel, List<CourseDate> courseDateList, List<Course> courseList,
             Ta ta) {
@@ -127,7 +127,7 @@ public class TaPanel extends JPanel {
             remove(courseDateListPanel);
         }
         courseDateListPanel = new JPanel(new GridLayout(1, 0));
-        courseDatePanelMap = new LinkedHashMap<CourseDate, JPanel>(courseDateList.size());
+        courseDatePanelMap = new LinkedHashMap<>(courseDateList.size());
         for (CourseDate courseDate : courseDateList) {
             JPanel courseDatePanel = new JPanel(new GridLayout(1, 0));
             Color backgroundColor = courseDatePanel.getBackground();
@@ -149,7 +149,7 @@ public class TaPanel extends JPanel {
                 courseDateListPanel.add(courseDatePanel);
             }
         }
-        coursePanelMap = new LinkedHashMap<Course, JPanel>(courseList.size());
+        coursePanelMap = new LinkedHashMap<>(courseList.size());
         for (Course course : courseList) {
             JPanel courseDatePanel = courseDatePanelMap.get(course.getCourseDate());
             JPanel coursePanel = new JPanel();

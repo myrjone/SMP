@@ -149,7 +149,7 @@ public class NurseRoster extends AbstractPersistable implements Solution<HardSof
     // ************************************************************************
 
     public Collection<? extends Object> getProblemFacts() {
-        List<Object> facts = new ArrayList<Object>();
+        List<Object> facts = new ArrayList<>();
         facts.addAll(courseTypeList);
         facts.addAll(contractList);
         facts.addAll(contractLineList);
