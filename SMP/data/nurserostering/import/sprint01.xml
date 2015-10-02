@@ -4,7 +4,6 @@
     <Course ID="00000">
       <StartTime>08:00:00</StartTime>
       <EndTime>09:50:00</EndTime>
-      <Description>CS111</Description>
       <Dept>CHEM</Dept>
       <Crs>124A</Crs>
       <Sec>001</Sec>
@@ -14,7 +13,6 @@
     <Course ID="00001">
       <StartTime>10:00:00</StartTime>
       <EndTime>11:50:00</EndTime>
-      <Description>CS222</Description>
       <Dept>CHEM</Dept>
       <Crs>124A</Crs>
       <Sec>001</Sec>
@@ -24,7 +22,6 @@
     <Course ID="00002">
       <StartTime>12:00:00</StartTime>
       <EndTime>13:50:00</EndTime>
-      <Description>CS333</Description>
       <Dept>CHEM</Dept>
       <Crs>124A</Crs>
       <Sec>001</Sec>
@@ -34,7 +31,6 @@
     <Course ID="00003">
       <StartTime>14:00:00</StartTime>
       <EndTime>15:50:00</EndTime>
-      <Description>CS444</Description>
       <Dept>CHEM</Dept>
       <Crs>124A</Crs>
       <Sec>001</Sec>
@@ -44,7 +40,6 @@
     <Course ID="00004">
       <StartTime>14:00:00</StartTime>
       <EndTime>15:50:00</EndTime>
-      <Description>CS555</Description>
       <Dept>CHEM</Dept>
       <Crs>124A</Crs>
       <Sec>001</Sec>
@@ -54,7 +49,6 @@
     <Course ID="00005">
       <StartTime>14:00:00</StartTime>
       <EndTime>15:50:00</EndTime>
-      <Description>CS666</Description>
       <Dept>CHEM</Dept>
       <Crs>124A</Crs>
       <Sec>001</Sec>
@@ -64,7 +58,6 @@
     <Course ID="00006">
       <StartTime>14:00:00</StartTime>
       <EndTime>15:50:00</EndTime>
-      <Description>CS777</Description>
       <Dept>CHEM</Dept>
       <Crs>124A</Crs>
       <Sec>001</Sec>

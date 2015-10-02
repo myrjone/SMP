@@ -27,7 +27,6 @@ public class CourseType extends AbstractPersistable {
     private String startTimeString;
     private String endTimeString;
     private boolean night;
-    private String description;
     private String dept;
     private String crs;
     private String sec;
@@ -114,16 +113,8 @@ public class CourseType extends AbstractPersistable {
         this.night = night;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public String getLabel() {
-        return code + " (" + description + ")";
+        return code + " (" + dept + " " + crs + ")";
     }
 
     @Override

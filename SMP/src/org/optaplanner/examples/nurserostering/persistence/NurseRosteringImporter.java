@@ -142,7 +142,6 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                 String endTimeString = element.getChild("EndTime").getText();
                 courseType.setEndTimeString(endTimeString);
                 courseType.setNight(startTimeString.compareTo(endTimeString) > 0);
-                courseType.setDescription(element.getChild("Description").getText());
                 String dept = element.getChild("Dept").getText();
                 courseType.setDept(dept);
                 String crs = element.getChild("Crs").getText();
