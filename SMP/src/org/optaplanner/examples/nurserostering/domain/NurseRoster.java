@@ -48,11 +48,20 @@ public class NurseRoster extends AbstractPersistable implements Solution<HardSof
     private List<Course> courseList;
     private List<CourseOffRequest> courseOffRequestList;
     private List<CourseOnRequest> courseOnRequestList;
+    private List<Coordinator> coordinatorList;
 
     private List<CourseAssignment> courseAssignmentList;
 
     @XStreamConverter(value = XStreamScoreConverter.class, types = {HardSoftScoreDefinition.class})
     private HardSoftScore score;
+
+    public List<Coordinator> getCoordinatorList() {
+        return coordinatorList;
+    }
+
+    public void setCoordinatorList(List<Coordinator> coordinatorList) {
+        this.coordinatorList = coordinatorList;
+    }
 
     public String getCode() {
         return code;
@@ -161,6 +170,7 @@ public class NurseRoster extends AbstractPersistable implements Solution<HardSof
         facts.addAll(courseList);
         facts.addAll(courseOffRequestList);
         facts.addAll(courseOnRequestList);
+        facts.addAll(coordinatorList);
         // Do not add the planning entity's (courseAssignmentList) because that will be done automatically
         return facts;
     }

@@ -65,6 +65,26 @@
       <Rm>1165</Rm>
     </Course>
   </CourseTypes>
+  <Coordinators>
+      <Coordinator ID="0">
+        <Name>Senator Palpatine</Name>
+        <Email>palp@republic.gov</Email>
+      </Coordinator>
+      <Coordinator ID="1">
+        <Name>Senator Palpatine</Name>
+        <Email>palp@republic.gov</Email>
+      </Coordinator>
+  </Coordinators>
+  <CoordinatorToCourseType>
+      <Mapping>
+          <CoordinatorId>0</CoordinatorId>
+          <CourseTypeId>00000</CourseTypeId>
+      </Mapping>
+      <Mapping>
+          <CoordinatorId>0</CoordinatorId>
+          <CourseTypeId>00001</CourseTypeId>
+      </Mapping>
+  </CoordinatorToCourseType>
   <Contracts>
     <Contract ID="0">
       <Description>Standard TA Contract</Description>

@@ -29,6 +29,7 @@ import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.optaplanner.core.api.domain.solution.Solution;
 import org.optaplanner.examples.common.persistence.AbstractXmlSolutionImporter;
+import org.optaplanner.examples.nurserostering.domain.Coordinator;
 import org.optaplanner.examples.nurserostering.domain.Course;
 import org.optaplanner.examples.nurserostering.domain.CourseAssignment;
 import org.optaplanner.examples.nurserostering.domain.CourseDate;
@@ -67,6 +68,8 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
         protected Map<List<Object>, List<Course>> dayOfWeekAndCourseTypeToCourseListMap;
         protected Map<String, Contract> contractMap;
         protected Map<String, Ta> taMap;
+        protected Map<String, Coordinator> coordinatorMap;
+        protected Map<String, String> courseTypeToCoordinatorMap; // Map coordinator id to courseTYpeId
 
         @Override
         public Solution readSolution() throws IOException, JDOMException {
@@ -81,6 +84,8 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
             generateCourseDateList(nurseRoster);
             readCourseTypeList(nurseRoster, schedulingPeriodElement.getChild("CourseTypes"));
             generateCourseList(nurseRoster);
+            readCoordinatorList(nurseRoster, schedulingPeriodElement.getChild("Coordinators"));
+            readCoordinatorToCourseTypeMapping(nurseRoster, schedulingPeriodElement.getChild("CoordinatorToCourseType"));
             readContractList(nurseRoster, schedulingPeriodElement.getChild("Contracts"));
             readTaList(nurseRoster, schedulingPeriodElement.getChild("Tas"));
             readRequiredTaSizes(nurseRoster, schedulingPeriodElement.getChild("CoverRequirements"));
@@ -101,6 +106,72 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                     nurseRoster.getCourseOffRequestList().size() + nurseRoster.getCourseOnRequestList().size(),
                     getFlooredPossibleSolutionSize(possibleSolutionSize));
             return nurseRoster;
+        }
+
+        private void readCoordinatorToCourseTypeMapping(NurseRoster nurseRoster,
+                Element coordinatorsElement) throws JDOMException{
+            List<Element> coordinatorMappingElementList = coordinatorsElement.getChildren();
+            courseTypeToCoordinatorMap = new HashMap<>(coordinatorMappingElementList.size());
+            for (Element element : coordinatorMappingElementList) {
+                assertElementName(element, "Mapping");
+                String coordinatorId = element.getChild("CoordinatorId").getText();
+                String courseTypeId = element.getChild("CourseTypeId").getText();
+
+                if (coordinatorMap.containsKey(coordinatorId)) {
+                    if (courseTypeMap.containsKey(courseTypeId)) {
+                        if (courseTypeToCoordinatorMap.containsKey(courseTypeId)) {
+                            throw new IllegalArgumentException("Coordinator "
+                                    +  courseTypeToCoordinatorMap.get(courseTypeId) + " is already assigned to courseType "
+                                    + courseTypeId);
+                        }
+                        else {
+                            Coordinator coordinator = coordinatorMap.get(coordinatorId);
+                            CourseType courseType = courseTypeMap.get(courseTypeId);
+                            ArrayList<CourseType> courseTypeList = (ArrayList<CourseType>) coordinator.getCourseTypes();
+                            courseTypeList.add(courseType);
+                            coordinator.setCourseTypes(courseTypeList);
+                            coordinator.setCourseTypes(courseTypeList);
+                            courseTypeToCoordinatorMap.put(courseTypeId, coordinatorId);
+                        }
+                    }
+                    else {
+                        throw new IllegalArgumentException("CourseType "
+                                + courseTypeId + " does not exist");
+                    }
+                }
+                else {
+                    throw new IllegalArgumentException("Coordinator "
+                                + coordinatorId + " does not exist");
+                }
+            }
+        }
+
+        private void readCoordinatorList(NurseRoster nurseRoster, Element coordinatorsElement)
+            throws JDOMException{
+            List<Element> coordinatorsElementList = coordinatorsElement.getChildren();
+            List<Coordinator> coordinatorList = new ArrayList<>(coordinatorsElementList.size());
+            coordinatorMap = new HashMap<>(coordinatorsElementList.size());
+            long id = 0L;
+            for (Element element : coordinatorsElementList) {
+                assertElementName(element, "Coordinator");
+                String code = element.getAttribute("ID").getValue();
+
+                if (coordinatorMap.containsKey(code)) {
+                    throw new IllegalArgumentException("Coordinator "
+                                + code + " already exists");
+                }
+                else {
+                    Coordinator coordinator = new Coordinator();
+                    coordinator.setId(id);
+                    coordinator.setCode(code);
+                    coordinator.setName(element.getChild("Name").getText());
+                    coordinator.setEmail(element.getChild("Email").getText());
+                    coordinator.setCourseTypes(new ArrayList<CourseType>());
+                    coordinatorList.add(coordinator);
+                    coordinatorMap.put(code,coordinator);
+                }
+            }
+            nurseRoster.setCoordinatorList(coordinatorList);
         }
 
         private void generateCourseDateList(NurseRoster nurseRoster) {

@@ -10,6 +10,8 @@
     <xs:complexType>
       <xs:sequence>
         <xs:element name="CourseTypes" type="CourseTypes"/>
+        <xs:element name="Coordinators" type="Coordinators"/>
+        <xs:element name="CoordinatorToCourseType" type="CoordinatorToCourseType"/>
         <xs:element name="Contracts" type="Contracts"/>
         <xs:element name="Tas" type="Tas"/>
         <xs:element name="CoverRequirements" type="CoverRequirements"/>
@@ -35,6 +37,32 @@
             </xs:element>
           </xs:all>
           <xs:attribute name="ID" type="ID" use="required"/>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="Coordinators">
+    <xs:sequence>
+      <xs:element name="Coordinator" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:all>
+            <xs:element name="Name" type="xs:string"/>
+            <xs:element name="Email" type="xs:string" minOccurs="0"/>
+            <xs:element name="CourseTypeID" type="ID"/>
+          </xs:all>
+          <xs:attribute name="ID" type="ID" use="required"/>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="CoordinatorToCourseType">
+    <xs:sequence>
+      <xs:element name="Mapping" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:all>
+            <xs:element name="CoordinatorId" type="ID"/>
+            <xs:element name="CourseTypeID" type="ID"/>
+          </xs:all>
         </xs:complexType>
       </xs:element>
     </xs:sequence>
