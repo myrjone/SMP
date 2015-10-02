@@ -184,7 +184,7 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                 CourseDate courseDate = new CourseDate();
                 courseDate.setId(id);
                 courseDate.setDayIndex(dayIndex);
-                String dateString = day.name();
+                String dateString = day.getCode();
                 courseDate.setDateString(dateString);
                 courseDate.setDayOfWeek(day);
                 courseDate.setCourseList(new ArrayList<Course>());
@@ -530,13 +530,11 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                     }
                     courseOffRequest.setTa(ta);
 
-                    Element dateElement = element.getChild("Date");
-
-                    DayOfWeek day = DayOfWeek.valueOfCode(dateElement.getText());
+                    String day = element.getChild("Date").getText();
                     Element courseTypeElement = element.getChild("CourseTypeID");
-                    Course course = dateAndCourseTypeToCourseMap.get(Arrays.asList(day.name(), courseTypeElement.getText()));
+                    Course course = dateAndCourseTypeToCourseMap.get(Arrays.asList(day, courseTypeElement.getText()));
                     if (course == null) {
-                        throw new IllegalArgumentException("The date (" + dateElement.getText()
+                        throw new IllegalArgumentException("The date (" + day
                                 + ") or the courseType (" + courseTypeElement.getText()
                                 + ") of courseOffRequest (" + courseOffRequest + ") does not exist.");
                     }
@@ -573,12 +571,11 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                     }
                     courseOnRequest.setTa(ta);
 
-                    Element dateElement = element.getChild("Date");
-                    DayOfWeek day = DayOfWeek.valueOfCode(dateElement.getText());
+                    String day = element.getChild("Date").getText();
                     Element courseTypeElement = element.getChild("CourseTypeID");
-                    Course course = dateAndCourseTypeToCourseMap.get(Arrays.asList(day.name(), courseTypeElement.getText()));
+                    Course course = dateAndCourseTypeToCourseMap.get(Arrays.asList(day, courseTypeElement.getText()));
                     if (course == null) {
-                        throw new IllegalArgumentException("The date (" + dateElement.getText()
+                        throw new IllegalArgumentException("The date (" + day
                                 + ") or the courseType (" + courseTypeElement.getText()
                                 + ") of courseOnRequest (" + courseOnRequest + ") does not exist.");
                     }
