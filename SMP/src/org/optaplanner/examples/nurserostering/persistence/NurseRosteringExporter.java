@@ -72,7 +72,7 @@ public class NurseRosteringExporter extends AbstractXmlSolutionExporter {
                     solutionElement.addContent(assignmentElement);
 
                     Element dateElement = new Element("Date");
-                    dateElement.setText(course.getCourseDate().getDateString());
+                    dateElement.setText(course.getCourseDay().getDateString());
                     assignmentElement.addContent(dateElement);
 
                     Element taElement = new Element("Ta");

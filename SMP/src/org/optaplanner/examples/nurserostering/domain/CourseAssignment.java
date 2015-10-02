@@ -64,20 +64,20 @@ public class CourseAssignment extends AbstractPersistable {
     // Complex methods
     // ************************************************************************
 
-    public CourseDate getCourseDate() {
-        return course.getCourseDate();
+    public CourseDay getCourseDay() {
+        return course.getCourseDay();
     }
 
     public CourseType getCourseType() {
         return course.getCourseType();
     }
 
-    public int getCourseDateDayIndex() {
-        return course.getCourseDate().getDayIndex();
+    public int getCourseDayDayIndex() {
+        return course.getCourseDay().getDayIndex();
     }
 
-    public DayOfWeek getCourseDateDayOfWeek() {
-        return course.getCourseDate().getDayOfWeek();
+    public DayOfWeek getCourseDayDayOfWeek() {
+        return course.getCourseDay().getDayOfWeek();
     }
 
     public Contract getContract() {

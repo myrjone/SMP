@@ -24,7 +24,7 @@ import org.optaplanner.examples.nurserostering.domain.Ta;
 import org.optaplanner.examples.nurserostering.domain.CourseAssignment;
 import org.optaplanner.examples.nurserostering.domain.NurseRoster;
 import org.optaplanner.examples.nurserostering.domain.Course;
-import org.optaplanner.examples.nurserostering.domain.CourseDate;
+import org.optaplanner.examples.nurserostering.domain.CourseDay;
 import org.optaplanner.examples.nurserostering.domain.CourseType;
 import org.optaplanner.examples.nurserostering.domain.contract.Contract;
 import org.optaplanner.examples.nurserostering.domain.contract.BooleanContractLine;
@@ -44,9 +44,9 @@ global HardSoftScoreHolder scoreHolder;
 // A ta can't be assigned more than two courses in a single day
 rule "noMoreThanTwoCoursesPerDay"
     when
-        $firstAssignment : CourseAssignment($firstId : id, $ta : ta, $courseDate : courseDate, ta != null)
-        $secondAssignment : CourseAssignment($secondId : id, ta == $ta, courseDate == $courseDate, id != $firstId)
-        $thirdAssignment : CourseAssignment($thirdId : id, ta == $ta, courseDate == $courseDate, id != $firstId, id != $secondId)
+        $firstAssignment : CourseAssignment($firstId : id, $ta : ta, $courseDay : courseDay, ta != null)
+        $secondAssignment : CourseAssignment($secondId : id, ta == $ta, courseDay == $courseDay, id != $firstId)
+        $thirdAssignment : CourseAssignment($thirdId : id, ta == $ta, courseDay == $courseDay, id != $firstId, id != $secondId)
     then
         scoreHolder.addHardConstraintMatch(kcontext, -1);
 end
@@ -55,8 +55,8 @@ end
 // on a single day
 rule "oneTypePerDay"
     when
-        $left : CourseAssignment($id : id, $ta : ta, $courseDate : courseDate, $courseType : course.courseType, ta != null)
-        $right : CourseAssignment(ta == $ta, courseDate == $courseDate, course.courseType == $courseType, id > $id)
+        $left : CourseAssignment($id : id, $ta : ta, $courseDay : courseDay, $courseType : course.courseType, ta != null)
+        $right : CourseAssignment(ta == $ta, courseDay == $courseDay, course.courseType == $courseType, id > $id)
     then
         scoreHolder.addHardConstraintMatch(kcontext, -1);
 end
@@ -73,8 +73,8 @@ end
 // Same course, different days needs same TA
 rule "sameCourseDifferentDaySameTA"
     when
-        $assignment : CourseAssignment($ta : ta, $courseDate : courseDate, $courseType : course.courseType, ta != null)
-        $result : CourseAssignment(ta != $ta, courseDate != $courseDate, course.courseType == $courseType)
+        $assignment : CourseAssignment($ta : ta, $courseDay : courseDay, $courseType : course.courseType, ta != null)
+        $result : CourseAssignment(ta != $ta, courseDay != $courseDay, course.courseType == $courseType)
     then
         scoreHolder.addHardConstraintMatch(kcontext, -1);
 end
@@ -100,8 +100,8 @@ end
 // A ta should only be assigned to one course per day
 rule "oneCoursePerDay"
     when
-        $leftAssignment : CourseAssignment($leftId : id, $ta : ta, $courseDate : courseDate, ta != null)
-        $rightAssignment : CourseAssignment(ta == $ta, courseDate == $courseDate, id > $leftId)
+        $leftAssignment : CourseAssignment($leftId : id, $ta : ta, $courseDay : courseDay, ta != null)
+        $rightAssignment : CourseAssignment(ta == $ta, courseDay == $courseDay, id > $leftId)
     then
         scoreHolder.addSoftConstraintMatch(kcontext, -1);
 end

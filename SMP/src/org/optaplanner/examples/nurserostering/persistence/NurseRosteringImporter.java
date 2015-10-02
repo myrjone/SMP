@@ -32,7 +32,7 @@ import org.optaplanner.examples.common.persistence.AbstractXmlSolutionImporter;
 import org.optaplanner.examples.nurserostering.domain.Coordinator;
 import org.optaplanner.examples.nurserostering.domain.Course;
 import org.optaplanner.examples.nurserostering.domain.CourseAssignment;
-import org.optaplanner.examples.nurserostering.domain.CourseDate;
+import org.optaplanner.examples.nurserostering.domain.CourseDay;
 import org.optaplanner.examples.nurserostering.domain.CourseType;
 import org.optaplanner.examples.nurserostering.domain.DayOfWeek;
 import org.optaplanner.examples.nurserostering.domain.NurseRoster;
@@ -62,7 +62,7 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
 
     public static class NurseRosteringInputBuilder extends XmlInputBuilder {
 
-        protected Map<String, CourseDate> courseDateMap;
+        protected Map<String, CourseDay> courseDayMap;
         protected Map<String, CourseType> courseTypeMap;
         protected Map<List<String>, Course> dateAndCourseTypeToCourseMap;
         protected Map<List<Object>, List<Course>> dayOfWeekAndCourseTypeToCourseListMap;
@@ -81,7 +81,7 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
             nurseRoster.setId(0L);
             nurseRoster.setCode(schedulingPeriodElement.getAttribute("ID").getValue());
 
-            generateCourseDateList(nurseRoster);
+            generateCourseDayList(nurseRoster);
             readCourseTypeList(nurseRoster, schedulingPeriodElement.getChild("CourseTypes"));
             generateCourseList(nurseRoster);
             readCoordinatorList(nurseRoster, schedulingPeriodElement.getChild("Coordinators"));
@@ -96,12 +96,12 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
             BigInteger possibleSolutionSize = BigInteger.valueOf(nurseRoster.getTaList().size()).pow(
                     nurseRoster.getCourseAssignmentList().size());
             logger.info("NurseRoster {} has {} courseTypes, {} contracts, {} tas," +
-                    " {} courseDates, {} courseAssignments and {} requests with a search space of {}.",
+                    " {} courseDays, {} courseAssignments and {} requests with a search space of {}.",
                     getInputId(),
                     nurseRoster.getCourseTypeList().size(),
                     nurseRoster.getContractList().size(),
                     nurseRoster.getTaList().size(),
-                    nurseRoster.getCourseDateList().size(),
+                    nurseRoster.getCourseDayList().size(),
                     nurseRoster.getCourseAssignmentList().size(),
                     nurseRoster.getCourseOffRequestList().size() + nurseRoster.getCourseOnRequestList().size(),
                     getFlooredPossibleSolutionSize(possibleSolutionSize));
@@ -174,26 +174,26 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
             nurseRoster.setCoordinatorList(coordinatorList);
         }
 
-        private void generateCourseDateList(NurseRoster nurseRoster) {
-            int courseDateSize = DayOfWeek.values().length;
-            List<CourseDate> courseDateList = new ArrayList<>(courseDateSize);
-            courseDateMap = new HashMap<>(courseDateSize);
+        private void generateCourseDayList(NurseRoster nurseRoster) {
+            int courseDaySize = DayOfWeek.values().length;
+            List<CourseDay> courseDayList = new ArrayList<>(courseDaySize);
+            courseDayMap = new HashMap<>(courseDaySize);
             long id = 0L;
             int dayIndex = 0;
             for (DayOfWeek day : DayOfWeek.values()) {
-                CourseDate courseDate = new CourseDate();
-                courseDate.setId(id);
-                courseDate.setDayIndex(dayIndex);
+                CourseDay courseDay = new CourseDay();
+                courseDay.setId(id);
+                courseDay.setDayIndex(dayIndex);
                 String dateString = day.getCode();
-                courseDate.setDateString(dateString);
-                courseDate.setDayOfWeek(day);
-                courseDate.setCourseList(new ArrayList<Course>());
-                courseDateList.add(courseDate);
-                courseDateMap.put(dateString, courseDate);
+                courseDay.setDateString(dateString);
+                courseDay.setDayOfWeek(day);
+                courseDay.setCourseList(new ArrayList<Course>());
+                courseDayList.add(courseDay);
+                courseDayMap.put(dateString, courseDay);
                 id++;
                 dayIndex++;
             }
-            nurseRoster.setCourseDateList(courseDateList);
+            nurseRoster.setCourseDayList(courseDayList);
         }
 
         private void readCourseTypeList(NurseRoster nurseRoster, Element courseTypesElement) throws JDOMException {
@@ -238,24 +238,24 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
 
         private void generateCourseList(NurseRoster nurseRoster) throws JDOMException {
             List<CourseType> courseTypeList = nurseRoster.getCourseTypeList();
-            int courseListSize = courseDateMap.size() * courseTypeList.size();
+            int courseListSize = courseDayMap.size() * courseTypeList.size();
             List<Course> courseList = new ArrayList<>(courseListSize);
             dateAndCourseTypeToCourseMap = new HashMap<>(courseListSize);
             dayOfWeekAndCourseTypeToCourseListMap = new HashMap<>(7 * courseTypeList.size());
             long id = 0L;
             int index = 0;
-            for (CourseDate courseDate : nurseRoster.getCourseDateList()) {
+            for (CourseDay courseDay : nurseRoster.getCourseDayList()) {
                 for (CourseType courseType : courseTypeList) {
                     Course course = new Course();
                     course.setId(id);
-                    course.setCourseDate(courseDate);
-                    courseDate.getCourseList().add(course);
+                    course.setCourseDay(courseDay);
+                    courseDay.getCourseList().add(course);
                     course.setCourseType(courseType);
                     course.setIndex(index);
                     course.setRequiredTaSize(0); // Filled in later
                     courseList.add(course);
-                    dateAndCourseTypeToCourseMap.put(Arrays.asList(courseDate.getDateString(), courseType.getCode()), course);
-                    addCourseToDayOfWeekAndCourseTypeToCourseListMap(courseDate, courseType, course);
+                    dateAndCourseTypeToCourseMap.put(Arrays.asList(courseDay.getDateString(), courseType.getCode()), course);
+                    addCourseToDayOfWeekAndCourseTypeToCourseListMap(courseDay, courseType, course);
                     id++;
                     index++;
                 }
@@ -263,12 +263,12 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
             nurseRoster.setCourseList(courseList);
         }
 
-        private void addCourseToDayOfWeekAndCourseTypeToCourseListMap(CourseDate courseDate, CourseType courseType,
+        private void addCourseToDayOfWeekAndCourseTypeToCourseListMap(CourseDay courseDay, CourseType courseType,
                 Course course) {
-            List<Object> key = Arrays.<Object>asList(courseDate.getDayOfWeek(), courseType);
+            List<Object> key = Arrays.<Object>asList(courseDay.getDayOfWeek(), courseType);
             List<Course> dayOfWeekAndCourseTypeToCourseList = dayOfWeekAndCourseTypeToCourseListMap.get(key);
             if (dayOfWeekAndCourseTypeToCourseList == null) {
-                dayOfWeekAndCourseTypeToCourseList = new ArrayList<>((courseDateMap.size() + 6) / 7);
+                dayOfWeekAndCourseTypeToCourseList = new ArrayList<>((courseDayMap.size() + 6) / 7);
                 dayOfWeekAndCourseTypeToCourseListMap.put(key, dayOfWeekAndCourseTypeToCourseList);
             }
             dayOfWeekAndCourseTypeToCourseList.add(course);
@@ -434,7 +434,7 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                             + ") of ta (" + ta.getCode() + ") does not exist.");
                 }
                 ta.setContract(contract);
-                int estimatedRequestSize = (courseDateMap.size() / taElementList.size()) + 1;
+                int estimatedRequestSize = (courseDayMap.size() / taElementList.size()) + 1;
                 ta.setCourseOffRequestMap(new HashMap<Course, CourseOffRequest>(estimatedRequestSize));
                 ta.setCourseOnRequestMap(new HashMap<Course, CourseOnRequest>(estimatedRequestSize));
 

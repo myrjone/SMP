@@ -44,7 +44,7 @@ public class NurseRoster extends AbstractPersistable implements Solution<HardSof
     private List<Contract> contractList;
     private List<ContractLine> contractLineList;
     private List<Ta> taList;
-    private List<CourseDate> courseDateList;
+    private List<CourseDay> courseDayList;
     private List<Course> courseList;
     private List<CourseOffRequest> courseOffRequestList;
     private List<CourseOnRequest> courseOnRequestList;
@@ -104,12 +104,12 @@ public class NurseRoster extends AbstractPersistable implements Solution<HardSof
         this.taList = taList;
     }
 
-    public List<CourseDate> getCourseDateList() {
-        return courseDateList;
+    public List<CourseDay> getCourseDayList() {
+        return courseDayList;
     }
 
-    public void setCourseDateList(List<CourseDate> courseDateList) {
-        this.courseDateList = courseDateList;
+    public void setCourseDayList(List<CourseDay> courseDayList) {
+        this.courseDayList = courseDayList;
     }
 
     public List<Course> getCourseList() {
@@ -166,7 +166,7 @@ public class NurseRoster extends AbstractPersistable implements Solution<HardSof
         facts.addAll(contractList);
         facts.addAll(contractLineList);
         facts.addAll(taList);
-        facts.addAll(courseDateList);
+        facts.addAll(courseDayList);
         facts.addAll(courseList);
         facts.addAll(courseOffRequestList);
         facts.addAll(courseOnRequestList);

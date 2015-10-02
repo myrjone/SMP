@@ -22,18 +22,18 @@ import org.optaplanner.examples.common.domain.AbstractPersistable;
 @XStreamAlias("Course")
 public class Course extends AbstractPersistable {
 
-    private CourseDate courseDate;
+    private CourseDay courseDay;
     private CourseType courseType;
     private int index;
 
     private int requiredTaSize;
 
-    public CourseDate getCourseDate() {
-        return courseDate;
+    public CourseDay getCourseDay() {
+        return courseDay;
     }
 
-    public void setCourseDate(CourseDate courseDate) {
-        this.courseDate = courseDate;
+    public void setCourseDay(CourseDay courseDay) {
+        this.courseDay = courseDay;
     }
 
     public CourseType getCourseType() {
@@ -61,12 +61,12 @@ public class Course extends AbstractPersistable {
     }
 
     public String getLabel() {
-        return courseType.getLabel() + " of " + courseDate.getLabel() ;
+        return courseType.getLabel() + " of " + courseDay.getLabel() ;
     }
 
     @Override
     public String toString() {
-        return courseDate + "_" + courseType;
+        return courseDay + "_" + courseType;
     }
 
 }

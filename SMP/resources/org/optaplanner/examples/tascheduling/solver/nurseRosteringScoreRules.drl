@@ -25,7 +25,7 @@ import org.optaplanner.examples.nurserostering.domain.CourseAssignment;
 import org.optaplanner.examples.nurserostering.domain.NurseRoster;
 import org.optaplanner.examples.nurserostering.domain.NurseRosterParametrization;
 import org.optaplanner.examples.nurserostering.domain.Course;
-import org.optaplanner.examples.nurserostering.domain.CourseDate;
+import org.optaplanner.examples.nurserostering.domain.CourseDay;
 import org.optaplanner.examples.nurserostering.domain.CourseType;
 import org.optaplanner.examples.nurserostering.domain.CourseTypeSkillRequirement;
 import org.optaplanner.examples.nurserostering.domain.Skill;
@@ -79,8 +79,8 @@ global HardSoftScoreHolder scoreHolder;
 // a nurse can only work one course per day, i.e. no two course can be assigned to the same nurse on a day.
 rule "oneCoursePerDay"
     when
-        $leftAssignment : CourseAssignment($leftId : id, $ta : ta, $courseDate : courseDate, ta != null)
-        $rightAssignment : CourseAssignment(ta == $ta, courseDate == $courseDate, id > $leftId)
+        $leftAssignment : CourseAssignment($leftId : id, $ta : ta, $courseDay : courseDay, ta != null)
+        $rightAssignment : CourseAssignment(ta == $ta, courseDay == $courseDay, id > $leftId)
     then
         scoreHolder.addHardConstraintMatch(kcontext, -1);
 end
@@ -135,26 +135,26 @@ rule "insertTaConsecutiveAssignmentStart"
     when
         CourseAssignment(
             $ta : ta, ta != null,
-            $dayIndex : courseDateDayIndex,
-            $courseDate : courseDate
+            $dayIndex : courseDayDayIndex,
+            $courseDay : courseDay
         )
         // The first day has no working day before it
-        not CourseAssignment(ta == $ta, courseDateDayIndex == ($dayIndex - 1))
+        not CourseAssignment(ta == $ta, courseDayDayIndex == ($dayIndex - 1))
     then
-        insertLogical(new TaConsecutiveAssignmentStart($ta, $courseDate));
+        insertLogical(new TaConsecutiveAssignmentStart($ta, $courseDay));
 end
 rule "insertTaConsecutiveAssignmentEnd"
         salience 2 // Do these rules first (optional, for performance)
     when
         CourseAssignment(
             $ta : ta, ta != null,
-            $dayIndex : courseDateDayIndex,
-            $courseDate : courseDate
+            $dayIndex : courseDayDayIndex,
+            $courseDay : courseDay
         )
         // The last day has no working day after it
-        not CourseAssignment(ta == $ta, courseDateDayIndex == ($dayIndex + 1))
+        not CourseAssignment(ta == $ta, courseDayDayIndex == ($dayIndex + 1))
     then
-        insertLogical(new TaConsecutiveAssignmentEnd($ta, $courseDate));
+        insertLogical(new TaConsecutiveAssignmentEnd($ta, $courseDay));
 end
 
 rule "insertTaWorkSequence"
@@ -162,19 +162,19 @@ rule "insertTaWorkSequence"
     when
         TaConsecutiveAssignmentStart(
             $ta : ta,
-            $firstDayIndex : courseDateDayIndex
+            $firstDayIndex : courseDayDayIndex
         )
 
         TaConsecutiveAssignmentEnd(
             ta == $ta,
-            courseDateDayIndex >= $firstDayIndex,
-            $lastDayIndex : courseDateDayIndex
+            courseDayDayIndex >= $firstDayIndex,
+            $lastDayIndex : courseDayDayIndex
         )
 
         // There are no free days between the first and last day
         not TaConsecutiveAssignmentEnd(
             ta == $ta,
-            courseDateDayIndex >= $firstDayIndex && < $lastDayIndex
+            courseDayDayIndex >= $firstDayIndex && < $lastDayIndex
         )
     then
         insertLogical(new TaWorkSequence($ta, $firstDayIndex, $lastDayIndex));
@@ -222,19 +222,19 @@ rule "insertTaFreeSequence"
     when
         TaConsecutiveAssignmentEnd(
             $ta : ta,
-            $firstDayIndexMinusOne : courseDateDayIndex
+            $firstDayIndexMinusOne : courseDayDayIndex
         )
 
         TaConsecutiveAssignmentStart(
             ta == $ta,
-            courseDateDayIndex > $firstDayIndexMinusOne,
-            $lastDayIndexPlusOne : courseDateDayIndex
+            courseDayDayIndex > $firstDayIndexMinusOne,
+            $lastDayIndexPlusOne : courseDayDayIndex
         )
 
         // There are no working days between the first and last day
         not TaConsecutiveAssignmentStart(
             ta == $ta,
-            courseDateDayIndex > $firstDayIndexMinusOne && < $lastDayIndexPlusOne
+            courseDayDayIndex > $firstDayIndexMinusOne && < $lastDayIndexPlusOne
         )
     then
         insertLogical(new TaFreeSequence($ta, $firstDayIndexMinusOne + 1, $lastDayIndexPlusOne - 1));
@@ -244,15 +244,15 @@ rule "insertFirstTaFreeSequence"
     when
         TaConsecutiveAssignmentStart(
             $ta : ta,
-            $lastDayIndexPlusOne : courseDateDayIndex
+            $lastDayIndexPlusOne : courseDayDayIndex
         )
 
         // There are no working days before the first day
         not TaConsecutiveAssignmentEnd(
             ta == $ta,
-            courseDateDayIndex < $lastDayIndexPlusOne
+            courseDayDayIndex < $lastDayIndexPlusOne
         )
-        NurseRosterParametrization(firstCourseDateDayIndex < $lastDayIndexPlusOne, $firstDayIndex : firstCourseDateDayIndex)
+        NurseRosterParametrization(firstCourseDayDayIndex < $lastDayIndexPlusOne, $firstDayIndex : firstCourseDayDayIndex)
     then
         insertLogical(new TaFreeSequence($ta, $firstDayIndex, $lastDayIndexPlusOne - 1));
 end
@@ -261,15 +261,15 @@ rule "insertLastTaFreeSequence"
     when
         TaConsecutiveAssignmentEnd(
             $ta : ta,
-            $firstDayIndexMinusOne : courseDateDayIndex
+            $firstDayIndexMinusOne : courseDayDayIndex
         )
 
         // There are no working days after the last day
         not TaConsecutiveAssignmentStart(
             ta == $ta,
-            courseDateDayIndex > $firstDayIndexMinusOne
+            courseDayDayIndex > $firstDayIndexMinusOne
         )
-        NurseRosterParametrization(lastCourseDateDayIndex > $firstDayIndexMinusOne, $lastDayIndex : lastCourseDateDayIndex)
+        NurseRosterParametrization(lastCourseDayDayIndex > $firstDayIndexMinusOne, $lastDayIndex : lastCourseDayDayIndex)
     then
         insertLogical(new TaFreeSequence($ta, $firstDayIndexMinusOne + 1, $lastDayIndex));
 end
@@ -281,7 +281,7 @@ rule "insertEntireTaFreeSequence"
         not TaConsecutiveAssignmentStart(
             ta == $ta
         )
-        NurseRosterParametrization($firstDayIndex : firstCourseDateDayIndex, $lastDayIndex : lastCourseDateDayIndex)
+        NurseRosterParametrization($firstDayIndex : firstCourseDayDayIndex, $lastDayIndex : lastCourseDayDayIndex)
     then
         insertLogical(new TaFreeSequence($ta, $firstDayIndex, $lastDayIndex));
 end
@@ -455,7 +455,7 @@ rule "identicalCourseTypesDuringWeekend"
         $contractLine : BooleanContractLine(contractLineType == ContractLineType.IDENTICAL_COURSE_TYPES_DURING_WEEKEND,
             enabled == true, $contract : contract)
         $ta : Ta(contract == $contract, $weekendLength : weekendLength)
-        CourseDate(dayOfWeek == DayOfWeek.SUNDAY, $sundayIndex : dayIndex)
+        CourseDay(dayOfWeek == DayOfWeek.SUNDAY, $sundayIndex : dayIndex)
         $courseType : CourseType()
         $weekendAssignmentTotal : Number(intValue > 0 && < $weekendLength) from accumulate(
             $assignment : CourseAssignment(
@@ -473,15 +473,15 @@ end
 // Requested day on/off
 rule "dayOffRequest"
     when
-        $dayOffRequest : DayOffRequest($ta : ta, $courseDate : courseDate, $weight : weight)
-        $assignment : CourseAssignment(ta == $ta, courseDate == $courseDate)
+        $dayOffRequest : DayOffRequest($ta : ta, $courseDay : courseDay, $weight : weight)
+        $assignment : CourseAssignment(ta == $ta, courseDay == $courseDay)
     then
         scoreHolder.addSoftConstraintMatch(kcontext, - $weight);
 end
 rule "dayOnRequest"
     when
-        $dayOnRequest : DayOnRequest($ta : ta, $courseDate : courseDate, $weight : weight)
-        not CourseAssignment(ta == $ta, courseDate == $courseDate)
+        $dayOnRequest : DayOnRequest($ta : ta, $courseDay : courseDay, $weight : weight)
+        not CourseAssignment(ta == $ta, courseDay == $courseDay)
     then
         scoreHolder.addSoftConstraintMatch(kcontext, - $weight);
 end
@@ -523,16 +523,16 @@ rule "unwantedPatternFreeBefore2DaysWithAWorkDayPattern"
         PatternContractLine(
             pattern == $pattern, $contract : contract
         )
-        CourseDate(dayOfWeek == $freeDayOfWeek, $freeDayIndex : dayIndex)
+        CourseDay(dayOfWeek == $freeDayOfWeek, $freeDayIndex : dayIndex)
         $ta : Ta(contract == $contract)
 
         not CourseAssignment(
             ta == $ta,
-            courseDateDayIndex == $freeDayIndex
+            courseDayDayIndex == $freeDayIndex
         )
         exists CourseAssignment(
             ta == $ta,
-            courseDateDayIndex == ($freeDayIndex + 1) || courseDateDayIndex == ($freeDayIndex + 2)
+            courseDayDayIndex == ($freeDayIndex + 1) || courseDayDayIndex == ($freeDayIndex + 2)
         )
     then
         scoreHolder.addSoftConstraintMatch(kcontext, - $pattern.getWeight());
@@ -551,10 +551,10 @@ end
 //        )
 //
 //        CourseAssignment(
-//            ($workDayOfWeek == null) || (courseDateDayOfWeek == $workDayOfWeek),
+//            ($workDayOfWeek == null) || (courseDayDayOfWeek == $workDayOfWeek),
 //            ($workCourseType == null) || (courseType == $workCourseType),
 //            contract == $contract,
-//            $ta : ta, $workDayIndex : courseDateDayIndex
+//            $ta : ta, $workDayIndex : courseDayDayIndex
 //        )
 //        TaFreeSequence(
 //            ta == $ta,
@@ -577,12 +577,12 @@ rule "unwantedPatternCourseType2DaysPattern"
         CourseAssignment(
             courseType == $dayIndex0CourseType,
             contract == $contract,
-            $ta : ta, $firstDayIndex : courseDateDayIndex
+            $ta : ta, $firstDayIndex : courseDayDayIndex
         )
         CourseAssignment(
             ($dayIndex1CourseType == null) || (courseType == $dayIndex1CourseType),
             ta == $ta,
-            courseDateDayIndex == ($firstDayIndex + 1)
+            courseDayDayIndex == ($firstDayIndex + 1)
         )
     then
         scoreHolder.addSoftConstraintMatch(kcontext, - $pattern.getWeight());
@@ -601,17 +601,17 @@ rule "unwantedPatternCourseType3DaysPattern"
         CourseAssignment(
             courseType == $dayIndex0CourseType,
             contract == $contract,
-            $ta : ta, $firstDayIndex : courseDateDayIndex
+            $ta : ta, $firstDayIndex : courseDayDayIndex
         )
         CourseAssignment(
             courseType == $dayIndex1CourseType,
             ta == $ta,
-            courseDateDayIndex == ($firstDayIndex + 1)
+            courseDayDayIndex == ($firstDayIndex + 1)
         )
         CourseAssignment(
             courseType == $dayIndex2CourseType,
             ta == $ta,
-            courseDateDayIndex == ($firstDayIndex + 2)
+            courseDayDayIndex == ($firstDayIndex + 2)
         )
     then
         scoreHolder.addSoftConstraintMatch(kcontext, - $pattern.getWeight());

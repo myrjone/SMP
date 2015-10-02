@@ -26,8 +26,8 @@ import java.util.List;
 import java.util.TimeZone;
 import org.optaplanner.examples.common.domain.AbstractPersistable;
 
-@XStreamAlias("CourseDate")
-public class CourseDate extends AbstractPersistable {
+@XStreamAlias("CourseDay")
+public class CourseDay extends AbstractPersistable {
 
     private int dayIndex;
     private String dateString;
@@ -78,7 +78,7 @@ public class CourseDate extends AbstractPersistable {
         try {
             date = dateFormat.parse(dateString);
         } catch (ParseException e) {
-            throw new IllegalStateException("Could not parse courseDate (" + this
+            throw new IllegalStateException("Could not parse courseDay (" + this
                     + ")'s dateString (" + dateString + ").");
         }
         calendar.setTime(date);
@@ -87,7 +87,7 @@ public class CourseDate extends AbstractPersistable {
     }
 
     public String getLabel() {
-        return dayOfWeek.getLabel() + " " + dateString.substring(5).replaceAll("\\-", "/");
+        return dayOfWeek.getCode();
     }
 
     @Override

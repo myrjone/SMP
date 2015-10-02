@@ -39,7 +39,7 @@ import org.optaplanner.examples.common.swingui.TangoColorFactory;
 import org.optaplanner.examples.common.swingui.components.LabeledComboBoxRenderer;
 import org.optaplanner.examples.nurserostering.domain.Course;
 import org.optaplanner.examples.nurserostering.domain.CourseAssignment;
-import org.optaplanner.examples.nurserostering.domain.CourseDate;
+import org.optaplanner.examples.nurserostering.domain.CourseDay;
 import org.optaplanner.examples.nurserostering.domain.CourseType;
 import org.optaplanner.examples.nurserostering.domain.Ta;
 
@@ -49,24 +49,24 @@ public class TaPanel extends JPanel {
     public static final int EAST_HEADER_WIDTH = 130;
 
     private final NurseRosteringPanel nurseRosteringPanel;
-    private List<CourseDate> courseDateList;
+    private List<CourseDay> courseDayList;
     private List<Course> courseList;
     private final Ta ta;
 
     private JLabel taLabel;
     private JButton deleteButton;
-    private JPanel courseDateListPanel = null;
-    private Map<CourseDate,JPanel> courseDatePanelMap;
+    private JPanel courseDayListPanel = null;
+    private Map<CourseDay,JPanel> courseDayPanelMap;
     private Map<Course, JPanel> coursePanelMap;
     private JLabel numberOfCourseAssignmentsLabel;
 
     private final Map<CourseAssignment, JButton> courseAssignmentButtonMap = new HashMap<> ();
 
-    public TaPanel(NurseRosteringPanel nurseRosteringPanel, List<CourseDate> courseDateList, List<Course> courseList,
+    public TaPanel(NurseRosteringPanel nurseRosteringPanel, List<CourseDay> courseDayList, List<Course> courseList,
             Ta ta) {
         super(new BorderLayout());
         this.nurseRosteringPanel = nurseRosteringPanel;
-        this.courseDateList = courseDateList;
+        this.courseDayList = courseDayList;
         this.courseList = courseList;
         this.ta = ta;
         setBorder(BorderFactory.createCompoundBorder(
@@ -85,8 +85,8 @@ public class TaPanel extends JPanel {
         return ta == null ? "Unassigned" : ta.getLabel();
     }
 
-    public void setCourseDateListAndCourseList(List<CourseDate> courseDateList, List<Course> courseList) {
-        this.courseDateList = courseDateList;
+    public void setCourseDayListAndCourseList(List<CourseDay> courseDayList, List<Course> courseList) {
+        this.courseDayList = courseDayList;
         this.courseList = courseList;
         resetCourseListPanel();
     }
@@ -124,39 +124,39 @@ public class TaPanel extends JPanel {
     }
 
     public void resetCourseListPanel() {
-        if (courseDateListPanel != null) {
-            remove(courseDateListPanel);
+        if (courseDayListPanel != null) {
+            remove(courseDayListPanel);
         }
-        courseDateListPanel = new JPanel(new GridLayout(1, 0));
-        courseDatePanelMap = new LinkedHashMap<>(courseDateList.size());
-        for (CourseDate courseDate : courseDateList) {
-            JPanel courseDatePanel = new JPanel(new GridLayout(1, 0));
-            Color backgroundColor = courseDatePanel.getBackground();
-            courseDatePanel.setBackground(backgroundColor);
-            courseDatePanel.setEnabled(true);
-            courseDatePanel.setBorder(BorderFactory.createCompoundBorder(
+        courseDayListPanel = new JPanel(new GridLayout(1, 0));
+        courseDayPanelMap = new LinkedHashMap<>(courseDayList.size());
+        for (CourseDay courseDay : courseDayList) {
+            JPanel courseDayPanel = new JPanel(new GridLayout(1, 0));
+            Color backgroundColor = courseDayPanel.getBackground();
+            courseDayPanel.setBackground(backgroundColor);
+            courseDayPanel.setEnabled(true);
+            courseDayPanel.setBorder(BorderFactory.createCompoundBorder(
                     BorderFactory.createLineBorder(TangoColorFactory.ALUMINIUM_6),
                     BorderFactory.createEmptyBorder(2, 2, 2, 2)));
-            courseDatePanelMap.put(courseDate, courseDatePanel);
+            courseDayPanelMap.put(courseDay, courseDayPanel);
             if (ta == null) {
                 // TODO HACK should be in NurseRosterPanel.createHeaderPanel
-                JPanel wrappingCourseDatePanel = new JPanel(new BorderLayout());
-                JLabel courseDateLabel = new JLabel(courseDate.getLabel(), JLabel.CENTER);
-                courseDateLabel.setEnabled(courseDatePanel.isEnabled());
-                wrappingCourseDatePanel.add(courseDateLabel, BorderLayout.NORTH);
-                wrappingCourseDatePanel.add(courseDatePanel, BorderLayout.CENTER);
-                courseDateListPanel.add(wrappingCourseDatePanel);
+                JPanel wrappingCourseDayPanel = new JPanel(new BorderLayout());
+                JLabel courseDayLabel = new JLabel(courseDay.getLabel(), JLabel.CENTER);
+                courseDayLabel.setEnabled(courseDayPanel.isEnabled());
+                wrappingCourseDayPanel.add(courseDayLabel, BorderLayout.NORTH);
+                wrappingCourseDayPanel.add(courseDayPanel, BorderLayout.CENTER);
+                courseDayListPanel.add(wrappingCourseDayPanel);
             } else {
-                courseDateListPanel.add(courseDatePanel);
+                courseDayListPanel.add(courseDayPanel);
             }
         }
         coursePanelMap = new LinkedHashMap<>(courseList.size());
         for (Course course : courseList) {
-            JPanel courseDatePanel = courseDatePanelMap.get(course.getCourseDate());
+            JPanel courseDayPanel = courseDayPanelMap.get(course.getCourseDay());
             JPanel coursePanel = new JPanel();
-            coursePanel.setEnabled(courseDatePanel.isEnabled());
+            coursePanel.setEnabled(courseDayPanel.isEnabled());
             coursePanel.setLayout(new BoxLayout(coursePanel, BoxLayout.Y_AXIS));
-            Color backgroundColor = courseDatePanel.getBackground();
+            Color backgroundColor = courseDayPanel.getBackground();
             if (ta != null) {
                 if (ta.getCourseOffRequestMap().containsKey(course)) {
                     backgroundColor = TangoColorFactory.ALUMINIUM_4;
@@ -165,13 +165,13 @@ public class TaPanel extends JPanel {
                 }
             }
             coursePanel.setBackground(backgroundColor);
-            coursePanel.setToolTipText("<html>Date: " + course.getCourseDate().getLabel() + "<br/>"
+            coursePanel.setToolTipText("<html>Date: " + course.getCourseDay().getLabel() + "<br/>"
                     + "Ta: " + (ta == null ? "unassigned" : ta.getLabel())
                     + "</html>");
             coursePanelMap.put(course, coursePanel);
-            courseDatePanel.add(coursePanel);
+            courseDayPanel.add(coursePanel);
         }
-        add(courseDateListPanel, BorderLayout.CENTER);
+        add(courseDayListPanel, BorderLayout.CENTER);
     }
 
     public void addCourseAssignment(CourseAssignment courseAssignment) {
@@ -221,7 +221,7 @@ public class TaPanel extends JPanel {
             Course course = courseAssignment.getCourse();
             CourseType courseType = course.getCourseType();
             // Tooltip
-            putValue(SHORT_DESCRIPTION, "<html>Date: " + course.getCourseDate().getLabel() + "<br/>"
+            putValue(SHORT_DESCRIPTION, "<html>Date: " + course.getCourseDay().getLabel() + "<br/>"
                     + "Course type: " + courseType.getLabel() + " (from " + courseType.getStartTimeString()
                     + " to " + courseType.getEndTimeString() + ")<br/>"
                     + "Ta: " + (ta == null ? "unassigned" : ta.getLabel())

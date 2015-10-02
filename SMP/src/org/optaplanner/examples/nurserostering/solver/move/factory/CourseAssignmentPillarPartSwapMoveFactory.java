@@ -45,7 +45,7 @@ public class CourseAssignmentPillarPartSwapMoveFactory implements MoveListFactor
         // Hash the assignments per ta
         Map<Ta, List<AssignmentSequence>> taToAssignmentSequenceListMap
                 = new HashMap<>(taList.size());
-        int assignmentSequenceCapacity = nurseRoster.getCourseDateList().size() + 1 / 2;
+        int assignmentSequenceCapacity = nurseRoster.getCourseDayList().size() + 1 / 2;
         for (Ta ta : taList) {
             taToAssignmentSequenceListMap.put(ta,
                     new ArrayList<AssignmentSequence>(assignmentSequenceCapacity));
@@ -143,7 +143,7 @@ public class CourseAssignmentPillarPartSwapMoveFactory implements MoveListFactor
             this.ta = ta;
             courseAssignmentList = new ArrayList<>();
             courseAssignmentList.add(courseAssignment);
-            firstDayIndex = courseAssignment.getCourseDateDayIndex();
+            firstDayIndex = courseAssignment.getCourseDayDayIndex();
             lastDayIndex = firstDayIndex;
         }
 
@@ -165,15 +165,15 @@ public class CourseAssignmentPillarPartSwapMoveFactory implements MoveListFactor
 
         private void add(CourseAssignment courseAssignment) {
             courseAssignmentList.add(courseAssignment);
-            int dayIndex = courseAssignment.getCourseDateDayIndex();
+            int dayIndex = courseAssignment.getCourseDayDayIndex();
             if (dayIndex < lastDayIndex) {
-                throw new IllegalStateException("The courseAssignmentList is expected to be sorted by courseDate.");
+                throw new IllegalStateException("The courseAssignmentList is expected to be sorted by courseDay.");
             }
             lastDayIndex = dayIndex;
         }
 
         private boolean belongsHere(CourseAssignment courseAssignment) {
-            return courseAssignment.getCourseDateDayIndex() <= (lastDayIndex + 1);
+            return courseAssignment.getCourseDayDayIndex() <= (lastDayIndex + 1);
         }
 
     }

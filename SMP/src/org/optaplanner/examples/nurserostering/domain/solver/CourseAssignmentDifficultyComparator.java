@@ -29,7 +29,7 @@ public class CourseAssignmentDifficultyComparator implements Comparator<CourseAs
         Course aCourse = a.getCourse();
         Course bCourse = b.getCourse();
         return new CompareToBuilder()
-                    .append(bCourse.getCourseDate(), aCourse.getCourseDate()) // Descending
+                    .append(bCourse.getCourseDay(), aCourse.getCourseDay()) // Descending
                     .append(bCourse.getCourseType(), aCourse.getCourseType()) // Descending
                     // For construction heuristics, scheduling the courses in sequence is better
                     .append(aCourse.getRequiredTaSize(), bCourse.getRequiredTaSize())

@@ -20,18 +20,18 @@ import java.io.Serializable;
 import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.optaplanner.examples.nurserostering.domain.CourseDate;
+import org.optaplanner.examples.nurserostering.domain.CourseDay;
 import org.optaplanner.examples.nurserostering.domain.Ta;
 import org.optaplanner.examples.nurserostering.domain.contract.Contract;
 
 public class TaConsecutiveAssignmentEnd implements Comparable<TaConsecutiveAssignmentEnd>, Serializable {
 
     private Ta ta;
-    private CourseDate courseDate;
+    private CourseDay courseDay;
 
-    public TaConsecutiveAssignmentEnd(Ta ta, CourseDate courseDate) {
+    public TaConsecutiveAssignmentEnd(Ta ta, CourseDay courseDay) {
         this.ta = ta;
-        this.courseDate = courseDate;
+        this.courseDay = courseDay;
     }
 
     public Ta getTa() {
@@ -42,12 +42,12 @@ public class TaConsecutiveAssignmentEnd implements Comparable<TaConsecutiveAssig
         this.ta = ta;
     }
 
-    public CourseDate getCourseDate() {
-        return courseDate;
+    public CourseDay getCourseDay() {
+        return courseDay;
     }
 
-    public void setCourseDate(CourseDate courseDate) {
-        this.courseDate = courseDate;
+    public void setCourseDay(CourseDay courseDay) {
+        this.courseDay = courseDay;
     }
 
     @Override
@@ -58,7 +58,7 @@ public class TaConsecutiveAssignmentEnd implements Comparable<TaConsecutiveAssig
             TaConsecutiveAssignmentEnd other = (TaConsecutiveAssignmentEnd) o;
             return new EqualsBuilder()
                     .append(ta, other.ta)
-                    .append(courseDate, other.courseDate)
+                    .append(courseDay, other.courseDay)
                     .isEquals();
         } else {
             return false;
@@ -69,7 +69,7 @@ public class TaConsecutiveAssignmentEnd implements Comparable<TaConsecutiveAssig
     public int hashCode() {
         return new HashCodeBuilder()
                 .append(ta)
-                .append(courseDate)
+                .append(courseDay)
                 .toHashCode();
     }
 
@@ -77,20 +77,20 @@ public class TaConsecutiveAssignmentEnd implements Comparable<TaConsecutiveAssig
     public int compareTo(TaConsecutiveAssignmentEnd other) {
         return new CompareToBuilder()
                 .append(ta, other.ta)
-                .append(courseDate, other.courseDate)
+                .append(courseDay, other.courseDay)
                 .toComparison();
     }
 
     @Override
     public String toString() {
-        return ta + " ... - " + courseDate;
+        return ta + " ... - " + courseDay;
     }
 
     public Contract getContract() {
         return ta.getContract();
     }
 
-    public int getCourseDateDayIndex() {
-        return courseDate.getDayIndex();
+    public int getCourseDayDayIndex() {
+        return courseDay.getDayIndex();
     }
 }

@@ -37,7 +37,7 @@ import org.optaplanner.core.impl.solver.ProblemFactChange;
 import org.optaplanner.examples.common.swingui.SolutionPanel;
 import org.optaplanner.examples.nurserostering.domain.Course;
 import org.optaplanner.examples.nurserostering.domain.CourseAssignment;
-import org.optaplanner.examples.nurserostering.domain.CourseDate;
+import org.optaplanner.examples.nurserostering.domain.CourseDay;
 import org.optaplanner.examples.nurserostering.domain.NurseRoster;
 import org.optaplanner.examples.nurserostering.domain.Ta;
 
@@ -87,7 +87,7 @@ public class NurseRosteringPanel extends SolutionPanel {
     private void createTaListPanel() {
         taListPanel = new JPanel();
         taListPanel.setLayout(new BoxLayout(taListPanel, BoxLayout.Y_AXIS));
-        unassignedPanel = new TaPanel(this, Collections.<CourseDate>emptyList(), Collections.<Course>emptyList(),
+        unassignedPanel = new TaPanel(this, Collections.<CourseDay>emptyList(), Collections.<Course>emptyList(),
                 null);
         taListPanel.add(unassignedPanel);
         taToPanelMap = new LinkedHashMap<>();
@@ -114,16 +114,16 @@ public class NurseRosteringPanel extends SolutionPanel {
         taToPanelMap.clear();
         taToPanelMap.put(null, unassignedPanel);
         unassignedPanel.clearCourseAssignments();
-        List<CourseDate> courseDateList = nurseRoster.getCourseDateList();
+        List<CourseDay> courseDayList = nurseRoster.getCourseDayList();
         List<Course> courseList = nurseRoster.getCourseList();
-        unassignedPanel.setCourseDateListAndCourseList(courseDateList, courseList);
+        unassignedPanel.setCourseDayListAndCourseList(courseDayList, courseList);
         updatePanel(nurseRoster);
     }
 
     @Override
     public void updatePanel(Solution solution) {
         NurseRoster nurseRoster = (NurseRoster) solution;
-        List<CourseDate> courseDateList = nurseRoster.getCourseDateList();
+        List<CourseDay> courseDayList = nurseRoster.getCourseDayList();
         List<Course> courseList = nurseRoster.getCourseList();
         Set<Ta> deadTaSet = new LinkedHashSet<>(taToPanelMap.keySet());
         deadTaSet.remove(null);
@@ -131,7 +131,7 @@ public class NurseRosteringPanel extends SolutionPanel {
             deadTaSet.remove(ta);
             TaPanel taPanel = taToPanelMap.get(ta);
             if (taPanel == null) {
-                taPanel = new TaPanel(this, courseDateList, courseList, ta);
+                taPanel = new TaPanel(this, courseDayList, courseList, ta);
                 taListPanel.add(taPanel);
                 taToPanelMap.put(ta, taPanel);
             }
