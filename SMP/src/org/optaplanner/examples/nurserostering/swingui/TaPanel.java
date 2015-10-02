@@ -165,7 +165,7 @@ public class TaPanel extends JPanel {
                 }
             }
             coursePanel.setBackground(backgroundColor);
-            coursePanel.setToolTipText("<html>Date: " + course.getCourseDay().getLabel() + "<br/>"
+            coursePanel.setToolTipText("<html>Day: " + course.getCourseDay().getLabel() + "<br/>"
                     + "Ta: " + (ta == null ? "unassigned" : ta.getLabel())
                     + "</html>");
             coursePanelMap.put(course, coursePanel);
@@ -221,7 +221,7 @@ public class TaPanel extends JPanel {
             Course course = courseAssignment.getCourse();
             CourseType courseType = course.getCourseType();
             // Tooltip
-            putValue(SHORT_DESCRIPTION, "<html>Date: " + course.getCourseDay().getLabel() + "<br/>"
+            putValue(SHORT_DESCRIPTION, "<html>Day: " + course.getCourseDay().getLabel() + "<br/>"
                     + "Course type: " + courseType.getLabel() + " (from " + courseType.getStartTimeString()
                     + " to " + courseType.getEndTimeString() + ")<br/>"
                     + "Ta: " + (ta == null ? "unassigned" : ta.getLabel())
@@ -250,5 +250,5 @@ public class TaPanel extends JPanel {
         }
 
     }
-    
+
 }

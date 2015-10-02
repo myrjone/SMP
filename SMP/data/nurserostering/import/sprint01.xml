@@ -194,54 +194,54 @@
     <CourseOff weight="1">
       <CourseTypeID>00000</CourseTypeID>
       <TaID>0</TaID>
-      <Date>Monday</Date>
+      <Day>Monday</Day>
     </CourseOff>
     <CourseOff weight="1">
       <CourseTypeID>00001</CourseTypeID>
       <TaID>4</TaID>
-      <Date>Monday</Date>
+      <Day>Monday</Day>
     </CourseOff>
     <CourseOff weight="1">
       <CourseTypeID>00002</CourseTypeID>
       <TaID>5</TaID>
-      <Date>Tuesday</Date>
+      <Day>Tuesday</Day>
     </CourseOff>
     <CourseOff weight="1">
       <CourseTypeID>00003</CourseTypeID>
       <TaID>6</TaID>
-      <Date>Wednesday</Date>
+      <Day>Wednesday</Day>
     </CourseOff>
     <CourseOff weight="1">
       <CourseTypeID>00001</CourseTypeID>
       <TaID>7</TaID>
-      <Date>Monday</Date>
+      <Day>Monday</Day>
     </CourseOff>
     <CourseOff weight="1">
       <CourseTypeID>00004</CourseTypeID>
       <TaID>8</TaID>
-      <Date>Thursday</Date>
+      <Day>Thursday</Day>
     </CourseOff>
     <CourseOff weight="1">
       <CourseTypeID>00005</CourseTypeID>
       <TaID>9</TaID>
-      <Date>Friday</Date>
+      <Day>Friday</Day>
     </CourseOff>
     <CourseOff weight="1">
       <CourseTypeID>00002</CourseTypeID>
       <TaID>2</TaID>
-      <Date>Tuesday</Date>
+      <Day>Tuesday</Day>
     </CourseOff>
     <CourseOff weight="1">
       <CourseTypeID>00003</CourseTypeID>
       <TaID>3</TaID>
-      <Date>Wednesday</Date>
+      <Day>Wednesday</Day>
     </CourseOff>
   </CourseOffRequests>
   <CourseOnRequests>
       <CourseOn weight="1">
           <CourseTypeID>00001</CourseTypeID>
           <TaID>0</TaID>
-          <Date>Monday</Date>
+          <Day>Monday</Day>
     </CourseOn>
   </CourseOnRequests>
 </SchedulingPeriod>

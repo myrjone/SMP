@@ -64,7 +64,7 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
 
         protected Map<String, CourseDay> courseDayMap;
         protected Map<String, CourseType> courseTypeMap;
-        protected Map<List<String>, Course> dateAndCourseTypeToCourseMap;
+        protected Map<List<String>, Course> dayAndCourseTypeToCourseMap;
         protected Map<List<Object>, List<Course>> dayOfWeekAndCourseTypeToCourseListMap;
         protected Map<String, Contract> contractMap;
         protected Map<String, Ta> taMap;
@@ -184,12 +184,12 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                 CourseDay courseDay = new CourseDay();
                 courseDay.setId(id);
                 courseDay.setDayIndex(dayIndex);
-                String dateString = day.getCode();
-                courseDay.setDateString(dateString);
+                String dayString = day.getCode();
+                courseDay.setDayString(dayString);
                 courseDay.setDayOfWeek(day);
                 courseDay.setCourseList(new ArrayList<Course>());
                 courseDayList.add(courseDay);
-                courseDayMap.put(dateString, courseDay);
+                courseDayMap.put(dayString, courseDay);
                 id++;
                 dayIndex++;
             }
@@ -240,7 +240,7 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
             List<CourseType> courseTypeList = nurseRoster.getCourseTypeList();
             int courseListSize = courseDayMap.size() * courseTypeList.size();
             List<Course> courseList = new ArrayList<>(courseListSize);
-            dateAndCourseTypeToCourseMap = new HashMap<>(courseListSize);
+            dayAndCourseTypeToCourseMap = new HashMap<>(courseListSize);
             dayOfWeekAndCourseTypeToCourseListMap = new HashMap<>(7 * courseTypeList.size());
             long id = 0L;
             int index = 0;
@@ -254,7 +254,7 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                     course.setIndex(index);
                     course.setRequiredTaSize(0); // Filled in later
                     courseList.add(course);
-                    dateAndCourseTypeToCourseMap.put(Arrays.asList(courseDay.getDateString(), courseType.getCode()), course);
+                    dayAndCourseTypeToCourseMap.put(Arrays.asList(courseDay.getDayString(), courseType.getCode()), course);
                     addCourseToDayOfWeekAndCourseTypeToCourseListMap(courseDay, courseType, course);
                     id++;
                     index++;
@@ -487,17 +487,17 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                         }   }
                             break;
                         }
-                    case "DateSpecificCover":
+                    case "DaySpecificCover":
                     {
-                        Element dateElement = element.getChild("Date");
+                        Element dayElement = element.getChild("Day");
                         List<Element> coverElementList = element.getChildren("Cover");
                         for (Element coverElement : coverElementList) {
                             Element courseTypeElement = coverElement.getChild("Course");
-                            Course course = dateAndCourseTypeToCourseMap.get(Arrays.asList(dateElement.getText(), courseTypeElement.getText()));
+                            Course course = dayAndCourseTypeToCourseMap.get(Arrays.asList(dayElement.getText(), courseTypeElement.getText()));
                             if (course == null) {
-                                throw new IllegalArgumentException("The date (" + dateElement.getText()
+                                throw new IllegalArgumentException("The day (" + dayElement.getText()
                                         + ") with the courseType (" + courseTypeElement.getText()
-                                        + ") of an entity DateSpecificCover does not have a course.");
+                                        + ") of an entity DaySpecificCover does not have a course.");
                             }
                             int requiredTaSize = Integer.parseInt(coverElement.getChild("Preferred").getText());
                             course.setRequiredTaSize(course.getRequiredTaSize() + requiredTaSize);
@@ -530,11 +530,11 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                     }
                     courseOffRequest.setTa(ta);
 
-                    String day = element.getChild("Date").getText();
+                    String day = element.getChild("Day").getText();
                     Element courseTypeElement = element.getChild("CourseTypeID");
-                    Course course = dateAndCourseTypeToCourseMap.get(Arrays.asList(day, courseTypeElement.getText()));
+                    Course course = dayAndCourseTypeToCourseMap.get(Arrays.asList(day, courseTypeElement.getText()));
                     if (course == null) {
-                        throw new IllegalArgumentException("The date (" + day
+                        throw new IllegalArgumentException("The day (" + day
                                 + ") or the courseType (" + courseTypeElement.getText()
                                 + ") of courseOffRequest (" + courseOffRequest + ") does not exist.");
                     }
@@ -571,11 +571,11 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                     }
                     courseOnRequest.setTa(ta);
 
-                    String day = element.getChild("Date").getText();
+                    String day = element.getChild("Day").getText();
                     Element courseTypeElement = element.getChild("CourseTypeID");
-                    Course course = dateAndCourseTypeToCourseMap.get(Arrays.asList(day, courseTypeElement.getText()));
+                    Course course = dayAndCourseTypeToCourseMap.get(Arrays.asList(day, courseTypeElement.getText()));
                     if (course == null) {
-                        throw new IllegalArgumentException("The date (" + day
+                        throw new IllegalArgumentException("The day (" + day
                                 + ") or the courseType (" + courseTypeElement.getText()
                                 + ") of courseOnRequest (" + courseOnRequest + ") does not exist.");
                     }

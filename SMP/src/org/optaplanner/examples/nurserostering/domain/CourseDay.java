@@ -17,20 +17,14 @@
 package org.optaplanner.examples.nurserostering.domain;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 import org.optaplanner.examples.common.domain.AbstractPersistable;
 
 @XStreamAlias("CourseDay")
 public class CourseDay extends AbstractPersistable {
 
     private int dayIndex;
-    private String dateString;
+    private String dayString;
     private DayOfWeek dayOfWeek;
 
     private List<Course> courseList;
@@ -43,12 +37,12 @@ public class CourseDay extends AbstractPersistable {
         this.dayIndex = dayIndex;
     }
 
-    public String getDateString() {
-        return dateString;
+    public String getDayString() {
+        return dayString;
     }
 
-    public void setDateString(String dateString) {
-        this.dateString = dateString;
+    public void setDayString(String dayString) {
+        this.dayString = dayString;
     }
 
     public DayOfWeek getDayOfWeek() {
@@ -67,32 +61,13 @@ public class CourseDay extends AbstractPersistable {
         this.courseList = courseList;
     }
 
-    public String determineNextDateString() {
-        TimeZone LOCAL_TIMEZONE = TimeZone.getTimeZone("GMT");
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeZone(LOCAL_TIMEZONE);
-        calendar.clear();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        dateFormat.setCalendar(calendar);
-        Date date;
-        try {
-            date = dateFormat.parse(dateString);
-        } catch (ParseException e) {
-            throw new IllegalStateException("Could not parse courseDay (" + this
-                    + ")'s dateString (" + dateString + ").");
-        }
-        calendar.setTime(date);
-        calendar.add(Calendar.DAY_OF_YEAR, 1);
-        return dateFormat.format(calendar.getTime());
-    }
-
     public String getLabel() {
         return dayOfWeek.getCode();
     }
 
     @Override
     public String toString() {
-        return dateString + "(" + dayOfWeek + ")";
+        return dayString + "(" + dayOfWeek + ")";
     }
 
     public int getWeekendSundayIndex() {
