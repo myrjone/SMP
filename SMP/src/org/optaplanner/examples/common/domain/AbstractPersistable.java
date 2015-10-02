@@ -67,6 +67,7 @@ public abstract class AbstractPersistable implements Serializable, Comparable<Ab
      * @param other never null
      * @return comparison
      */
+    @Override
     public int compareTo(AbstractPersistable other) {
         return new CompareToBuilder()
                 .append(getClass().getName(), other.getClass().getName())
@@ -74,6 +75,7 @@ public abstract class AbstractPersistable implements Serializable, Comparable<Ab
                 .toComparison();
     }
 
+    @Override
     public String toString() {
         return "[" + getClass().getName().replaceAll(".*\\.", "") + "-" + id + "]";
     }

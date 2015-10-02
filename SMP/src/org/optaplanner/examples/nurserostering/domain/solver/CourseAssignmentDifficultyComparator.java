@@ -24,6 +24,7 @@ import org.optaplanner.examples.nurserostering.domain.CourseAssignment;
 
 public class CourseAssignmentDifficultyComparator implements Comparator<CourseAssignment>, Serializable {
 
+    @Override
     public int compare(CourseAssignment a, CourseAssignment b) {
         Course aCourse = a.getCourse();
         Course bCourse = b.getCourse();

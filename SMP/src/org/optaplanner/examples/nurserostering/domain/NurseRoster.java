@@ -136,10 +136,12 @@ public class NurseRoster extends AbstractPersistable implements Solution<HardSof
         this.courseAssignmentList = courseAssignmentList;
     }
 
+    @Override
     public HardSoftScore getScore() {
         return score;
     }
 
+    @Override
     public void setScore(HardSoftScore score) {
         this.score = score;
     }
@@ -148,6 +150,7 @@ public class NurseRoster extends AbstractPersistable implements Solution<HardSof
     // Complex methods
     // ************************************************************************
 
+    @Override
     public Collection<? extends Object> getProblemFacts() {
         List<Object> facts = new ArrayList<>();
         facts.addAll(courseTypeList);

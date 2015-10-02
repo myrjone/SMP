@@ -37,14 +37,17 @@ public class CourseAssignmentSwapMove extends AbstractMove {
         this.rightCourseAssignment = rightCourseAssignment;
     }
 
+    @Override
     public boolean isMoveDoable(ScoreDirector scoreDirector) {
         return !ObjectUtils.equals(leftCourseAssignment.getTa(), rightCourseAssignment.getTa());
     }
 
+    @Override
     public Move createUndoMove(ScoreDirector scoreDirector) {
         return new CourseAssignmentSwapMove(rightCourseAssignment, leftCourseAssignment);
     }
 
+    @Override
     public void doMove(ScoreDirector scoreDirector) {
         Ta oldLeftTa = leftCourseAssignment.getTa();
         Ta oldRightTa = rightCourseAssignment.getTa();
@@ -52,14 +55,17 @@ public class CourseAssignmentSwapMove extends AbstractMove {
         NurseRosteringMoveHelper.moveTa(scoreDirector, rightCourseAssignment, oldLeftTa);
     }
 
+    @Override
     public Collection<? extends Object> getPlanningEntities() {
         return Arrays.asList(leftCourseAssignment, rightCourseAssignment);
     }
 
+    @Override
     public Collection<? extends Object> getPlanningValues() {
         return Arrays.asList(leftCourseAssignment.getTa(), rightCourseAssignment.getTa());
     }
 
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -74,6 +80,7 @@ public class CourseAssignmentSwapMove extends AbstractMove {
         }
     }
 
+    @Override
     public int hashCode() {
         return new HashCodeBuilder()
                 .append(leftCourseAssignment)
@@ -81,6 +88,7 @@ public class CourseAssignmentSwapMove extends AbstractMove {
                 .toHashCode();
     }
 
+    @Override
     public String toString() {
         return leftCourseAssignment + " <=> " + rightCourseAssignment;
     }

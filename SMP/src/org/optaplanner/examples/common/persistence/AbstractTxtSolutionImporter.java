@@ -39,12 +39,14 @@ public abstract class AbstractTxtSolutionImporter extends AbstractSolutionImport
         super(withoutDao);
     }
 
+    @Override
     public String getInputFileSuffix() {
         return DEFAULT_INPUT_FILE_SUFFIX;
     }
 
     public abstract TxtInputBuilder createTxtInputBuilder();
 
+    @Override
     public Solution readSolution(File inputFile) {
         Solution solution;
         BufferedReader bufferedReader = null;

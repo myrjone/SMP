@@ -39,12 +39,14 @@ public abstract class AbstractXmlSolutionExporter extends AbstractSolutionExport
         super(withoutDao);
     }
 
+    @Override
     public String getOutputFileSuffix() {
         return DEFAULT_OUTPUT_FILE_SUFFIX;
     }
 
     public abstract XmlOutputBuilder createXmlOutputBuilder();
 
+    @Override
     public void writeSolution(Solution solution, File outputFile) {
         OutputStream out = null;
         try {

@@ -34,6 +34,7 @@ import org.optaplanner.examples.nurserostering.solver.move.TaMultipleChangeMove;
 
 public class CourseAssignmentPillarPartSwapMoveFactory implements MoveListFactory<NurseRoster> {
 
+    @Override
     public List<Move> createMoveList(NurseRoster nurseRoster) {
         List<Ta> taList = nurseRoster.getTaList();
         // This code assumes the courseAssignmentList is sorted
@@ -209,6 +210,7 @@ public class CourseAssignmentPillarPartSwapMoveFactory implements MoveListFactor
             }
         }
 
+        @Override
         public boolean hasNext() {
             return leftHasNext || rightHasNext;
         }
@@ -230,6 +232,7 @@ public class CourseAssignmentPillarPartSwapMoveFactory implements MoveListFactor
             }
         }
 
+        @Override
         public AssignmentSequence next() {
             lastNextWasLeft = nextIsLeft();
             // Buffer the nextLeft or nextRight
@@ -274,6 +277,7 @@ public class CourseAssignmentPillarPartSwapMoveFactory implements MoveListFactor
             return returnLeft;
         }
 
+        @Override
         public void remove() {
             throw new UnsupportedOperationException("The optional operation remove() is not supported.");
         }

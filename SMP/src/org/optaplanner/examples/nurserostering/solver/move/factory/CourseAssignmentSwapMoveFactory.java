@@ -27,6 +27,7 @@ import org.optaplanner.examples.nurserostering.solver.move.CourseAssignmentSwapM
 
 public class CourseAssignmentSwapMoveFactory implements MoveListFactory<NurseRoster> {
 
+    @Override
     public List<Move> createMoveList(NurseRoster nurseRoster) {
         // Filter out every immovable CourseAssignment
         List<CourseAssignment> courseAssignmentList = new ArrayList<>(

@@ -50,10 +50,12 @@ public abstract class AbstractSolutionDao implements SolutionDao {
         }
     }
 
+    @Override
     public String getDirName() {
         return dirName;
     }
 
+    @Override
     public File getDataDir() {
         return dataDir;
     }

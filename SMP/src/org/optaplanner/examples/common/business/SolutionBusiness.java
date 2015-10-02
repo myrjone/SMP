@@ -214,6 +214,7 @@ public class SolutionBusiness {
     public void registerForBestSolutionChanges(final SolverAndPersistenceFrame solverAndPersistenceFrame) {
         solver.addEventListener(new SolverEventListener<Solution>() {
             // Not called on the event thread
+            @Override
             public void bestSolutionChanged(BestSolutionChangedEvent<Solution> event) {
                 // Avoid ConcurrentModificationException when there is an unprocessed ProblemFactChange
                 // because the paint method uses the same problem facts instances as the Solver's workingSolution
@@ -223,6 +224,7 @@ public class SolutionBusiness {
                     final Solution latestBestSolution = event.getNewBestSolution();
                     // Migrate it to the event thread
                     SwingUtilities.invokeLater(new Runnable() {
+                        @Override
                         public void run() {
                             // TODO by the time we process this event, a newer bestSolution might already be queued
                             guiScoreDirector.setWorkingSolution(latestBestSolution);

@@ -58,6 +58,7 @@ public class TaFreeSequence implements Comparable<TaFreeSequence>, Serializable 
         this.lastDayIndex = lastDayIndex;
     }
 
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -73,6 +74,7 @@ public class TaFreeSequence implements Comparable<TaFreeSequence>, Serializable 
         }
     }
 
+    @Override
     public int hashCode() {
         return new HashCodeBuilder()
                 .append(ta)
@@ -81,6 +83,7 @@ public class TaFreeSequence implements Comparable<TaFreeSequence>, Serializable 
                 .toHashCode();
     }
 
+    @Override
     public int compareTo(TaFreeSequence other) {
         return new CompareToBuilder()
                 .append(ta, other.ta)

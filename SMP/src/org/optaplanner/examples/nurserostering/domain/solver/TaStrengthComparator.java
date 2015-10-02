@@ -23,6 +23,7 @@ import org.optaplanner.examples.nurserostering.domain.Ta;
 
 public class TaStrengthComparator implements Comparator<Ta>, Serializable {
 
+    @Override
     public int compare(Ta a, Ta b) {
         // TODO refactor to DifficultyWeightFactory and use getContract().getContractLineList()
         // to sum maximumValue and minimumValue etc

@@ -74,6 +74,7 @@ public class Ta extends AbstractPersistable implements Labeled {
         this.courseOnRequestMap = courseOnRequestMap;
     }
 
+    @Override
     public String getLabel() {
         return name;
     }

@@ -50,6 +50,7 @@ public class TaConsecutiveAssignmentEnd implements Comparable<TaConsecutiveAssig
         this.courseDate = courseDate;
     }
 
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -64,6 +65,7 @@ public class TaConsecutiveAssignmentEnd implements Comparable<TaConsecutiveAssig
         }
     }
 
+    @Override
     public int hashCode() {
         return new HashCodeBuilder()
                 .append(ta)
@@ -71,6 +73,7 @@ public class TaConsecutiveAssignmentEnd implements Comparable<TaConsecutiveAssig
                 .toHashCode();
     }
 
+    @Override
     public int compareTo(TaConsecutiveAssignmentEnd other) {
         return new CompareToBuilder()
                 .append(ta, other.ta)

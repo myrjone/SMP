@@ -41,14 +41,17 @@ public class TaMultipleChangeMove extends AbstractMove {
         this.toTa = toTa;
     }
 
+    @Override
     public boolean isMoveDoable(ScoreDirector scoreDirector) {
         return !ObjectUtils.equals(fromTa, toTa);
     }
 
+    @Override
     public Move createUndoMove(ScoreDirector scoreDirector) {
         return new TaMultipleChangeMove(toTa, courseAssignmentList, fromTa);
     }
 
+    @Override
     public void doMove(ScoreDirector scoreDirector) {
         for (CourseAssignment courseAssignment : courseAssignmentList) {
             if (!courseAssignment.getTa().equals(fromTa)) {
@@ -59,14 +62,17 @@ public class TaMultipleChangeMove extends AbstractMove {
         }
     }
 
+    @Override
     public Collection<? extends Object> getPlanningEntities() {
         return Collections.singletonList(courseAssignmentList);
     }
 
+    @Override
     public Collection<? extends Object> getPlanningValues() {
         return Arrays.asList(fromTa, toTa);
     }
 
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -82,6 +88,7 @@ public class TaMultipleChangeMove extends AbstractMove {
         }
     }
 
+    @Override
     public int hashCode() {
         return new HashCodeBuilder()
                 .append(fromTa)
@@ -90,6 +97,7 @@ public class TaMultipleChangeMove extends AbstractMove {
                 .toHashCode();
     }
 
+    @Override
     public String toString() {
         return courseAssignmentList + " => " + toTa;
     }

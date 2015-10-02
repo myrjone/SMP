@@ -103,6 +103,7 @@ public class SolverAndPersistenceFrame extends JFrame {
     private void registerListeners() {
         solutionBusiness.registerForBestSolutionChanges(this);
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 // This async, so it doesn't stop the solving immediately
                 solutionBusiness.terminateSolvingEarly();
@@ -209,6 +210,7 @@ public class SolverAndPersistenceFrame extends JFrame {
             this.file = file;
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             try {
@@ -264,6 +266,7 @@ public class SolverAndPersistenceFrame extends JFrame {
             super("Solve", new ImageIcon(SolverAndPersistenceFrame.class.getResource("solveAction.png")));
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             setSolvingState(true);
             Solution planningProblem = solutionBusiness.getSolution();
@@ -309,6 +312,7 @@ public class SolverAndPersistenceFrame extends JFrame {
                     new ImageIcon(SolverAndPersistenceFrame.class.getResource("terminateSolvingEarlyAction.png")));
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             terminateSolvingEarlyAction.setEnabled(false);
             progressBar.setString("Terminating...");
@@ -327,10 +331,12 @@ public class SolverAndPersistenceFrame extends JFrame {
             super(NAME, new ImageIcon(SolverAndPersistenceFrame.class.getResource("openAction.png")));
             fileChooser = new JFileChooser(solutionBusiness.getSolvedDataDir());
             fileChooser.setFileFilter(new FileFilter() {
+                @Override
                 public boolean accept(File file) {
                     return file.isDirectory() || file.getName().endsWith(".xml");
                 }
 
+                @Override
                 public String getDescription() {
                     return "Solution XStream XML files";
                 }
@@ -338,6 +344,7 @@ public class SolverAndPersistenceFrame extends JFrame {
             fileChooser.setDialogTitle(NAME);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             int approved = fileChooser.showOpenDialog(SolverAndPersistenceFrame.this);
             if (approved == JFileChooser.APPROVE_OPTION) {
@@ -362,10 +369,12 @@ public class SolverAndPersistenceFrame extends JFrame {
             super(NAME, new ImageIcon(SolverAndPersistenceFrame.class.getResource("saveAction.png")));
             fileChooser = new JFileChooser(solutionBusiness.getSolvedDataDir());
             fileChooser.setFileFilter(new FileFilter() {
+                @Override
                 public boolean accept(File file) {
                     return file.isDirectory() || file.getName().endsWith(".xml");
                 }
 
+                @Override
                 public String getDescription() {
                     return "Solution XStream XML files";
                 }
@@ -373,6 +382,7 @@ public class SolverAndPersistenceFrame extends JFrame {
             fileChooser.setDialogTitle(NAME);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             fileChooser.setSelectedFile(new File(solutionBusiness.getSolvedDataDir(),
                     FilenameUtils.getBaseName(solutionBusiness.getSolutionFileName()) + ".xml"));
@@ -409,10 +419,12 @@ public class SolverAndPersistenceFrame extends JFrame {
             FileFilter filter;
             if (solutionBusiness.isImportFileDirectory()) {
                 filter = new FileFilter() {
+                    @Override
                     public boolean accept(File file) {
                         return file.isDirectory();
                     }
 
+                    @Override
                     public String getDescription() {
                         return "Import directory";
                     }
@@ -420,10 +432,12 @@ public class SolverAndPersistenceFrame extends JFrame {
                 fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             } else {
                 filter = new FileFilter() {
+                    @Override
                     public boolean accept(File file) {
                         return file.isDirectory() || solutionBusiness.acceptImportFile(file);
                     }
 
+                    @Override
                     public String getDescription() {
                         return "Import files (*." + solutionBusiness.getImportFileSuffix() + ")";
                     }
@@ -433,6 +447,7 @@ public class SolverAndPersistenceFrame extends JFrame {
             fileChooser.setDialogTitle(NAME);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             int approved = fileChooser.showOpenDialog(SolverAndPersistenceFrame.this);
             if (approved == JFileChooser.APPROVE_OPTION) {
@@ -461,10 +476,12 @@ public class SolverAndPersistenceFrame extends JFrame {
             }
             fileChooser = new JFileChooser(solutionBusiness.getExportDataDir());
             fileChooser.setFileFilter(new FileFilter() {
+                @Override
                 public boolean accept(File file) {
                     return file.isDirectory() || file.getName().endsWith("." + solutionBusiness.getExportFileSuffix());
                 }
 
+                @Override
                 public String getDescription() {
                     return "Export files (*." + solutionBusiness.getExportFileSuffix() + ")";
                 }
@@ -472,6 +489,7 @@ public class SolverAndPersistenceFrame extends JFrame {
             fileChooser.setDialogTitle(NAME);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             fileChooser.setSelectedFile(new File(solutionBusiness.getExportDataDir(),
                     FilenameUtils.getBaseName(solutionBusiness.getSolutionFileName())
@@ -541,6 +559,7 @@ public class SolverAndPersistenceFrame extends JFrame {
             super("Constraint matches", new ImageIcon(SolverAndPersistenceFrame.class.getResource("showConstraintMatchesDialogAction.png")));
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             constraintMatchesDialog.resetContentPanel();
             constraintMatchesDialog.setVisible(true);

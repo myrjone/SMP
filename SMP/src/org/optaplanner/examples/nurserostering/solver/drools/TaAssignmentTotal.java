@@ -49,6 +49,7 @@ public class TaAssignmentTotal implements Comparable<TaAssignmentTotal>, Seriali
         this.total = total;
     }
 
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -63,6 +64,7 @@ public class TaAssignmentTotal implements Comparable<TaAssignmentTotal>, Seriali
         }
     }
 
+    @Override
     public int hashCode() {
         return new HashCodeBuilder()
                 .append(ta)
@@ -70,6 +72,7 @@ public class TaAssignmentTotal implements Comparable<TaAssignmentTotal>, Seriali
                 .toHashCode();
     }
 
+    @Override
     public int compareTo(TaAssignmentTotal other) {
         return new CompareToBuilder()
                 .append(ta, other.ta)

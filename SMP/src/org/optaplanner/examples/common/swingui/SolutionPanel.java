@@ -76,18 +76,22 @@ public abstract class SolutionPanel extends JPanel implements Scrollable {
         // Hook method
     }
 
+    @Override
     public Dimension getPreferredScrollableViewportSize() {
         return PREFERRED_SCROLLABLE_VIEWPORT_SIZE;
     }
 
+    @Override
     public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
         return 20;
     }
 
+    @Override
     public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
         return 20;
     }
 
+    @Override
     public boolean getScrollableTracksViewportWidth() {
         if (getParent() instanceof JViewport) {
             return (((JViewport) getParent()).getWidth() > getPreferredSize().width);
@@ -95,6 +99,7 @@ public abstract class SolutionPanel extends JPanel implements Scrollable {
         return false;
     }
 
+    @Override
     public boolean getScrollableTracksViewportHeight() {
         if (getParent() instanceof JViewport) {
             return (((JViewport) getParent()).getHeight() > getPreferredSize().height);

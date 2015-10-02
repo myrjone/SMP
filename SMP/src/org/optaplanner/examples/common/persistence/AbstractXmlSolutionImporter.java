@@ -36,12 +36,14 @@ public abstract class AbstractXmlSolutionImporter extends AbstractSolutionImport
         super(solutionDao);
     }
 
+    @Override
     public String getInputFileSuffix() {
         return DEFAULT_INPUT_FILE_SUFFIX;
     }
 
     public abstract XmlInputBuilder createXmlInputBuilder();
 
+    @Override
     public Solution readSolution(File inputFile) {
         Solution solution;
         InputStream in = null;

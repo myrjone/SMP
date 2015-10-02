@@ -101,6 +101,7 @@ public enum DayOfWeek {
         return code.substring(0, 2);
     }
 
+    @Override
     public String toString() {
         return code.substring(0, 3);
     }

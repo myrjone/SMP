@@ -104,6 +104,7 @@ public class TaPanel extends JPanel {
             deleteButton = new JButton(nurseRosteringPanel.getDeleteTaIcon());
             deleteButton.setToolTipText("Delete");
             deleteButton.addActionListener(new ActionListener() {
+                @Override
                 public void actionPerformed(ActionEvent e) {
                     nurseRosteringPanel.deleteTa(ta);
                 }
@@ -227,6 +228,7 @@ public class TaPanel extends JPanel {
                     + "</html>");
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             List<Ta> taList = nurseRosteringPanel.getNurseRoster().getTaList();
             // Add 1 to array size to add null, which makes the entity unassigned

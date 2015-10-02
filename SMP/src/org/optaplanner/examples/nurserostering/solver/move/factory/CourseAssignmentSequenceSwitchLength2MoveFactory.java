@@ -32,6 +32,7 @@ import org.optaplanner.examples.nurserostering.solver.move.TaChangeMove;
 
 public class CourseAssignmentSequenceSwitchLength2MoveFactory implements MoveListFactory<NurseRoster> {
 
+    @Override
     public List<Move> createMoveList(NurseRoster nurseRoster) {
         List<Ta> taList = nurseRoster.getTaList();
         // This code assumes the courseAssignmentList is sorted

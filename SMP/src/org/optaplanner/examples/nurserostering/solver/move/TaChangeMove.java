@@ -37,26 +37,32 @@ public class TaChangeMove extends AbstractMove {
         this.toTa = toTa;
     }
 
+    @Override
     public boolean isMoveDoable(ScoreDirector scoreDirector) {
         return !ObjectUtils.equals(courseAssignment.getTa(), toTa);
     }
 
+    @Override
     public Move createUndoMove(ScoreDirector scoreDirector) {
         return new TaChangeMove(courseAssignment, courseAssignment.getTa());
     }
 
+    @Override
     public void doMove(ScoreDirector scoreDirector) {
         NurseRosteringMoveHelper.moveTa(scoreDirector, courseAssignment, toTa);
     }
 
+    @Override
     public Collection<? extends Object> getPlanningEntities() {
         return Collections.singletonList(courseAssignment);
     }
 
+    @Override
     public Collection<? extends Object> getPlanningValues() {
         return Collections.singletonList(toTa);
     }
 
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -71,6 +77,7 @@ public class TaChangeMove extends AbstractMove {
         }
     }
 
+    @Override
     public int hashCode() {
         return new HashCodeBuilder()
                 .append(courseAssignment)
@@ -78,6 +85,7 @@ public class TaChangeMove extends AbstractMove {
                 .toHashCode();
     }
 
+    @Override
     public String toString() {
         return courseAssignment + " => " + toTa;
     }

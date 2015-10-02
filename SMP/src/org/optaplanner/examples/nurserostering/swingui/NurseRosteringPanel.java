@@ -103,6 +103,7 @@ public class NurseRosteringPanel extends SolutionPanel {
         return (NurseRoster) solutionBusiness.getSolution();
     }
 
+    @Override
     public void resetPanel(Solution solution) {
         NurseRoster nurseRoster = (NurseRoster) solution;
         for (TaPanel taPanel : taToPanelMap.values()) {
@@ -154,6 +155,7 @@ public class NurseRosteringPanel extends SolutionPanel {
     public void deleteTa(final Ta ta) {
         logger.info("Scheduling delete of ta ({}).", ta);
         doProblemFactChange(new ProblemFactChange() {
+            @Override
             public void doChange(ScoreDirector scoreDirector) {
                 NurseRoster nurseRoster = (NurseRoster) scoreDirector.getWorkingSolution();
                 // First remove the planning fact from all planning entities that use it

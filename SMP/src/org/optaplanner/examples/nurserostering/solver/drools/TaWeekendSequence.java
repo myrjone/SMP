@@ -58,6 +58,7 @@ public class TaWeekendSequence implements Comparable<TaWeekendSequence>, Seriali
         this.lastSundayIndex = lastSundayIndex;
     }
 
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -73,6 +74,7 @@ public class TaWeekendSequence implements Comparable<TaWeekendSequence>, Seriali
         }
     }
 
+    @Override
     public int hashCode() {
         return new HashCodeBuilder()
                 .append(ta)
@@ -81,6 +83,7 @@ public class TaWeekendSequence implements Comparable<TaWeekendSequence>, Seriali
                 .toHashCode();
     }
 
+    @Override
     public int compareTo(TaWeekendSequence other) {
         return new CompareToBuilder()
                 .append(ta, other.ta)

@@ -27,6 +27,7 @@ import org.optaplanner.examples.nurserostering.solver.move.TaChangeMove;
 
 public class TaChangeMoveFactory implements MoveListFactory<NurseRoster> {
 
+    @Override
     public List<Move> createMoveList(NurseRoster nurseRoster) {
         List<Move> moveList = new ArrayList<>();
         List<Ta> taList = nurseRoster.getTaList();
