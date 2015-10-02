@@ -61,15 +61,15 @@ import org.slf4j.LoggerFactory;
 
 public class SolverAndPersistenceFrame extends JFrame {
 
-    protected final transient Logger logger = LoggerFactory.getLogger(getClass());
 
     public static final ImageIcon OPTA_PLANNER_ICON = new ImageIcon(
             SolverAndPersistenceFrame.class.getResource("optaPlannerIcon.png"));
+    protected final transient Logger logger = LoggerFactory.getLogger(getClass());
 
     private final SolutionBusiness solutionBusiness;
 
-    private SolutionPanel solutionPanel;
-    private ConstraintMatchesDialog constraintMatchesDialog;
+    private final SolutionPanel solutionPanel;
+    private final ConstraintMatchesDialog constraintMatchesDialog;
 
     private JPanel quickOpenUnsolvedPanel;
     private List<Action> quickOpenUnsolvedActionList;
@@ -201,27 +201,6 @@ public class SolverAndPersistenceFrame extends JFrame {
         }
     }
 
-    private class QuickOpenAction extends AbstractAction {
-
-        private File file;
-
-        public QuickOpenAction(File file) {
-            super(file.getName().replaceAll("\\.xml$", ""));
-            this.file = file;
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            try {
-                solutionBusiness.openSolution(file);
-                setSolutionLoaded();
-            } finally {
-                setCursor(Cursor.getDefaultCursor());
-            }
-        }
-
-    }
 
     private JComponent createToolBar() {
         JToolBar toolBar = new JToolBar("File operations");
@@ -258,254 +237,6 @@ public class SolverAndPersistenceFrame extends JFrame {
         solveButton.setMinimumSize(terminateSolvingEarlyButton.getMinimumSize());
         solveButton.setPreferredSize(terminateSolvingEarlyButton.getPreferredSize());
         return toolBar;
-    }
-
-    private class SolveAction extends AbstractAction {
-
-        public SolveAction() {
-            super("Solve", new ImageIcon(SolverAndPersistenceFrame.class.getResource("solveAction.png")));
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            setSolvingState(true);
-            Solution planningProblem = solutionBusiness.getSolution();
-            new SolveWorker(planningProblem).execute();
-        }
-
-    }
-
-    protected class SolveWorker extends SwingWorker<Solution, Void> {
-
-        protected final Solution planningProblem;
-
-        public SolveWorker(Solution planningProblem) {
-            this.planningProblem = planningProblem;
-        }
-
-        @Override
-        protected Solution doInBackground() throws Exception {
-            return solutionBusiness.solve(planningProblem);
-        }
-
-        @Override
-        protected void done() {
-            try {
-                Solution bestSolution = get();
-                solutionBusiness.setSolution(bestSolution);
-            } catch (InterruptedException e) {
-                throw new IllegalStateException("Solving interrupted.", e);
-            } catch (ExecutionException e) {
-                throw new IllegalStateException("Solving failed.", e.getCause());
-            } finally {
-                setSolvingState(false);
-                resetScreen();
-            }
-        }
-
-    }
-
-    private class TerminateSolvingEarlyAction extends AbstractAction {
-
-        public TerminateSolvingEarlyAction() {
-            super("Terminate solving early",
-                    new ImageIcon(SolverAndPersistenceFrame.class.getResource("terminateSolvingEarlyAction.png")));
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            terminateSolvingEarlyAction.setEnabled(false);
-            progressBar.setString("Terminating...");
-            // This async, so it doesn't stop the solving immediately
-            solutionBusiness.terminateSolvingEarly();
-        }
-
-    }
-
-    private class OpenAction extends AbstractAction {
-
-        private static final String NAME = "Open...";
-        private JFileChooser fileChooser;
-
-        public OpenAction() {
-            super(NAME, new ImageIcon(SolverAndPersistenceFrame.class.getResource("openAction.png")));
-            fileChooser = new JFileChooser(solutionBusiness.getSolvedDataDir());
-            fileChooser.setFileFilter(new FileFilter() {
-                @Override
-                public boolean accept(File file) {
-                    return file.isDirectory() || file.getName().endsWith(".xml");
-                }
-
-                @Override
-                public String getDescription() {
-                    return "Solution XStream XML files";
-                }
-            });
-            fileChooser.setDialogTitle(NAME);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            int approved = fileChooser.showOpenDialog(SolverAndPersistenceFrame.this);
-            if (approved == JFileChooser.APPROVE_OPTION) {
-                setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                try {
-                    solutionBusiness.openSolution(fileChooser.getSelectedFile());
-                    setSolutionLoaded();
-                } finally {
-                    setCursor(Cursor.getDefaultCursor());
-                }
-            }
-        }
-
-    }
-
-    private class SaveAction extends AbstractAction {
-
-        private static final String NAME = "Save as...";
-        private JFileChooser fileChooser;
-
-        public SaveAction() {
-            super(NAME, new ImageIcon(SolverAndPersistenceFrame.class.getResource("saveAction.png")));
-            fileChooser = new JFileChooser(solutionBusiness.getSolvedDataDir());
-            fileChooser.setFileFilter(new FileFilter() {
-                @Override
-                public boolean accept(File file) {
-                    return file.isDirectory() || file.getName().endsWith(".xml");
-                }
-
-                @Override
-                public String getDescription() {
-                    return "Solution XStream XML files";
-                }
-            });
-            fileChooser.setDialogTitle(NAME);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            fileChooser.setSelectedFile(new File(solutionBusiness.getSolvedDataDir(),
-                    FilenameUtils.getBaseName(solutionBusiness.getSolutionFileName()) + ".xml"));
-            int approved = fileChooser.showSaveDialog(SolverAndPersistenceFrame.this);
-            if (approved == JFileChooser.APPROVE_OPTION) {
-                setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                try {
-                    solutionBusiness.saveSolution(fileChooser.getSelectedFile());
-                } finally {
-                    setCursor(Cursor.getDefaultCursor());
-                }
-                refreshQuickOpenPanel(quickOpenUnsolvedPanel, quickOpenUnsolvedActionList,
-                        solutionBusiness.getUnsolvedFileList());
-                refreshQuickOpenPanel(quickOpenSolvedPanel, quickOpenSolvedActionList,
-                        solutionBusiness.getSolvedFileList());
-                SolverAndPersistenceFrame.this.validate();
-            }
-        }
-
-    }
-
-    private class ImportAction extends AbstractAction {
-
-        private static final String NAME = "Import...";
-        private JFileChooser fileChooser;
-
-        public ImportAction() {
-            super(NAME, new ImageIcon(SolverAndPersistenceFrame.class.getResource("importAction.png")));
-            if (!solutionBusiness.hasImporter()) {
-                fileChooser = null;
-                return;
-            }
-            fileChooser = new JFileChooser(solutionBusiness.getImportDataDir());
-            FileFilter filter;
-            if (solutionBusiness.isImportFileDirectory()) {
-                filter = new FileFilter() {
-                    @Override
-                    public boolean accept(File file) {
-                        return file.isDirectory();
-                    }
-
-                    @Override
-                    public String getDescription() {
-                        return "Import directory";
-                    }
-                };
-                fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            } else {
-                filter = new FileFilter() {
-                    @Override
-                    public boolean accept(File file) {
-                        return file.isDirectory() || solutionBusiness.acceptImportFile(file);
-                    }
-
-                    @Override
-                    public String getDescription() {
-                        return "Import files (*." + solutionBusiness.getImportFileSuffix() + ")";
-                    }
-                };
-            }
-            fileChooser.setFileFilter(filter);
-            fileChooser.setDialogTitle(NAME);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            int approved = fileChooser.showOpenDialog(SolverAndPersistenceFrame.this);
-            if (approved == JFileChooser.APPROVE_OPTION) {
-                setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                try {
-                    solutionBusiness.importSolution(fileChooser.getSelectedFile());
-                    setSolutionLoaded();
-                } finally {
-                    setCursor(Cursor.getDefaultCursor());
-                }
-            }
-        }
-
-    }
-
-    private class ExportAction extends AbstractAction {
-
-        private static final String NAME = "Export as...";
-        private final JFileChooser fileChooser;
-
-        public ExportAction() {
-            super(NAME, new ImageIcon(SolverAndPersistenceFrame.class.getResource("exportAction.png")));
-            if (!solutionBusiness.hasExporter()) {
-                fileChooser = null;
-                return;
-            }
-            fileChooser = new JFileChooser(solutionBusiness.getExportDataDir());
-            fileChooser.setFileFilter(new FileFilter() {
-                @Override
-                public boolean accept(File file) {
-                    return file.isDirectory() || file.getName().endsWith("." + solutionBusiness.getExportFileSuffix());
-                }
-
-                @Override
-                public String getDescription() {
-                    return "Export files (*." + solutionBusiness.getExportFileSuffix() + ")";
-                }
-            });
-            fileChooser.setDialogTitle(NAME);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            fileChooser.setSelectedFile(new File(solutionBusiness.getExportDataDir(),
-                    FilenameUtils.getBaseName(solutionBusiness.getSolutionFileName())
-                            + "." + solutionBusiness.getExportFileSuffix()
-            ));
-            int approved = fileChooser.showSaveDialog(SolverAndPersistenceFrame.this);
-            if (approved == JFileChooser.APPROVE_OPTION) {
-                setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                try {
-                    solutionBusiness.exportSolution(fileChooser.getSelectedFile());
-                } finally {
-                    setCursor(Cursor.getDefaultCursor());
-                }
-            }
-        }
-
     }
 
     private JPanel createMiddlePanel() {
@@ -551,20 +282,6 @@ public class SolverAndPersistenceFrame extends JFrame {
                 solutionPanel.isRefreshScreenDuringSolving());
         scorePanel.add(refreshScreenDuringSolvingCheckBox, BorderLayout.EAST);
         return scorePanel;
-    }
-
-    private class ShowConstraintMatchesDialogAction extends AbstractAction {
-
-        public ShowConstraintMatchesDialogAction() {
-            super("Constraint matches", new ImageIcon(SolverAndPersistenceFrame.class.getResource("showConstraintMatchesDialogAction.png")));
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            constraintMatchesDialog.resetContentPanel();
-            constraintMatchesDialog.setVisible(true);
-        }
-
     }
 
     private void setSolutionLoaded() {
@@ -618,6 +335,279 @@ public class SolverAndPersistenceFrame extends JFrame {
         } else {
             FeasibilityScore<?> feasibilityScore = (FeasibilityScore<?>) score;
             return feasibilityScore.isFeasible() ? TangoColorFactory.CHAMELEON_3 : TangoColorFactory.SCARLET_3;
+        }
+    }
+
+    private class QuickOpenAction extends AbstractAction {
+        private final File file;
+
+        QuickOpenAction(File file) {
+            super(file.getName().replaceAll("\\.xml$", ""));
+            this.file = file;
+        }
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            try {
+                solutionBusiness.openSolution(file);
+                setSolutionLoaded();
+            } finally {
+                setCursor(Cursor.getDefaultCursor());
+            }
+        }
+
+    }
+
+    private class SolveAction extends AbstractAction {
+
+
+        SolveAction() {
+            super("Solve", new ImageIcon(SolverAndPersistenceFrame.class.getResource("solveAction.png")));
+        }
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            setSolvingState(true);
+            Solution planningProblem = solutionBusiness.getSolution();
+            new SolveWorker(planningProblem).execute();
+        }
+
+
+    }
+
+    protected class SolveWorker extends SwingWorker<Solution, Void> {
+        protected final Solution planningProblem;
+
+        SolveWorker(Solution planningProblem) {
+            this.planningProblem = planningProblem;
+        }
+        @Override
+        protected Solution doInBackground() throws Exception {
+            return solutionBusiness.solve(planningProblem);
+        }
+
+        @Override
+        protected void done() {
+            try {
+                Solution bestSolution = get();
+                solutionBusiness.setSolution(bestSolution);
+            } catch (InterruptedException e) {
+                throw new IllegalStateException("Solving interrupted.", e);
+            } catch (ExecutionException e) {
+                throw new IllegalStateException("Solving failed.", e.getCause());
+            } finally {
+                setSolvingState(false);
+                resetScreen();
+            }
+        }
+
+    }
+
+    private class TerminateSolvingEarlyAction extends AbstractAction {
+
+
+        TerminateSolvingEarlyAction() {
+            super("Terminate solving early",
+                    new ImageIcon(SolverAndPersistenceFrame.class.getResource("terminateSolvingEarlyAction.png")));
+        }
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            terminateSolvingEarlyAction.setEnabled(false);
+            progressBar.setString("Terminating...");
+            // This async, so it doesn't stop the solving immediately
+            solutionBusiness.terminateSolvingEarly();
+        }
+
+    }
+
+    private class OpenAction extends AbstractAction {
+        private static final String NAME = "Open...";
+        private JFileChooser fileChooser;
+
+        OpenAction() {
+            super(NAME, new ImageIcon(SolverAndPersistenceFrame.class.getResource("openAction.png")));
+            fileChooser = new JFileChooser(solutionBusiness.getSolvedDataDir());
+            fileChooser.setFileFilter(new FileFilter() {
+                @Override
+                public boolean accept(File file) {
+                    return file.isDirectory() || file.getName().endsWith(".xml");
+                }
+
+                @Override
+                public String getDescription() {
+                    return "Solution XStream XML files";
+                }
+            });
+            fileChooser.setDialogTitle(NAME);
+        }
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            int approved = fileChooser.showOpenDialog(SolverAndPersistenceFrame.this);
+            if (approved == JFileChooser.APPROVE_OPTION) {
+                setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                try {
+                    solutionBusiness.openSolution(fileChooser.getSelectedFile());
+                    setSolutionLoaded();
+                } finally {
+                    setCursor(Cursor.getDefaultCursor());
+                }
+            }
+        }
+
+    }
+
+    private class SaveAction extends AbstractAction {
+        private static final String NAME = "Save as...";
+        private JFileChooser fileChooser;
+
+        SaveAction() {
+            super(NAME, new ImageIcon(SolverAndPersistenceFrame.class.getResource("saveAction.png")));
+            fileChooser = new JFileChooser(solutionBusiness.getSolvedDataDir());
+            fileChooser.setFileFilter(new FileFilter() {
+                @Override
+                public boolean accept(File file) {
+                    return file.isDirectory() || file.getName().endsWith(".xml");
+                }
+
+                @Override
+                public String getDescription() {
+                    return "Solution XStream XML files";
+                }
+            });
+            fileChooser.setDialogTitle(NAME);
+        }
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            fileChooser.setSelectedFile(new File(solutionBusiness.getSolvedDataDir(),
+                    FilenameUtils.getBaseName(solutionBusiness.getSolutionFileName()) + ".xml"));
+            int approved = fileChooser.showSaveDialog(SolverAndPersistenceFrame.this);
+            if (approved == JFileChooser.APPROVE_OPTION) {
+                setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                try {
+                    solutionBusiness.saveSolution(fileChooser.getSelectedFile());
+                } finally {
+                    setCursor(Cursor.getDefaultCursor());
+                }
+                refreshQuickOpenPanel(quickOpenUnsolvedPanel, quickOpenUnsolvedActionList,
+                        solutionBusiness.getUnsolvedFileList());
+                refreshQuickOpenPanel(quickOpenSolvedPanel, quickOpenSolvedActionList,
+                        solutionBusiness.getSolvedFileList());
+                SolverAndPersistenceFrame.this.validate();
+            }
+        }
+
+    }
+
+    private class ImportAction extends AbstractAction {
+        private static final String NAME = "Import...";
+        private JFileChooser fileChooser;
+        
+        ImportAction() {
+            super(NAME, new ImageIcon(SolverAndPersistenceFrame.class.getResource("importAction.png")));
+            if (!solutionBusiness.hasImporter()) {
+                fileChooser = null;
+                return;
+            }
+            fileChooser = new JFileChooser(solutionBusiness.getImportDataDir());
+            FileFilter filter;
+            if (solutionBusiness.isImportFileDirectory()) {
+                filter = new FileFilter() {
+                    @Override
+                    public boolean accept(File file) {
+                        return file.isDirectory();
+                    }
+
+                    @Override
+                    public String getDescription() {
+                        return "Import directory";
+                    }
+                };
+                fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            } else {
+                filter = new FileFilter() {
+                    @Override
+                    public boolean accept(File file) {
+                        return file.isDirectory() || solutionBusiness.acceptImportFile(file);
+                    }
+
+                    @Override
+                    public String getDescription() {
+                        return "Import files (*." + solutionBusiness.getImportFileSuffix() + ")";
+                    }
+                };
+            }
+            fileChooser.setFileFilter(filter);
+            fileChooser.setDialogTitle(NAME);
+        }
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            int approved = fileChooser.showOpenDialog(SolverAndPersistenceFrame.this);
+            if (approved == JFileChooser.APPROVE_OPTION) {
+                setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                try {
+                    solutionBusiness.importSolution(fileChooser.getSelectedFile());
+                    setSolutionLoaded();
+                } finally {
+                    setCursor(Cursor.getDefaultCursor());
+                }
+            }
+        }
+
+    }
+
+    
+    private class ExportAction extends AbstractAction {
+        private static final String NAME = "Export as...";
+        private final JFileChooser fileChooser;
+        
+        ExportAction() {
+            super(NAME, new ImageIcon(SolverAndPersistenceFrame.class.getResource("exportAction.png")));
+            if (!solutionBusiness.hasExporter()) {
+                fileChooser = null;
+                return;
+            }
+            fileChooser = new JFileChooser(solutionBusiness.getExportDataDir());
+            fileChooser.setFileFilter(new FileFilter() {
+                @Override
+                public boolean accept(File file) {
+                    return file.isDirectory() || file.getName().endsWith("." + solutionBusiness.getExportFileSuffix());
+                }
+
+                @Override
+                public String getDescription() {
+                    return "Export files (*." + solutionBusiness.getExportFileSuffix() + ")";
+                }
+            });
+            fileChooser.setDialogTitle(NAME);
+        }
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            fileChooser.setSelectedFile(new File(solutionBusiness.getExportDataDir(),
+                    FilenameUtils.getBaseName(solutionBusiness.getSolutionFileName())
+                            + "." + solutionBusiness.getExportFileSuffix()
+            ));
+            int approved = fileChooser.showSaveDialog(SolverAndPersistenceFrame.this);
+            if (approved == JFileChooser.APPROVE_OPTION) {
+                setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                try {
+                    solutionBusiness.exportSolution(fileChooser.getSelectedFile());
+                } finally {
+                    setCursor(Cursor.getDefaultCursor());
+                }
+            }
+        }
+
+    }
+
+    private class ShowConstraintMatchesDialogAction extends AbstractAction {
+        
+        ShowConstraintMatchesDialogAction() {
+            super("Constraint matches", new ImageIcon(SolverAndPersistenceFrame.class.getResource("showConstraintMatchesDialogAction.png")));
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            constraintMatchesDialog.resetContentPanel();
+            constraintMatchesDialog.setVisible(true);
         }
     }
 

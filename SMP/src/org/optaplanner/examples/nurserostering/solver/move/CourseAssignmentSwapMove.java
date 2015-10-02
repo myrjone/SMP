@@ -29,8 +29,8 @@ import org.optaplanner.examples.nurserostering.domain.Ta;
 
 public class CourseAssignmentSwapMove extends AbstractMove {
 
-    private CourseAssignment leftCourseAssignment;
-    private CourseAssignment rightCourseAssignment;
+    private final CourseAssignment leftCourseAssignment;
+    private final CourseAssignment rightCourseAssignment;
 
     public CourseAssignmentSwapMove(CourseAssignment leftCourseAssignment, CourseAssignment rightCourseAssignment) {
         this.leftCourseAssignment = leftCourseAssignment;

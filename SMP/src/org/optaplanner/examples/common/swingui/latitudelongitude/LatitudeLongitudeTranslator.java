@@ -78,11 +78,11 @@ public class LatitudeLongitudeTranslator {
     }
 
     public double translateXToLongitude(int x) {
-        return minimumLongitude + ((((double) x) - innerWidthMargin) * longitudeLength / innerWidth);
+        return minimumLongitude + ((x - innerWidthMargin) * longitudeLength / innerWidth);
     }
 
     public double translateYToLatitude(double y) {
-        return maximumLatitude - ((((double) y) - innerHeightMargin) * latitudeLength / innerHeight);
+        return maximumLatitude - ((y - innerHeightMargin) * latitudeLength / innerHeight);
     }
 
     public int getImageWidth() {

@@ -29,6 +29,13 @@ public abstract class AbstractSolutionImporter extends LoggingMain {
 
     protected static final String DEFAULT_OUTPUT_FILE_SUFFIX = "xml";
 
+    public static String getFlooredPossibleSolutionSize(BigInteger possibleSolutionSize) {
+        if (possibleSolutionSize.compareTo(BigInteger.valueOf(1000L)) < 0) {
+            return possibleSolutionSize.toString();
+        }
+        return "10^" + (BigIntegerMath.log10(possibleSolutionSize, RoundingMode.FLOOR));
+    }
+
     protected final SolutionDao solutionDao;
     protected final File inputDir;
     protected final File outputDir;
@@ -120,11 +127,5 @@ public abstract class AbstractSolutionImporter extends LoggingMain {
 
     }
 
-    public static String getFlooredPossibleSolutionSize(BigInteger possibleSolutionSize) {
-        if (possibleSolutionSize.compareTo(BigInteger.valueOf(1000L)) < 0) {
-            return possibleSolutionSize.toString();
-        }
-        return "10^" + (BigIntegerMath.log10(possibleSolutionSize, RoundingMode.FLOOR));
-    }
 
 }

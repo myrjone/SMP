@@ -134,9 +134,9 @@ public class CourseAssignmentPillarPartSwapMoveFactory implements MoveListFactor
      */
     private static class AssignmentSequence {
 
-        private Ta ta;
-        private List<CourseAssignment> courseAssignmentList;
-        private int firstDayIndex;
+        private final Ta ta;
+        private final List<CourseAssignment> courseAssignmentList;
+        private final int firstDayIndex;
         private int lastDayIndex;
 
         private AssignmentSequence(Ta ta, CourseAssignment courseAssignment) {
@@ -180,8 +180,8 @@ public class CourseAssignmentPillarPartSwapMoveFactory implements MoveListFactor
 
     private static class LowestDayIndexAssignmentSequenceIterator implements Iterator<AssignmentSequence> {
 
-        private Iterator<AssignmentSequence> leftIterator;
-        private Iterator<AssignmentSequence> rightIterator;
+        private final Iterator<AssignmentSequence> leftIterator;
+        private final Iterator<AssignmentSequence> rightIterator;
 
         private boolean leftHasNext = true;
         private boolean rightHasNext = true;
@@ -191,7 +191,7 @@ public class CourseAssignmentPillarPartSwapMoveFactory implements MoveListFactor
 
         private boolean lastNextWasLeft;
 
-        public LowestDayIndexAssignmentSequenceIterator(
+        LowestDayIndexAssignmentSequenceIterator(
                 List<AssignmentSequence> leftAssignmentList, List<AssignmentSequence> rightAssignmentList) {
             // Buffer the nextLeft and nextRight
             leftIterator = leftAssignmentList.iterator();

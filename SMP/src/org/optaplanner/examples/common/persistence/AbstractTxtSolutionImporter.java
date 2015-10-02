@@ -340,13 +340,14 @@ public abstract class AbstractTxtSolutionImporter extends AbstractSolutionImport
         }
 
         public boolean parseBooleanFromNumber(String token) {
-            if (token.equals("0")) {
-                return false;
-            } else if (token.equals("1")) {
-                return true;
-            } else {
-                throw new IllegalArgumentException("The token (" + token
-                        + ") is expected to be 0 or 1 representing a boolean.");
+            switch (token) {
+                case "0":
+                    return false;
+                case "1":
+                    return true;
+                default:
+                    throw new IllegalArgumentException("The token (" + token
+                            + ") is expected to be 0 or 1 representing a boolean.");
             }
         }
 

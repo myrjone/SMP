@@ -58,7 +58,7 @@ public enum DayOfWeek {
         return null;
     }
 
-    private String code;
+    private final String code;
 
     private DayOfWeek(String code) {
         this.code = code;

@@ -112,8 +112,8 @@ public class CourseAssignmentSequenceSwitchLength2MoveFactory implements MoveLis
      */
     private static class AssignmentSequence {
 
-        private List<CourseAssignment> courseAssignmentList;
-        private int firstDayIndex;
+        private final List<CourseAssignment> courseAssignmentList;
+        private final int firstDayIndex;
         private int lastDayIndex;
 
         private AssignmentSequence(CourseAssignment courseAssignment) {

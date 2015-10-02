@@ -29,8 +29,8 @@ import org.optaplanner.examples.nurserostering.domain.Ta;
 
 public class TaChangeMove extends AbstractMove {
 
-    private CourseAssignment courseAssignment;
-    private Ta toTa;
+    private final CourseAssignment courseAssignment;
+    private final Ta toTa;
 
     public TaChangeMove(CourseAssignment courseAssignment, Ta toTa) {
         this.courseAssignment = courseAssignment;

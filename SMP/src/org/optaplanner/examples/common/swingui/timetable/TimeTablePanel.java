@@ -28,9 +28,9 @@ import org.optaplanner.examples.common.swingui.SolutionPanel;
 
 public class TimeTablePanel<XObject, YObject> extends JPanel implements Scrollable  {
 
-    private TimeTableLayout layout = new TimeTableLayout();
-    private Map<Object, Integer> xMap = new HashMap<>();
-    private Map<Object, Integer> yMap = new HashMap<>();
+    private final TimeTableLayout layout = new TimeTableLayout();
+    private final Map<Object, Integer> xMap = new HashMap<>();
+    private final Map<Object, Integer> yMap = new HashMap<>();
 
     public TimeTablePanel() {
         setLayout(layout);
@@ -153,7 +153,7 @@ public class TimeTablePanel<XObject, YObject> extends JPanel implements Scrollab
     @Override
     public boolean getScrollableTracksViewportWidth() {
         if (getParent() instanceof JViewport) {
-            return (((JViewport) getParent()).getWidth() > getPreferredSize().width);
+            return (getParent().getWidth() > getPreferredSize().width);
         }
         return false;
     }
@@ -161,7 +161,7 @@ public class TimeTablePanel<XObject, YObject> extends JPanel implements Scrollab
     @Override
     public boolean getScrollableTracksViewportHeight() {
         if (getParent() instanceof JViewport) {
-            return (((JViewport) getParent()).getHeight() > getPreferredSize().height);
+            return (getParent().getHeight() > getPreferredSize().height);
         }
         return false;
     }

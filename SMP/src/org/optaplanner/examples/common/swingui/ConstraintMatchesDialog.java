@@ -123,7 +123,7 @@ public class ConstraintMatchesDialog extends JDialog {
 
     public static class ConstraintMatchTotalTableModel extends AbstractTableModel {
 
-        private List<ConstraintMatchTotal> constraintMatchTotalList;
+        private final List<ConstraintMatchTotal> constraintMatchTotalList;
 
         public ConstraintMatchTotalTableModel(List<ConstraintMatchTotal> constraintMatchTotalList) {
             this.constraintMatchTotalList = constraintMatchTotalList;

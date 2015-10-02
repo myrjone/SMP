@@ -31,9 +31,9 @@ import org.optaplanner.examples.nurserostering.domain.Ta;
 
 public class TaMultipleChangeMove extends AbstractMove {
 
-    private Ta fromTa;
-    private List<CourseAssignment> courseAssignmentList;
-    private Ta toTa;
+    private final Ta fromTa;
+    private final List<CourseAssignment> courseAssignmentList;
+    private final Ta toTa;
 
     public TaMultipleChangeMove(Ta fromTa, List<CourseAssignment> courseAssignmentList, Ta toTa) {
         this.fromTa = fromTa;

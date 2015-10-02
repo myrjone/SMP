@@ -51,7 +51,7 @@ public class TaPanel extends JPanel {
     private final NurseRosteringPanel nurseRosteringPanel;
     private List<CourseDate> courseDateList;
     private List<Course> courseList;
-    private Ta ta;
+    private final Ta ta;
 
     private JLabel taLabel;
     private JButton deleteButton;
@@ -60,7 +60,7 @@ public class TaPanel extends JPanel {
     private Map<Course, JPanel> coursePanelMap;
     private JLabel numberOfCourseAssignmentsLabel;
 
-    private Map<CourseAssignment, JButton> courseAssignmentButtonMap = new HashMap<> ();
+    private final Map<CourseAssignment, JButton> courseAssignmentButtonMap = new HashMap<> ();
 
     public TaPanel(NurseRosteringPanel nurseRosteringPanel, List<CourseDate> courseDateList, List<Course> courseList,
             Ta ta) {
@@ -213,9 +213,9 @@ public class TaPanel extends JPanel {
 
     private class CourseAssignmentAction extends AbstractAction {
 
-        private CourseAssignment courseAssignment;
+        private final CourseAssignment courseAssignment;
 
-        public CourseAssignmentAction(CourseAssignment courseAssignment) {
+        CourseAssignmentAction(CourseAssignment courseAssignment) {
             super(courseAssignment.getCourse().getCourseType().getCode());
             this.courseAssignment = courseAssignment;
             Course course = courseAssignment.getCourse();
@@ -242,6 +242,11 @@ public class TaPanel extends JPanel {
                 Ta toTa = (Ta) taListField.getSelectedItem();
                 nurseRosteringPanel.moveCourseAssignmentToTa(courseAssignment, toTa);
             }
+        }
+
+        @Override
+        public Object clone() throws CloneNotSupportedException {
+            return super.clone(); //To change body of generated methods, choose Tools | Templates.
         }
 
     }

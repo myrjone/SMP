@@ -126,7 +126,7 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
         }
 
         private void readCourseTypeList(NurseRoster nurseRoster, Element courseTypesElement) throws JDOMException {
-            List<Element> courseTypeElementList = (List<Element>) courseTypesElement.getChildren();
+            List<Element> courseTypeElementList = courseTypesElement.getChildren();
             List<CourseType> courseTypeList = new ArrayList<>(courseTypeElementList.size());
             courseTypeMap = new HashMap<>(courseTypeElementList.size());
             long id = 0L;
@@ -196,7 +196,7 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
 
         private void readContractList(NurseRoster nurseRoster, Element contractsElement) throws JDOMException {
             int contractLineTypeListSize = ContractLineType.values().length;
-            List<Element> contractElementList = (List<Element>) contractsElement.getChildren();
+            List<Element> contractElementList = contractsElement.getChildren();
             List<Contract> contractList = new ArrayList<>(contractElementList.size());
             contractMap = new HashMap<>(contractElementList.size());
             long id = 0L;
@@ -336,7 +336,7 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
         }
 
         private void readTaList(NurseRoster nurseRoster, Element tasElement) throws JDOMException {
-            List<Element> taElementList = (List<Element>) tasElement.getChildren();
+            List<Element> taElementList = tasElement.getChildren();
             List<Ta> taList = new ArrayList<>(taElementList.size());
             taMap = new HashMap<>(taElementList.size());
             long id = 0L;
@@ -369,58 +369,61 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
         }
 
         private void readRequiredTaSizes(NurseRoster nurseRoster, Element coverRequirementsElement) {
-            List<Element> coverRequirementElementList = (List<Element>) coverRequirementsElement.getChildren();
+            List<Element> coverRequirementElementList = coverRequirementsElement.getChildren();
             for (Element element : coverRequirementElementList) {
-                if (element.getName().equals("DayOfWeekCover")) {
-                    Element dayOfWeekElement = element.getChild("Day");
-                    DayOfWeek dayOfWeek = DayOfWeek.valueOfCode(dayOfWeekElement.getText());
-                    if (dayOfWeek == null) {
-                        throw new IllegalArgumentException("The dayOfWeek (" + dayOfWeekElement.getText()
-                                + ") of an entity DayOfWeekCover does not exist.");
-                    }
-
-                    List<Element> coverElementList = (List<Element>) element.getChildren("Cover");
-                    for (Element coverElement : coverElementList) {
-                        Element courseTypeElement = coverElement.getChild("Course");
-                        CourseType courseType = courseTypeMap.get(courseTypeElement.getText());
-                        if (courseType == null) {
-                            if (courseTypeElement.getText().equals("Any")) {
-                                throw new IllegalStateException("The courseType Any is not supported on DayOfWeekCover.");
-                            } else if (courseTypeElement.getText().equals("None")) {
-                                throw new IllegalStateException("The courseType None is not supported on DayOfWeekCover.");
-                            } else {
-                                throw new IllegalArgumentException("The courseType (" + courseTypeElement.getText()
+                switch (element.getName()) {
+                    case "DayOfWeekCover":
+                        {
+                            Element dayOfWeekElement = element.getChild("Day");
+                            DayOfWeek dayOfWeek = DayOfWeek.valueOfCode(dayOfWeekElement.getText());
+                            if (dayOfWeek == null) {
+                                throw new IllegalArgumentException("The dayOfWeek (" + dayOfWeekElement.getText()
                                         + ") of an entity DayOfWeekCover does not exist.");
+                            }       List<Element> coverElementList = element.getChildren("Cover");
+                            for (Element coverElement : coverElementList) {
+                                Element courseTypeElement = coverElement.getChild("Course");
+                                CourseType courseType = courseTypeMap.get(courseTypeElement.getText());
+                                if (courseType == null) {
+                                    switch (courseTypeElement.getText()) {
+                                        case "Any":
+                                            throw new IllegalStateException("The courseType Any is not supported on DayOfWeekCover.");
+                                        case "None":
+                                            throw new IllegalStateException("The courseType None is not supported on DayOfWeekCover.");
+                                        default:
+                                            throw new IllegalArgumentException("The courseType (" + courseTypeElement.getText()
+                                                    + ") of an entity DayOfWeekCover does not exist.");
+                                    }
+                                }
+                                List<Object> key = Arrays.<Object>asList(dayOfWeek, courseType);
+                                List<Course> courseList = dayOfWeekAndCourseTypeToCourseListMap.get(key);
+                                if (courseList == null) {
+                                    throw new IllegalArgumentException("The dayOfWeek (" + dayOfWeekElement.getText()
+                                            + ") with the courseType (" + courseTypeElement.getText()
+                                            + ") of an entity DayOfWeekCover does not have any courses.");
+                                }       int requiredTaSize = Integer.parseInt(coverElement.getChild("Preferred").getText());
+                                for (Course course : courseList) {
+                                    course.setRequiredTaSize(course.getRequiredTaSize() + requiredTaSize);
+                        }   }
+                            break;
+                        }
+                    case "DateSpecificCover":
+                    {
+                        Element dateElement = element.getChild("Date");
+                        List<Element> coverElementList = element.getChildren("Cover");
+                        for (Element coverElement : coverElementList) {
+                            Element courseTypeElement = coverElement.getChild("Course");
+                            Course course = dateAndCourseTypeToCourseMap.get(Arrays.asList(dateElement.getText(), courseTypeElement.getText()));
+                            if (course == null) {
+                                throw new IllegalArgumentException("The date (" + dateElement.getText()
+                                        + ") with the courseType (" + courseTypeElement.getText()
+                                        + ") of an entity DateSpecificCover does not have a course.");
                             }
-                        }
-                        List<Object> key = Arrays.<Object>asList(dayOfWeek, courseType);
-                        List<Course> courseList = dayOfWeekAndCourseTypeToCourseListMap.get(key);
-                        if (courseList == null) {
-                            throw new IllegalArgumentException("The dayOfWeek (" + dayOfWeekElement.getText()
-                                    + ") with the courseType (" + courseTypeElement.getText()
-                                    + ") of an entity DayOfWeekCover does not have any courses.");
-                        }
-                        int requiredTaSize = Integer.parseInt(coverElement.getChild("Preferred").getText());
-                        for (Course course : courseList) {
+                            int requiredTaSize = Integer.parseInt(coverElement.getChild("Preferred").getText());
                             course.setRequiredTaSize(course.getRequiredTaSize() + requiredTaSize);
-                        }
+                        }       break;
                     }
-                } else if (element.getName().equals("DateSpecificCover")) {
-                    Element dateElement = element.getChild("Date");
-                    List<Element> coverElementList = (List<Element>) element.getChildren("Cover");
-                    for (Element coverElement : coverElementList) {
-                        Element courseTypeElement = coverElement.getChild("Course");
-                        Course course = dateAndCourseTypeToCourseMap.get(Arrays.asList(dateElement.getText(), courseTypeElement.getText()));
-                        if (course == null) {
-                            throw new IllegalArgumentException("The date (" + dateElement.getText()
-                                    + ") with the courseType (" + courseTypeElement.getText()
-                                    + ") of an entity DateSpecificCover does not have a course.");
-                        }
-                        int requiredTaSize = Integer.parseInt(coverElement.getChild("Preferred").getText());
-                        course.setRequiredTaSize(course.getRequiredTaSize() + requiredTaSize);
-                    }
-                } else {
-                    throw new IllegalArgumentException("Unknown cover entity (" + element.getName() + ").");
+                    default:
+                        throw new IllegalArgumentException("Unknown cover entity (" + element.getName() + ").");
                 }
             }
         }
@@ -430,7 +433,7 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
             if (courseOffRequestsElement == null) {
                 courseOffRequestList = Collections.emptyList();
             } else {
-                List<Element> courseOffElementList = (List<Element>) courseOffRequestsElement.getChildren();
+                List<Element> courseOffElementList = courseOffRequestsElement.getChildren();
                 courseOffRequestList = new ArrayList<>(courseOffElementList.size());
                 long id = 0L;
                 for (Element element : courseOffElementList) {
@@ -473,7 +476,7 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
             if (courseOnRequestsElement == null) {
                 courseOnRequestList = Collections.emptyList();
             } else {
-                List<Element> courseOnElementList = (List<Element>) courseOnRequestsElement.getChildren();
+                List<Element> courseOnElementList = courseOnRequestsElement.getChildren();
                 courseOnRequestList = new ArrayList<>(courseOnElementList.size());
                 long id = 0L;
                 for (Element element : courseOnElementList) {

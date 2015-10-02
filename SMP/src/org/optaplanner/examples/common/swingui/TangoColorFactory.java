@@ -80,7 +80,7 @@ public class TangoColorFactory {
     public static final Stroke LIGHT_DASHED_STROKE = new BasicStroke(
             1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f, new float[] {3.0f, 7.0f}, 0.0f);
     
-    private Map<Object, Color> colorMap;
+    private final Map<Object, Color> colorMap;
     private int nextColorCount;
 
     public TangoColorFactory() {
@@ -124,7 +124,7 @@ public class TangoColorFactory {
                 divisor *= 2;
             }
             base = (base * 2) - divisor + 1;
-            double shadePercentage = ((double) base) / (double) divisor;
+            double shadePercentage = base / divisor;
             color = new Color(
                     floorColor.getRed() + (int) (shadePercentage * (ceilColor.getRed() - floorColor.getRed())),
                     floorColor.getGreen() + (int) (shadePercentage * (ceilColor.getGreen() - floorColor.getGreen())),

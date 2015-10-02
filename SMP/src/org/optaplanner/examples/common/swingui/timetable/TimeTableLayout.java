@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class TimeTableLayout implements LayoutManager2, Serializable {
+public final class TimeTableLayout implements LayoutManager2, Serializable {
 
     public static final int FILL_COLLISIONS_FLAG = -1;
 
