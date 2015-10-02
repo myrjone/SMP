@@ -18,7 +18,6 @@ package org.optaplanner.examples.nurserostering.domain.solver;
 
 import java.io.Serializable;
 import java.util.Comparator;
-
 import org.apache.commons.lang.builder.CompareToBuilder;
 import org.optaplanner.examples.nurserostering.domain.Course;
 import org.optaplanner.examples.nurserostering.domain.CourseAssignment;

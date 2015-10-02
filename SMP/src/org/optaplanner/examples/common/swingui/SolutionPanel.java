@@ -21,7 +21,6 @@ import java.awt.Rectangle;
 import javax.swing.JPanel;
 import javax.swing.JViewport;
 import javax.swing.Scrollable;
-
 import org.optaplanner.core.api.domain.solution.Solution;
 import org.optaplanner.core.impl.solver.ProblemFactChange;
 import org.optaplanner.examples.common.business.SolutionBusiness;

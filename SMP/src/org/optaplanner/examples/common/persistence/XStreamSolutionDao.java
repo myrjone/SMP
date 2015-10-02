@@ -17,7 +17,6 @@
 package org.optaplanner.examples.common.persistence;
 
 import java.io.File;
-
 import org.optaplanner.core.api.domain.solution.Solution;
 import org.optaplanner.persistence.xstream.impl.domain.solution.XStreamSolutionFileIO;
 

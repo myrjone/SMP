@@ -21,8 +21,8 @@ import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 import org.optaplanner.examples.common.domain.AbstractPersistable;
 import org.optaplanner.examples.nurserostering.domain.contract.Contract;
-import org.optaplanner.examples.nurserostering.domain.solver.TaStrengthComparator;
 import org.optaplanner.examples.nurserostering.domain.solver.CourseAssignmentDifficultyComparator;
+import org.optaplanner.examples.nurserostering.domain.solver.TaStrengthComparator;
 
 @PlanningEntity(difficultyComparatorClass = CourseAssignmentDifficultyComparator.class)
 @XStreamAlias("CourseAssignment")

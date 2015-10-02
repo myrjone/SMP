@@ -17,13 +17,12 @@
 package org.optaplanner.examples.nurserostering.persistence;
 
 import java.io.IOException;
-
 import org.jdom2.Element;
 import org.optaplanner.core.api.domain.solution.Solution;
 import org.optaplanner.examples.common.persistence.AbstractXmlSolutionExporter;
-import org.optaplanner.examples.nurserostering.domain.NurseRoster;
 import org.optaplanner.examples.nurserostering.domain.Course;
 import org.optaplanner.examples.nurserostering.domain.CourseAssignment;
+import org.optaplanner.examples.nurserostering.domain.NurseRoster;
 
 public class NurseRosteringExporter extends AbstractXmlSolutionExporter {
 

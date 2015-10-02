@@ -16,6 +16,7 @@
 
 package org.optaplanner.examples.nurserostering.domain;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -23,8 +24,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
-
-import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.optaplanner.examples.common.domain.AbstractPersistable;
 
 @XStreamAlias("CourseDate")

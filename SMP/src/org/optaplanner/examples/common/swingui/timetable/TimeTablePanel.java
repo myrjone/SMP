@@ -24,7 +24,6 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JViewport;
 import javax.swing.Scrollable;
-
 import org.optaplanner.examples.common.swingui.SolutionPanel;
 
 public class TimeTablePanel<XObject, YObject> extends JPanel implements Scrollable  {

@@ -17,13 +17,11 @@
 package org.optaplanner.examples.nurserostering.solver.drools;
 
 import java.io.Serializable;
-
 import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.optaplanner.examples.nurserostering.domain.DayOfWeek;
-import org.optaplanner.examples.nurserostering.domain.Ta;
 import org.optaplanner.examples.nurserostering.domain.CourseDate;
+import org.optaplanner.examples.nurserostering.domain.Ta;
 import org.optaplanner.examples.nurserostering.domain.contract.Contract;
 
 public class TaConsecutiveAssignmentEnd implements Comparable<TaConsecutiveAssignmentEnd>, Serializable {

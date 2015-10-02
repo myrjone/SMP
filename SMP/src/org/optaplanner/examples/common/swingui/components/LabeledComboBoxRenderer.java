@@ -17,7 +17,6 @@
 package org.optaplanner.examples.common.swingui.components;
 
 import java.awt.Component;
-import javax.swing.Icon;
 import javax.swing.JList;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 

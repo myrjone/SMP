@@ -18,31 +18,24 @@ package org.optaplanner.examples.nurserostering.persistence;
 
 import java.io.IOException;
 import java.math.BigInteger;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
-
 import org.jdom2.DataConversionException;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.optaplanner.core.api.domain.solution.Solution;
 import org.optaplanner.examples.common.persistence.AbstractXmlSolutionImporter;
-import org.optaplanner.examples.nurserostering.domain.DayOfWeek;
-import org.optaplanner.examples.nurserostering.domain.Ta;
-import org.optaplanner.examples.nurserostering.domain.NurseRoster;
 import org.optaplanner.examples.nurserostering.domain.Course;
 import org.optaplanner.examples.nurserostering.domain.CourseAssignment;
 import org.optaplanner.examples.nurserostering.domain.CourseDate;
 import org.optaplanner.examples.nurserostering.domain.CourseType;
+import org.optaplanner.examples.nurserostering.domain.DayOfWeek;
+import org.optaplanner.examples.nurserostering.domain.NurseRoster;
+import org.optaplanner.examples.nurserostering.domain.Ta;
 import org.optaplanner.examples.nurserostering.domain.contract.BooleanContractLine;
 import org.optaplanner.examples.nurserostering.domain.contract.Contract;
 import org.optaplanner.examples.nurserostering.domain.contract.ContractLine;
@@ -110,7 +103,7 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
             return nurseRoster;
         }
 
-        private void generateCourseDateList(NurseRoster nurseRoster) {            
+        private void generateCourseDateList(NurseRoster nurseRoster) {
             int courseDateSize = DayOfWeek.values().length;
             List<CourseDate> courseDateList = new ArrayList<>(courseDateSize);
             courseDateMap = new HashMap<>(courseDateSize);
@@ -454,7 +447,7 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                     courseOffRequest.setTa(ta);
 
                     Element dateElement = element.getChild("Date");
-                    
+
                     DayOfWeek day = DayOfWeek.valueOfCode(dateElement.getText());
                     Element courseTypeElement = element.getChild("CourseTypeID");
                     Course course = dateAndCourseTypeToCourseMap.get(Arrays.asList(day.name(), courseTypeElement.getText()));

@@ -17,8 +17,8 @@
 package org.optaplanner.examples.nurserostering.solver.move;
 
 import org.optaplanner.core.impl.score.director.ScoreDirector;
-import org.optaplanner.examples.nurserostering.domain.Ta;
 import org.optaplanner.examples.nurserostering.domain.CourseAssignment;
+import org.optaplanner.examples.nurserostering.domain.Ta;
 
 public class NurseRosteringMoveHelper {
 

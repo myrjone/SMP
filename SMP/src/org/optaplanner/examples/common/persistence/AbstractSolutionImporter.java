@@ -16,12 +16,11 @@
 
 package org.optaplanner.examples.common.persistence;
 
+import com.google.common.math.BigIntegerMath;
 import java.io.File;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.Arrays;
-
-import com.google.common.math.BigIntegerMath;
 import org.optaplanner.core.api.domain.solution.Solution;
 import org.optaplanner.examples.common.app.LoggingMain;
 import org.optaplanner.examples.common.business.ProblemFileComparator;

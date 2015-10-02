@@ -16,9 +16,8 @@
 
 package org.optaplanner.examples.nurserostering.domain.contract;
 
-import java.util.List;
-
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import java.util.List;
 import org.optaplanner.examples.common.domain.AbstractPersistable;
 
 @XStreamAlias("Contract")
