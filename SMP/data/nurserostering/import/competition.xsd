@@ -28,6 +28,11 @@
             <xs:element name="StartTime" type="xs:time"/>
             <xs:element name="EndTime" type="xs:time"/>
             <xs:element name="Description" type="xs:string" minOccurs="0"/>
+            <xs:element name="Dept" type="xs:string" minOccurs="0"/>
+            <xs:element name="Crs" type="xs:string" minOccurs="0"/>
+            <xs:element name="Sec" type="xs:string" minOccurs="0"/>
+            <xs:element name="Bldg" type="xs:string"/>
+            <xs:element name="Rm" type="xs:string"/>
             </xs:element>
           </xs:all>
           <xs:attribute name="ID" type="ID" use="required"/>

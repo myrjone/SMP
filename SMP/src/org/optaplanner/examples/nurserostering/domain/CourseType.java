@@ -28,6 +28,51 @@ public class CourseType extends AbstractPersistable {
     private String endTimeString;
     private boolean night;
     private String description;
+    private String dept;
+    private String crs;
+    private String sec;
+    private String bldg;
+    private String rm;
+
+    public String getDept() {
+        return dept;
+    }
+
+    public void setDept(String dept) {
+        this.dept = dept;
+    }
+
+    public String getCrs() {
+        return crs;
+    }
+
+    public void setCrs(String crs) {
+        this.crs = crs;
+    }
+
+    public String getSec() {
+        return sec;
+    }
+
+    public void setSec(String sec) {
+        this.sec = sec;
+    }
+
+    public String getBldg() {
+        return bldg;
+    }
+
+    public void setBldg(String bldg) {
+        this.bldg = bldg;
+    }
+
+    public String getRm() {
+        return rm;
+    }
+
+    public void setRm(String rm) {
+        this.rm = rm;
+    }
 
     public String getCode() {
         return code;
