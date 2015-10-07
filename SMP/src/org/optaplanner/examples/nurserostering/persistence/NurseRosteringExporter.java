@@ -17,30 +17,23 @@
 package org.optaplanner.examples.nurserostering.persistence;
 
 import java.io.IOException;
-import org.jdom2.Element;
+import java.util.List;
+import java.util.Objects;
 import org.optaplanner.core.api.domain.solution.Solution;
-import org.optaplanner.examples.common.persistence.AbstractXmlSolutionExporter;
-import org.optaplanner.examples.nurserostering.domain.Course;
+import org.optaplanner.examples.common.persistence.AbstractTxtSolutionExporter;
+import org.optaplanner.examples.nurserostering.domain.Coordinator;
 import org.optaplanner.examples.nurserostering.domain.CourseAssignment;
+import org.optaplanner.examples.nurserostering.domain.CourseType;
 import org.optaplanner.examples.nurserostering.domain.NurseRoster;
+import org.optaplanner.examples.nurserostering.domain.Ta;
 
-public class NurseRosteringExporter extends AbstractXmlSolutionExporter {
-
-    public static void main(String[] args) {
-        new NurseRosteringExporter().convertAll();
-    }
-
+public class NurseRosteringExporter extends AbstractTxtSolutionExporter{
     public NurseRosteringExporter() {
         super(new NurseRosteringDao());
     }
-
-    @Override
-    public XmlOutputBuilder createXmlOutputBuilder() {
-        return new NurseRosteringOutputBuilder();
-    }
-
-    public static class NurseRosteringOutputBuilder extends XmlOutputBuilder {
-
+    
+    private class SaveTxtOutputBuilder extends TxtOutputBuilder {
+        
         private NurseRoster nurseRoster;
 
         @Override
@@ -50,41 +43,43 @@ public class NurseRosteringExporter extends AbstractXmlSolutionExporter {
 
         @Override
         public void writeSolution() throws IOException {
-            Element solutionElement = new Element("Solution");
-            document.setRootElement(solutionElement);
 
-            Element schedulingPeriodIDElement = new Element("SchedulingPeriodID");
-            schedulingPeriodIDElement.setText(nurseRoster.getCode());
-            solutionElement.addContent(schedulingPeriodIDElement);
+            List<CourseAssignment> courseAssign = nurseRoster.getCourseAssignmentList();
 
-            Element competitorElement = new Element("Competitor");
-            competitorElement.setText("Geoffrey De Smet with OptaPlanner");
-            solutionElement.addContent(competitorElement);
+            for (CourseAssignment ca : courseAssign) {
+                CourseType courseType = ca.getCourse().getCourseType();
+                bufferedWriter.write(courseType.getCode() + ",");
+                bufferedWriter.write(courseType.getDept() + ",");
+                bufferedWriter.write(courseType.getCrs() + ",");
+                bufferedWriter.write(courseType.getSec() + ",");
+                bufferedWriter.write(ca.getCourseDay().getDayString() + ",");             
+                bufferedWriter.write(courseType.getStartTimeString() + ",");              
+                bufferedWriter.write(courseType.getEndTimeString() + ",");     
+                bufferedWriter.write(courseType.getBldg() + ",");
+                bufferedWriter.write(courseType.getRm() + ",");
 
-            Element softConstraintsPenaltyElement = new Element("SoftConstraintsPenalty");
-            softConstraintsPenaltyElement.setText(Integer.toString(nurseRoster.getScore().getSoftScore()));
-            solutionElement.addContent(softConstraintsPenaltyElement);
-
-            for (CourseAssignment courseAssignment : nurseRoster.getCourseAssignmentList()) {
-                Course course = courseAssignment.getCourse();
-                if (course != null) {
-                    Element assignmentElement = new Element("Assignment");
-                    solutionElement.addContent(assignmentElement);
-
-                    Element dayElement = new Element("Day");
-                    dayElement.setText(course.getCourseDay().getDayString());
-                    assignmentElement.addContent(dayElement);
-
-                    Element taElement = new Element("Ta");
-                    taElement.setText(courseAssignment.getTa().getCode());
-                    assignmentElement.addContent(taElement);
-
-                    Element courseTypeElement = new Element("CourseType");
-                    courseTypeElement.setText(course.getCourseType().getCode());
-                    assignmentElement.addContent(courseTypeElement);
+                List<Coordinator> coordinatorList = nurseRoster.getCoordinatorList();
+                for (Coordinator coord : coordinatorList){
+                    List<CourseType> coordCourseTypeList = coord.getCourseTypes();
+                    for (CourseType ct : coordCourseTypeList){
+                         if (Objects.equals(courseType.getId(), ct.getId())){
+                             bufferedWriter.write(coord.getName() + ",");
+                             break;
+                        }
+                    }
                 }
+
+                Ta ta = ca.getTa();
+                bufferedWriter.write(ta.getName() + ",");               
+                bufferedWriter.write(ta.getEmail());
+                bufferedWriter.write(System.getProperty("line.separator"));
             }
         }
     }
 
+    @Override
+    public TxtOutputBuilder createTxtOutputBuilder() {
+        SaveTxtOutputBuilder saveTextOutputBuilder = new SaveTxtOutputBuilder();
+        return saveTextOutputBuilder;
+    }   
 }
