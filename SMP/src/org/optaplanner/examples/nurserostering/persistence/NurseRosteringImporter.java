@@ -109,6 +109,9 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
 
         private void readCoordinatorToCourseTypeMapping(NurseRoster nurseRoster,
                 Element coordinatorsElement) throws JDOMException{
+            if (coordinatorsElement == null) {
+                return;
+            }
             List<Element> coordinatorMappingElementList = coordinatorsElement.getChildren();
             courseTypeToCoordinatorMap = new HashMap<>(coordinatorMappingElementList.size());
             for (Element element : coordinatorMappingElementList) {
@@ -147,27 +150,33 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
 
         private void readCoordinatorList(NurseRoster nurseRoster, Element coordinatorsElement)
             throws JDOMException{
-            List<Element> coordinatorsElementList = coordinatorsElement.getChildren();
-            List<Coordinator> coordinatorList = new ArrayList<>(coordinatorsElementList.size());
-            coordinatorMap = new HashMap<>(coordinatorsElementList.size());
-            long id = 0L;
-            for (Element element : coordinatorsElementList) {
-                assertElementName(element, "Coordinator");
-                String code = element.getAttribute("ID").getValue();
+            List<Coordinator> coordinatorList;
+            if (coordinatorsElement == null) {
+                coordinatorList = Collections.emptyList();
+            }
+            else {
+                List<Element> coordinatorsElementList = coordinatorsElement.getChildren();
+                coordinatorList = new ArrayList<>(coordinatorsElementList.size());
+                coordinatorMap = new HashMap<>(coordinatorsElementList.size());
+                long id = 0L;
+                for (Element element : coordinatorsElementList) {
+                    assertElementName(element, "Coordinator");
+                    String code = element.getAttribute("ID").getValue();
 
-                if (coordinatorMap.containsKey(code)) {
-                    throw new IllegalArgumentException("Coordinator "
-                                + code + " already exists");
-                }
-                else {
-                    Coordinator coordinator = new Coordinator();
-                    coordinator.setId(id);
-                    coordinator.setCode(code);
-                    coordinator.setName(element.getChild("Name").getText());
-                    coordinator.setEmail(element.getChild("Email").getText());
-                    coordinator.setCourseTypes(new ArrayList<CourseType>());
-                    coordinatorList.add(coordinator);
-                    coordinatorMap.put(code,coordinator);
+                    if (coordinatorMap.containsKey(code)) {
+                        throw new IllegalArgumentException("Coordinator "
+                                    + code + " already exists");
+                    }
+                    else {
+                        Coordinator coordinator = new Coordinator();
+                        coordinator.setId(id);
+                        coordinator.setCode(code);
+                        coordinator.setName(element.getChild("Name").getText());
+                        coordinator.setEmail(element.getChild("Email").getText());
+                        coordinator.setCourseTypes(new ArrayList<CourseType>());
+                        coordinatorList.add(coordinator);
+                        coordinatorMap.put(code,coordinator);
+                    }
                 }
             }
             nurseRoster.setCoordinatorList(coordinatorList);
