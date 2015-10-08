@@ -37,7 +37,6 @@ import org.optaplanner.examples.nurserostering.domain.CourseType;
 import org.optaplanner.examples.nurserostering.domain.DayOfWeek;
 import org.optaplanner.examples.nurserostering.domain.NurseRoster;
 import org.optaplanner.examples.nurserostering.domain.Ta;
-import org.optaplanner.examples.nurserostering.domain.contract.BooleanContractLine;
 import org.optaplanner.examples.nurserostering.domain.contract.Contract;
 import org.optaplanner.examples.nurserostering.domain.contract.ContractLine;
 import org.optaplanner.examples.nurserostering.domain.contract.ContractLineType;
@@ -283,7 +282,6 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
             List<ContractLine> contractLineList = new ArrayList<>(
                     contractElementList.size() * contractLineTypeListSize);
             long contractLineId = 0L;
-            long patternContractLineId = 0L;
             for (Element element : contractElementList) {
                 assertElementName(element, "Contract");
                 Contract contract = new Contract();
@@ -307,40 +305,6 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
             }
             nurseRoster.setContractList(contractList);
             nurseRoster.setContractLineList(contractLineList);
-        }
-
-        private long readBooleanContractLine(Contract contract, List<ContractLine> contractLineList,
-                List<ContractLine> contractLineListOfContract, long contractLineId, Element element,
-                ContractLineType contractLineType) throws DataConversionException {
-            boolean enabled = Boolean.valueOf(element.getText());
-            int weight;
-            if (enabled) {
-                weight = element.getAttribute("weight").getIntValue();
-                if (weight < 0) {
-                    throw new IllegalArgumentException("The weight (" + weight
-                            + ") of contract (" + contract.getCode() + ") and contractLineType (" + contractLineType
-                            + ") should be 0 or at least 1.");
-                } else if (weight == 0) {
-                    // If the weight is zero, the constraint should not be considered.
-                    enabled = false;
-                    logger.warn("In contract ({}), the contractLineType ({}) is enabled with weight 0.",
-                            contract.getCode(), contractLineType);
-                }
-            } else {
-                weight = 0;
-            }
-            if (enabled) {
-                BooleanContractLine contractLine = new BooleanContractLine();
-                contractLine.setId(contractLineId);
-                contractLine.setContract(contract);
-                contractLine.setContractLineType(contractLineType);
-                contractLine.setEnabled(enabled);
-                contractLine.setWeight(weight);
-                contractLineList.add(contractLine);
-                contractLineListOfContract.add(contractLine);
-                contractLineId++;
-            }
-            return contractLineId;
         }
 
         private long readMinMaxContractLine(Contract contract, List<ContractLine> contractLineList,
@@ -539,8 +503,6 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                                 + ") of courseOffRequest (" + courseOffRequest + ") does not exist.");
                     }
                     courseOffRequest.setCourse(course);
-
-                    courseOffRequest.setWeight(element.getAttribute("weight").getIntValue());
 
                     courseOffRequestList.add(courseOffRequest);
                     ta.getCourseOffRequestMap().put(course, courseOffRequest);

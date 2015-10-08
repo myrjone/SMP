@@ -17,5 +17,5 @@
 package org.optaplanner.examples.nurserostering.domain.contract;
 
 public enum ContractLineType {
-    TOTAL_ASSIGNMENTS,
+    TOTAL_ASSIGNMENTS;
 }

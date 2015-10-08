@@ -154,7 +154,6 @@
             <xs:element name="TaID" type="ID"/>
             <xs:element name="Day" type="WeekDay"/>
           </xs:sequence>
-          <xs:attribute name="weight" type="xs:nonNegativeInteger" use="required"/>
         </xs:complexType>
       </xs:element>
     </xs:sequence>

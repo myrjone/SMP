@@ -38,21 +38,25 @@ import org.optaplanner.examples.nurserostering.solver.drools.TaAssignmentTotal;
 global HardSoftScoreHolder scoreHolder;
 
 // ############################################################################
-// Hard constraints
+// Hard constraints (all equally important)
 // ############################################################################
 
-// A ta can't be assigned more than two courses in a single day
-rule "noMoreThanTwoCoursesPerDay"
+/* Course off request symbolizes that a TA cannot assist with a course
+ * due to incompatible schedules (i.e. the times that they are available
+ * do not match up with the times that the course is being taught).
+ */
+rule "courseOffRequest"
     when
-        $firstAssignment : CourseAssignment($firstId : id, $ta : ta, $courseDay : courseDay, ta != null)
-        $secondAssignment : CourseAssignment($secondId : id, ta == $ta, courseDay == $courseDay, id != $firstId)
-        $thirdAssignment : CourseAssignment($thirdId : id, ta == $ta, courseDay == $courseDay, id != $firstId, id != $secondId)
+        $courseOffRequest : CourseOffRequest($ta : ta, $course : course)
+        $assignment : CourseAssignment(ta == $ta, course == $course)
     then
         scoreHolder.addHardConstraintMatch(kcontext, -1);
 end
 
-// Can't assist with more than one of the same courseType
-// on a single day
+
+/* If a particular course requires more than 1 TA, then we need
+ * to ensure that it gets assigned to two different TAs, otherwise
+ */
 rule "oneTypePerDay"
     when
         $left : CourseAssignment($id : id, $ta : ta, $courseDay : courseDay, $courseType : course.courseType, ta != null)
@@ -61,16 +65,12 @@ rule "oneTypePerDay"
         scoreHolder.addHardConstraintMatch(kcontext, -1);
 end
 
-// Unavailability is a top priority
-rule "courseOffRequest"
-    when
-        $courseOffRequest : CourseOffRequest($ta : ta, $course : course, $weight : weight)
-        $assignment : CourseAssignment(ta == $ta, course == $course)
-    then
-        scoreHolder.addHardConstraintMatch(kcontext, - $weight);
-end
 
-// Same course, different days needs same TA
+/* Recall that a coursetype in this application's context is information pertaining to
+ * a specific course. A course itself is a mapping of a coursetype to a particular day.
+ * If a coursetype spans more than one day (it could be offered on Monday and Wednesday,
+ * for example), then the same TA must be assigned to that course.
+ */
 rule "sameCourseDifferentDaySameTA"
     when
         $assignment : CourseAssignment($ta : ta, $courseDay : courseDay, $courseType : course.courseType, ta != null)
@@ -83,6 +83,10 @@ end
 // Soft constraints
 // ############################################################################
 
+/* This rule is necessary to enforce the min/max course assignments.
+ * I believe it essentially sets the min/max course assignments
+ * rules based on whether or not they are present in the input file.
+ */
 rule "insertTaAssignmentTotal"
         salience 1 // Do these rules first (optional, for performance)
     when
@@ -97,7 +101,32 @@ rule "insertTaAssignmentTotal"
         insertLogical(new TaAssignmentTotal($ta, $assignmentTotal.intValue()));
 end
 
-// A ta should only be assigned to one course per day
+
+/* Some instructors may prefer to have a certain TA
+ * assist with certain courses. These should be
+ * taken into consideratio when scheduling.
+ */
+rule "courseOnRequest"
+    when
+        $courseOnRequest : CourseOnRequest($ta : ta, $course : course, $weight : weight)
+        not CourseAssignment(ta == $ta, course == $course)
+    then
+        scoreHolder.addSoftConstraintMatch(kcontext, - $weight);
+end
+
+
+/* A TA should not be assigned to more than two courses per day */
+rule "noMoreThanTwoCoursesPerDay"
+    when
+        $firstAssignment : CourseAssignment($firstId : id, $ta : ta, $courseDay : courseDay, ta != null)
+        $secondAssignment : CourseAssignment($secondId : id, ta == $ta, courseDay == $courseDay, id != $firstId)
+        $thirdAssignment : CourseAssignment($thirdId : id, ta == $ta, courseDay == $courseDay, id != $firstId, id != $secondId)
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -1);
+end
+
+
+/* A ta should only be assigned to one course per day */
 rule "oneCoursePerDay"
     when
         $leftAssignment : CourseAssignment($leftId : id, $ta : ta, $courseDay : courseDay, ta != null)
@@ -106,20 +135,11 @@ rule "oneCoursePerDay"
         scoreHolder.addSoftConstraintMatch(kcontext, -1);
 end
 
-// Minimum number of assignments
-rule "minimumTotalAssignments"
-    when
-        $contractLine : MinMaxContractLine(
-            contractLineType == ContractLineType.TOTAL_ASSIGNMENTS, minimumEnabled == true,
-            $contract : contract, $minimumValue : minimumValue
-        )
-        TaAssignmentTotal(taContract == $contract, total < $minimumValue,
-            $ta : ta, $total : total)
-    then
-        scoreHolder.addSoftConstraintMatch(kcontext, ($total - $minimumValue) * $contractLine.getMinimumWeight());
-end
 
-// Maximum number of assignments
+/* If a maximum number of assignments is specified for the
+ * application, then the number of assignments to
+ * one TA should not exceed this value.
+ */
 rule "maximumTotalAssignments"
     when
         $contractLine : MinMaxContractLine(
@@ -132,12 +152,19 @@ rule "maximumTotalAssignments"
         scoreHolder.addSoftConstraintMatch(kcontext, ($maximumValue - $total) * $contractLine.getMaximumWeight());
 end
 
-// Requested course on
 
-rule "courseOnRequest"
+/* If a minimum number of assignments is specified for the
+ * application, then the number of assignments to
+ * one TA should not exceed this value.
+ */
+rule "minimumTotalAssignments"
     when
-        $courseOnRequest : CourseOnRequest($ta : ta, $course : course, $weight : weight)
-        not CourseAssignment(ta == $ta, course == $course)
+        $contractLine : MinMaxContractLine(
+            contractLineType == ContractLineType.TOTAL_ASSIGNMENTS, minimumEnabled == true,
+            $contract : contract, $minimumValue : minimumValue
+        )
+        TaAssignmentTotal(taContract == $contract, total < $minimumValue,
+            $ta : ta, $total : total)
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, - $weight);
+        scoreHolder.addSoftConstraintMatch(kcontext, ($total - $minimumValue) * $contractLine.getMinimumWeight());
 end

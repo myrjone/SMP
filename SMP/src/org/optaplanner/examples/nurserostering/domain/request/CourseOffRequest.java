@@ -26,7 +26,6 @@ public class CourseOffRequest extends AbstractPersistable {
 
     private Ta ta;
     private Course course;
-    private int weight;
 
     public Ta getTa() {
         return ta;
@@ -42,14 +41,6 @@ public class CourseOffRequest extends AbstractPersistable {
 
     public void setCourse(Course course) {
         this.course = course;
-    }
-
-    public int getWeight() {
-        return weight;
-    }
-
-    public void setWeight(int weight) {
-        this.weight = weight;
     }
 
     @Override

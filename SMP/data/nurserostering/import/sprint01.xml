@@ -88,7 +88,6 @@
   <Contracts>
     <Contract ID="0">
       <Description>Standard TA Contract</Description>
-      <SingleAssignmentPerDay weight="1">true</SingleAssignmentPerDay>
       <MaxNumAssignments on="1" weight="1">2</MaxNumAssignments>
       <MinNumAssignments on="1" weight="1">1</MinNumAssignments>
     </Contract>
@@ -191,47 +190,47 @@
     </DayOfWeekCover>
   </CoverRequirements>
   <CourseOffRequests>
-    <CourseOff weight="1">
+    <CourseOff >
       <CourseTypeID>00000</CourseTypeID>
       <TaID>0</TaID>
       <Day>Monday</Day>
     </CourseOff>
-    <CourseOff weight="1">
+    <CourseOff >
       <CourseTypeID>00001</CourseTypeID>
       <TaID>4</TaID>
       <Day>Monday</Day>
     </CourseOff>
-    <CourseOff weight="1">
+    <CourseOff >
       <CourseTypeID>00002</CourseTypeID>
       <TaID>5</TaID>
       <Day>Tuesday</Day>
     </CourseOff>
-    <CourseOff weight="1">
+    <CourseOff >
       <CourseTypeID>00003</CourseTypeID>
       <TaID>6</TaID>
       <Day>Wednesday</Day>
     </CourseOff>
-    <CourseOff weight="1">
+    <CourseOff >
       <CourseTypeID>00001</CourseTypeID>
       <TaID>7</TaID>
       <Day>Monday</Day>
     </CourseOff>
-    <CourseOff weight="1">
+    <CourseOff >
       <CourseTypeID>00004</CourseTypeID>
       <TaID>8</TaID>
       <Day>Thursday</Day>
     </CourseOff>
-    <CourseOff weight="1">
+    <CourseOff >
       <CourseTypeID>00005</CourseTypeID>
       <TaID>9</TaID>
       <Day>Friday</Day>
     </CourseOff>
-    <CourseOff weight="1">
+    <CourseOff >
       <CourseTypeID>00002</CourseTypeID>
       <TaID>2</TaID>
       <Day>Tuesday</Day>
     </CourseOff>
-    <CourseOff weight="1">
+    <CourseOff >
       <CourseTypeID>00003</CourseTypeID>
       <TaID>3</TaID>
       <Day>Wednesday</Day>
