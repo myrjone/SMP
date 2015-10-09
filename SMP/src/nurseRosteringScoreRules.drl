@@ -27,7 +27,6 @@ import org.optaplanner.examples.nurserostering.domain.Course;
 import org.optaplanner.examples.nurserostering.domain.CourseDay;
 import org.optaplanner.examples.nurserostering.domain.CourseType;
 import org.optaplanner.examples.nurserostering.domain.contract.Contract;
-import org.optaplanner.examples.nurserostering.domain.contract.BooleanContractLine;
 import org.optaplanner.examples.nurserostering.domain.contract.ContractLine;
 import org.optaplanner.examples.nurserostering.domain.contract.ContractLineType;
 import org.optaplanner.examples.nurserostering.domain.contract.MinMaxContractLine;
