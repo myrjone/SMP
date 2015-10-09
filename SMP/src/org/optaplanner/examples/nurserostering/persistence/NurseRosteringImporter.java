@@ -492,30 +492,28 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                 long id = 0L;
                 for (Element element : courseOffElementList) {
                     assertElementName(element, "CourseOff");
-                    CourseOffRequest courseOffRequest = new CourseOffRequest();
-                    courseOffRequest.setId(id);
 
                     Element taElement = element.getChild("TaID");
                     Ta ta = taMap.get(taElement.getText());
+
                     if (ta == null) {
                         throw new IllegalArgumentException("The course (" + taElement.getText()
-                                + ") of courseOffRequest (" + courseOffRequest + ") does not exist.");
+                                + ") of courseOffRequest () does not exist.");
                     }
-                    courseOffRequest.setTa(ta);
 
-                    String day = element.getChild("Day").getText();
                     Element courseTypeElement = element.getChild("CourseTypeID");
-                    Course course = dayAndCourseTypeToCourseMap.get(Arrays.asList(day, courseTypeElement.getText()));
-                    if (course == null) {
-                        throw new IllegalArgumentException("The day (" + day
-                                + ") or the courseType (" + courseTypeElement.getText()
-                                + ") of courseOffRequest (" + courseOffRequest + ") does not exist.");
+                    List<Course> courseList = nurseRoster.getCourseList();
+                    for (Course crs : courseList) {
+                        if (crs.getCourseType().getCode().equals(courseTypeElement.getText())){
+                            CourseOffRequest courseOffRequest = new CourseOffRequest();
+                            courseOffRequest.setId(id);
+                            courseOffRequest.setTa(ta);
+                            courseOffRequest.setCourse(crs);
+                            courseOffRequestList.add(courseOffRequest);
+                            ta.getCourseOffRequestMap().put(crs, courseOffRequest);
+                            id++;
+                        }
                     }
-                    courseOffRequest.setCourse(course);
-
-                    courseOffRequestList.add(courseOffRequest);
-                    ta.getCourseOffRequestMap().put(course, courseOffRequest);
-                    id++;
                 }
             }
             nurseRoster.setCourseOffRequestList(courseOffRequestList);
@@ -531,32 +529,28 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                 long id = 0L;
                 for (Element element : courseOnElementList) {
                     assertElementName(element, "CourseOn");
-                    CourseOnRequest courseOnRequest = new CourseOnRequest();
-                    courseOnRequest.setId(id);
 
                     Element taElement = element.getChild("TaID");
                     Ta ta = taMap.get(taElement.getText());
                     if (ta == null) {
                         throw new IllegalArgumentException("The course (" + taElement.getText()
-                                + ") of courseOnRequest (" + courseOnRequest + ") does not exist.");
+                                + ") of courseOnRequest (s) does not exist.");
                     }
-                    courseOnRequest.setTa(ta);
 
-                    String day = element.getChild("Day").getText();
                     Element courseTypeElement = element.getChild("CourseTypeID");
-                    Course course = dayAndCourseTypeToCourseMap.get(Arrays.asList(day, courseTypeElement.getText()));
-                    if (course == null) {
-                        throw new IllegalArgumentException("The day (" + day
-                                + ") or the courseType (" + courseTypeElement.getText()
-                                + ") of courseOnRequest (" + courseOnRequest + ") does not exist.");
+                    List<Course> courseList = nurseRoster.getCourseList();
+                    for (Course crs : courseList) {
+                        if (crs.getCourseType().getCode().equals(courseTypeElement.getText())){
+                            CourseOnRequest courseOnRequest = new CourseOnRequest();
+                            courseOnRequest.setId(id);
+                            courseOnRequest.setTa(ta);
+                            courseOnRequest.setCourse(crs);
+                            courseOnRequest.setWeight(element.getAttribute("weight").getIntValue());
+                            courseOnRequestList.add(courseOnRequest);
+                            ta.getCourseOnRequestMap().put(crs, courseOnRequest);
+                            id++;
+                        }
                     }
-                    courseOnRequest.setCourse(course);
-
-                    courseOnRequest.setWeight(element.getAttribute("weight").getIntValue());
-
-                    courseOnRequestList.add(courseOnRequest);
-                    ta.getCourseOnRequestMap().put(course, courseOnRequest);
-                    id++;
                 }
             }
             nurseRoster.setCourseOnRequestList(courseOnRequestList);
