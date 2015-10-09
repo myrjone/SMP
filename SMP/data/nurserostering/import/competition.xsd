@@ -118,31 +118,19 @@
     </xs:simpleContent>
   </xs:complexType>
   <xs:complexType name="CoverRequirements">
-    <xs:choice minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="DayOfWeekCover">
+      <xs:element name="CourseCover">
         <xs:complexType>
-          <xs:sequence>
-            <xs:element name="Day" type="WeekDay"/>
-            <xs:element name="Cover" type="Cover" maxOccurs="unbounded"/>
+            <xs:sequence>
+                <xs:element name="Course" type="ID"/>
+                <xs:element name="Preferred" type="xs:nonNegativeInteger" minOccurs="0"/>
+                <xs:element name="Days" type="Days">
           </xs:sequence>
         </xs:complexType>
       </xs:element>
-      <xs:element name="DaySpecificCover">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element name="Day" type="xs:date"/>
-            <xs:element name="Cover" type="Cover" maxOccurs="unbounded"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-    </xs:choice>
   </xs:complexType>
-  <xs:complexType name="Cover">
+  <xs:complexType name="Days">
     <xs:sequence>
-      <xs:choice>
-        <xs:element name="Course" type="ID"/>
-      </xs:choice>
-      <xs:element name="Preferred" type="xs:nonNegativeInteger" minOccurs="0"/>
+        <xs:element name="Day" type="WeekDay"/>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="CourseOffRequests">
@@ -152,7 +140,6 @@
           <xs:sequence>
             <xs:element name="CourseTypeID" type="ID"/>
             <xs:element name="TaID" type="ID"/>
-            <xs:element name="Day" type="WeekDay"/>
           </xs:sequence>
         </xs:complexType>
       </xs:element>
@@ -163,11 +150,8 @@
       <xs:element name="CourseOn" minOccurs="0" maxOccurs="unbounded">
         <xs:complexType>
           <xs:sequence>
-            <xs:choice>
               <xs:element name="CourseTypeID" type="ID"/>
-            </xs:choice>
             <xs:element name="TaID" type="ID"/>
-            <xs:element name="Day" type="WeekDay"/>
           </xs:sequence>
           <xs:attribute name="weight" type="xs:nonNegativeInteger" use="required"/>
         </xs:complexType>
