@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -44,6 +45,7 @@ import org.optaplanner.examples.nurserostering.domain.contract.ContractLineType;
 import org.optaplanner.examples.nurserostering.domain.contract.MinMaxContractLine;
 import org.optaplanner.examples.nurserostering.domain.request.CourseOffRequest;
 import org.optaplanner.examples.nurserostering.domain.request.CourseOnRequest;
+import org.optaplanner.examples.nurserostering.domain.solver.CourseAssignmentDayOfWeekComparator;
 
 public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
 
@@ -538,7 +540,20 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                     courseAssignmentList.add(courseAssignment);
                 }
             }
+            courseAssignmentList = sortCourseAssignmentByDay(courseAssignmentList);
             nurseRoster.setCourseAssignmentList(courseAssignmentList);
+        }
+
+        private List<CourseAssignment> sortCourseAssignmentByDay(List<CourseAssignment> caList) {
+            if (caList.isEmpty()) {
+                return Collections.emptyList();
+            }
+            else {
+                List<CourseAssignment> temp = caList;
+                Comparator<CourseAssignment> comp = new CourseAssignmentDayOfWeekComparator();
+                Collections.sort(temp, comp);
+                return temp;
+            }
         }
 
     }

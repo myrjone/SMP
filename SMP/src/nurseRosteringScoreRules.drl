@@ -54,7 +54,7 @@ end
 
 
 /* If a particular course requires more than 1 TA, then we need
- * to ensure that it gets assigned to two different TAs, otherwise
+ * to ensure that it gets assigned to two different TAs
  */
 rule "oneTypePerDay"
     when
@@ -73,7 +73,7 @@ end
 rule "sameCourseDifferentDaySameTA"
     when
         $assignment : CourseAssignment($ta : ta, $courseDay : courseDay, $courseType : course.courseType, ta != null)
-        $result : CourseAssignment(ta != $ta, courseDay != $courseDay, course.courseType == $courseType)
+        not CourseAssignment(ta == $ta, courseDay != $courseDay, course.courseType == $courseType)
     then
         scoreHolder.addHardConstraintMatch(kcontext, -1);
 end
