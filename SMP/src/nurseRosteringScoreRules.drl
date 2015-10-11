@@ -73,7 +73,8 @@ end
 rule "sameCourseDifferentDaySameTA"
     when
         $assignment : CourseAssignment($ta : ta, $courseDay : courseDay, $courseType : course.courseType, ta != null)
-        not CourseAssignment(ta == $ta, courseDay != $courseDay, course.courseType == $courseType)
+        $ass2 : CourseAssignment($ta2 : ta, $ta2 != $ta, courseDay != $courseDay, course.courseType == $courseType)
+        not CourseAssignment(ta == $ta2, courseDay == $courseDay, course.courseType == $courseType)
     then
         scoreHolder.addHardConstraintMatch(kcontext, -1);
 end
