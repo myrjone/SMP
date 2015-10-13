@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.optaplanner.examples.nurserostering.domain.request;
+package org.optaplanner.examples.tarostering.domain.request;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.optaplanner.examples.common.domain.AbstractPersistable;
-import org.optaplanner.examples.nurserostering.domain.Course;
-import org.optaplanner.examples.nurserostering.domain.Ta;
+import org.optaplanner.examples.tarostering.domain.Course;
+import org.optaplanner.examples.tarostering.domain.Ta;
 
 @XStreamAlias("CourseOnRequest")
 public class CourseOnRequest extends AbstractPersistable {

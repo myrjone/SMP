@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package org.optaplanner.examples.nurserostering.solver.move.factory;
+package org.optaplanner.examples.tarostering.solver.move.factory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 import org.optaplanner.core.impl.heuristic.move.Move;
 import org.optaplanner.core.impl.heuristic.selector.move.factory.MoveListFactory;
-import org.optaplanner.examples.nurserostering.domain.CourseAssignment;
-import org.optaplanner.examples.nurserostering.domain.NurseRoster;
-import org.optaplanner.examples.nurserostering.solver.move.CourseAssignmentSwapMove;
+import org.optaplanner.examples.tarostering.domain.CourseAssignment;
+import org.optaplanner.examples.tarostering.domain.TaRoster;
+import org.optaplanner.examples.tarostering.solver.move.CourseAssignmentSwapMove;
 
-public class CourseAssignmentSwapMoveFactory implements MoveListFactory<NurseRoster> {
+public class CourseAssignmentSwapMoveFactory implements MoveListFactory<TaRoster> {
 
     @Override
-    public List<Move> createMoveList(NurseRoster nurseRoster) {
+    public List<Move> createMoveList(TaRoster taRoster) {
         // Filter out every immovable CourseAssignment
         List<CourseAssignment> courseAssignmentList = new ArrayList<>(
-                nurseRoster.getCourseAssignmentList());
+                taRoster.getCourseAssignmentList());
 
         List<Move> moveList = new ArrayList<>();
         for (ListIterator<CourseAssignment> leftIt = courseAssignmentList.listIterator(); leftIt.hasNext();) {

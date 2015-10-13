@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.optaplanner.examples.nurserostering.domain;
+package org.optaplanner.examples.tarostering.domain;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
@@ -28,15 +28,15 @@ import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.core.impl.score.buildin.hardsoft.HardSoftScoreDefinition;
 import org.optaplanner.examples.common.domain.AbstractPersistable;
-import org.optaplanner.examples.nurserostering.domain.contract.Contract;
-import org.optaplanner.examples.nurserostering.domain.contract.ContractLine;
-import org.optaplanner.examples.nurserostering.domain.request.CourseOffRequest;
-import org.optaplanner.examples.nurserostering.domain.request.CourseOnRequest;
+import org.optaplanner.examples.tarostering.domain.contract.Contract;
+import org.optaplanner.examples.tarostering.domain.contract.ContractLine;
+import org.optaplanner.examples.tarostering.domain.request.CourseOffRequest;
+import org.optaplanner.examples.tarostering.domain.request.CourseOnRequest;
 import org.optaplanner.persistence.xstream.impl.score.XStreamScoreConverter;
 
 @PlanningSolution
-@XStreamAlias("NurseRoster")
-public class NurseRoster extends AbstractPersistable implements Solution<HardSoftScore> {
+@XStreamAlias("TaRoster")
+public class TaRoster extends AbstractPersistable implements Solution<HardSoftScore> {
 
     private String code;
 

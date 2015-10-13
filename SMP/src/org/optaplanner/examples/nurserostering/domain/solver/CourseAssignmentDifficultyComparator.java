@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.optaplanner.examples.nurserostering.domain.solver;
+package org.optaplanner.examples.tarostering.domain.solver;
 
 import java.io.Serializable;
 import java.util.Comparator;
 import org.apache.commons.lang.builder.CompareToBuilder;
-import org.optaplanner.examples.nurserostering.domain.Course;
-import org.optaplanner.examples.nurserostering.domain.CourseAssignment;
+import org.optaplanner.examples.tarostering.domain.Course;
+import org.optaplanner.examples.tarostering.domain.CourseAssignment;
 
 public class CourseAssignmentDifficultyComparator implements Comparator<CourseAssignment>, Serializable {
 

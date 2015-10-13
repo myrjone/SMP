@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package org.optaplanner.examples.nurserostering.domain;
+package org.optaplanner.examples.tarostering.domain;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 import org.optaplanner.examples.common.domain.AbstractPersistable;
-import org.optaplanner.examples.nurserostering.domain.contract.Contract;
-import org.optaplanner.examples.nurserostering.domain.solver.CourseAssignmentDifficultyComparator;
-import org.optaplanner.examples.nurserostering.domain.solver.TaStrengthComparator;
+import org.optaplanner.examples.tarostering.domain.contract.Contract;
+import org.optaplanner.examples.tarostering.domain.solver.CourseAssignmentDifficultyComparator;
+import org.optaplanner.examples.tarostering.domain.solver.TaStrengthComparator;
 
 @PlanningEntity(difficultyComparatorClass = CourseAssignmentDifficultyComparator.class)
 @XStreamAlias("CourseAssignment")

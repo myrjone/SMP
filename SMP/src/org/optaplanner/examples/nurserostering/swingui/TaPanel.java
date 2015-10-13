@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.optaplanner.examples.nurserostering.swingui;
+package org.optaplanner.examples.tarostering.swingui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -37,18 +37,18 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import org.optaplanner.examples.common.swingui.TangoColorFactory;
 import org.optaplanner.examples.common.swingui.components.LabeledComboBoxRenderer;
-import org.optaplanner.examples.nurserostering.domain.Course;
-import org.optaplanner.examples.nurserostering.domain.CourseAssignment;
-import org.optaplanner.examples.nurserostering.domain.CourseDay;
-import org.optaplanner.examples.nurserostering.domain.CourseType;
-import org.optaplanner.examples.nurserostering.domain.Ta;
+import org.optaplanner.examples.tarostering.domain.Course;
+import org.optaplanner.examples.tarostering.domain.CourseAssignment;
+import org.optaplanner.examples.tarostering.domain.CourseDay;
+import org.optaplanner.examples.tarostering.domain.CourseType;
+import org.optaplanner.examples.tarostering.domain.Ta;
 
 public class TaPanel extends JPanel {
 
     public static final int WEST_HEADER_WIDTH = 160;
     public static final int EAST_HEADER_WIDTH = 130;
 
-    private final NurseRosteringPanel nurseRosteringPanel;
+    private final TaRosteringPanel taRosteringPanel;
     private List<CourseDay> courseDayList;
     private List<Course> courseList;
     private final Ta ta;
@@ -62,10 +62,10 @@ public class TaPanel extends JPanel {
 
     private final Map<CourseAssignment, JButton> courseAssignmentButtonMap = new HashMap<> ();
 
-    public TaPanel(NurseRosteringPanel nurseRosteringPanel, List<CourseDay> courseDayList, List<Course> courseList,
+    public TaPanel(TaRosteringPanel taRosteringPanel, List<CourseDay> courseDayList, List<Course> courseList,
             Ta ta) {
         super(new BorderLayout());
-        this.nurseRosteringPanel = nurseRosteringPanel;
+        this.taRosteringPanel = taRosteringPanel;
         this.courseDayList = courseDayList;
         this.courseList = courseList;
         this.ta = ta;
@@ -94,19 +94,19 @@ public class TaPanel extends JPanel {
     private void createUI() {
         JPanel labelAndDeletePanel = new JPanel(new BorderLayout(5, 0));
         if (ta != null) {
-            labelAndDeletePanel.add(new JLabel(nurseRosteringPanel.getTaIcon()), BorderLayout.WEST);
+            labelAndDeletePanel.add(new JLabel(taRosteringPanel.getTaIcon()), BorderLayout.WEST);
         }
         taLabel = new JLabel(getTaLabel());
         taLabel.setEnabled(false);
         labelAndDeletePanel.add(taLabel, BorderLayout.CENTER);
         if (ta != null) {
             JPanel deletePanel = new JPanel(new BorderLayout());
-            deleteButton = new JButton(nurseRosteringPanel.getDeleteTaIcon());
+            deleteButton = new JButton(taRosteringPanel.getDeleteTaIcon());
             deleteButton.setToolTipText("Delete");
             deleteButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    nurseRosteringPanel.deleteTa(ta);
+                    taRosteringPanel.deleteTa(ta);
                 }
             });
             deleteButton.setMargin(new Insets(0, 0, 0, 0));
@@ -139,7 +139,7 @@ public class TaPanel extends JPanel {
                     BorderFactory.createEmptyBorder(2, 2, 2, 2)));
             courseDayPanelMap.put(courseDay, courseDayPanel);
             if (ta == null) {
-                // TODO HACK should be in NurseRosterPanel.createHeaderPanel
+                // TODO HACK should be in TaRosterPanel.createHeaderPanel
                 JPanel wrappingCourseDayPanel = new JPanel(new BorderLayout());
                 JLabel courseDayLabel = new JLabel(courseDay.getLabel(), JLabel.CENTER);
                 courseDayLabel.setEnabled(courseDayPanel.isEnabled());
@@ -230,7 +230,7 @@ public class TaPanel extends JPanel {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            List<Ta> taList = nurseRosteringPanel.getNurseRoster().getTaList();
+            List<Ta> taList = taRosteringPanel.getTaRoster().getTaList();
             // Add 1 to array size to add null, which makes the entity unassigned
             JComboBox taListField = new JComboBox(
                     taList.toArray(new Object[taList.size() + 1]));
@@ -240,7 +240,7 @@ public class TaPanel extends JPanel {
                     "Select ta", JOptionPane.OK_CANCEL_OPTION);
             if (result == JOptionPane.OK_OPTION) {
                 Ta toTa = (Ta) taListField.getSelectedItem();
-                nurseRosteringPanel.moveCourseAssignmentToTa(courseAssignment, toTa);
+                taRosteringPanel.moveCourseAssignmentToTa(courseAssignment, toTa);
             }
         }
 

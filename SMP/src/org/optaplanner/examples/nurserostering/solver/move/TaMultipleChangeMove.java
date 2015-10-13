@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.optaplanner.examples.nurserostering.solver.move;
+package org.optaplanner.examples.tarostering.solver.move;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,8 +26,8 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.optaplanner.core.impl.heuristic.move.AbstractMove;
 import org.optaplanner.core.impl.heuristic.move.Move;
 import org.optaplanner.core.impl.score.director.ScoreDirector;
-import org.optaplanner.examples.nurserostering.domain.CourseAssignment;
-import org.optaplanner.examples.nurserostering.domain.Ta;
+import org.optaplanner.examples.tarostering.domain.CourseAssignment;
+import org.optaplanner.examples.tarostering.domain.Ta;
 
 public class TaMultipleChangeMove extends AbstractMove {
 
@@ -58,7 +58,7 @@ public class TaMultipleChangeMove extends AbstractMove {
                 throw new IllegalStateException("The courseAssignment (" + courseAssignment + ") should have the same ta ("
                         + fromTa + ") as the fromTa (" + fromTa + ").");
             }
-            NurseRosteringMoveHelper.moveTa(scoreDirector, courseAssignment, toTa);
+            TaRosteringMoveHelper.moveTa(scoreDirector, courseAssignment, toTa);
         }
     }
 

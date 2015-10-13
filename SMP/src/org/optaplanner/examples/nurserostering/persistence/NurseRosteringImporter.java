@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.optaplanner.examples.nurserostering.persistence;
+package org.optaplanner.examples.tarostering.persistence;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -31,38 +31,38 @@ import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.optaplanner.core.api.domain.solution.Solution;
 import org.optaplanner.examples.common.persistence.AbstractXmlSolutionImporter;
-import org.optaplanner.examples.nurserostering.domain.Coordinator;
-import org.optaplanner.examples.nurserostering.domain.Course;
-import org.optaplanner.examples.nurserostering.domain.CourseAssignment;
-import org.optaplanner.examples.nurserostering.domain.CourseDay;
-import org.optaplanner.examples.nurserostering.domain.CourseType;
-import org.optaplanner.examples.nurserostering.domain.DayOfWeek;
-import org.optaplanner.examples.nurserostering.domain.NurseRoster;
-import org.optaplanner.examples.nurserostering.domain.Ta;
-import org.optaplanner.examples.nurserostering.domain.contract.Contract;
-import org.optaplanner.examples.nurserostering.domain.contract.ContractLine;
-import org.optaplanner.examples.nurserostering.domain.contract.ContractLineType;
-import org.optaplanner.examples.nurserostering.domain.contract.MinMaxContractLine;
-import org.optaplanner.examples.nurserostering.domain.request.CourseOffRequest;
-import org.optaplanner.examples.nurserostering.domain.request.CourseOnRequest;
-import org.optaplanner.examples.nurserostering.domain.solver.CourseAssignmentDayOfWeekComparator;
+import org.optaplanner.examples.tarostering.domain.Coordinator;
+import org.optaplanner.examples.tarostering.domain.Course;
+import org.optaplanner.examples.tarostering.domain.CourseAssignment;
+import org.optaplanner.examples.tarostering.domain.CourseDay;
+import org.optaplanner.examples.tarostering.domain.CourseType;
+import org.optaplanner.examples.tarostering.domain.DayOfWeek;
+import org.optaplanner.examples.tarostering.domain.TaRoster;
+import org.optaplanner.examples.tarostering.domain.Ta;
+import org.optaplanner.examples.tarostering.domain.contract.Contract;
+import org.optaplanner.examples.tarostering.domain.contract.ContractLine;
+import org.optaplanner.examples.tarostering.domain.contract.ContractLineType;
+import org.optaplanner.examples.tarostering.domain.contract.MinMaxContractLine;
+import org.optaplanner.examples.tarostering.domain.request.CourseOffRequest;
+import org.optaplanner.examples.tarostering.domain.request.CourseOnRequest;
+import org.optaplanner.examples.tarostering.domain.solver.CourseAssignmentDayOfWeekComparator;
 
-public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
+public class TaRosteringImporter extends AbstractXmlSolutionImporter {
 
     public static void main(String[] args) {
-        new NurseRosteringImporter().convertAll();
+        new TaRosteringImporter().convertAll();
     }
 
-    public NurseRosteringImporter() {
-        super(new NurseRosteringDao());
+    public TaRosteringImporter() {
+        super(new TaRosteringDao());
     }
 
     @Override
     public XmlInputBuilder createXmlInputBuilder() {
-        return new NurseRosteringInputBuilder();
+        return new TaRosteringInputBuilder();
     }
 
-    public static class NurseRosteringInputBuilder extends XmlInputBuilder {
+    public static class TaRosteringInputBuilder extends XmlInputBuilder {
 
         protected Map<String, CourseDay> courseDayMap;
         protected Map<String, CourseType> courseTypeMap;
@@ -79,38 +79,38 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
 
             Element schedulingPeriodElement = document.getRootElement();
             assertElementName(schedulingPeriodElement, "SchedulingPeriod");
-            NurseRoster nurseRoster = new NurseRoster();
-            nurseRoster.setId(0L);
-            nurseRoster.setCode(schedulingPeriodElement.getAttribute("ID").getValue());
+            TaRoster taRoster = new TaRoster();
+            taRoster.setId(0L);
+            taRoster.setCode(schedulingPeriodElement.getAttribute("ID").getValue());
 
-            generateCourseDayList(nurseRoster);
-            readCourseTypeList(nurseRoster, schedulingPeriodElement.getChild("CourseTypes"));
-            readCourseTypeCoverRequirements(nurseRoster, schedulingPeriodElement.getChild("CoverRequirements"));
-            generateCourseList(nurseRoster);
-            readCoordinatorList(nurseRoster, schedulingPeriodElement.getChild("Coordinators"));
-            readCoordinatorToCourseTypeMapping(nurseRoster, schedulingPeriodElement.getChild("CoordinatorToCourseType"));
-            readContractList(nurseRoster, schedulingPeriodElement.getChild("Contracts"));
-            readTaList(nurseRoster, schedulingPeriodElement.getChild("Tas"));
-            readCourseOffRequestList(nurseRoster, schedulingPeriodElement.getChild("CourseOffRequests"));
-            readCourseOnRequestList(nurseRoster, schedulingPeriodElement.getChild("CourseOnRequests"));
-            createCourseAssignmentList(nurseRoster);
+            generateCourseDayList(taRoster);
+            readCourseTypeList(taRoster, schedulingPeriodElement.getChild("CourseTypes"));
+            readCourseTypeCoverRequirements(taRoster, schedulingPeriodElement.getChild("CoverRequirements"));
+            generateCourseList(taRoster);
+            readCoordinatorList(taRoster, schedulingPeriodElement.getChild("Coordinators"));
+            readCoordinatorToCourseTypeMapping(taRoster, schedulingPeriodElement.getChild("CoordinatorToCourseType"));
+            readContractList(taRoster, schedulingPeriodElement.getChild("Contracts"));
+            readTaList(taRoster, schedulingPeriodElement.getChild("Tas"));
+            readCourseOffRequestList(taRoster, schedulingPeriodElement.getChild("CourseOffRequests"));
+            readCourseOnRequestList(taRoster, schedulingPeriodElement.getChild("CourseOnRequests"));
+            createCourseAssignmentList(taRoster);
 
-            BigInteger possibleSolutionSize = BigInteger.valueOf(nurseRoster.getTaList().size()).pow(
-                    nurseRoster.getCourseAssignmentList().size());
-            logger.info("NurseRoster {} has {} courseTypes, {} contracts, {} tas," +
+            BigInteger possibleSolutionSize = BigInteger.valueOf(taRoster.getTaList().size()).pow(
+                    taRoster.getCourseAssignmentList().size());
+            logger.info("TaRoster {} has {} courseTypes, {} contracts, {} tas," +
                     " {} courseDays, {} courseAssignments and {} requests with a search space of {}.",
                     getInputId(),
-                    nurseRoster.getCourseTypeList().size(),
-                    nurseRoster.getContractList().size(),
-                    nurseRoster.getTaList().size(),
-                    nurseRoster.getCourseDayList().size(),
-                    nurseRoster.getCourseAssignmentList().size(),
-                    nurseRoster.getCourseOffRequestList().size() + nurseRoster.getCourseOnRequestList().size(),
+                    taRoster.getCourseTypeList().size(),
+                    taRoster.getContractList().size(),
+                    taRoster.getTaList().size(),
+                    taRoster.getCourseDayList().size(),
+                    taRoster.getCourseAssignmentList().size(),
+                    taRoster.getCourseOffRequestList().size() + taRoster.getCourseOnRequestList().size(),
                     getFlooredPossibleSolutionSize(possibleSolutionSize));
-            return nurseRoster;
+            return taRoster;
         }
 
-        private void readCoordinatorToCourseTypeMapping(NurseRoster nurseRoster,
+        private void readCoordinatorToCourseTypeMapping(TaRoster taRoster,
                 Element coordinatorsElement) throws JDOMException{
             if (coordinatorsElement == null) {
                 return;
@@ -151,7 +151,7 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
             }
         }
 
-        private void readCoordinatorList(NurseRoster nurseRoster, Element coordinatorsElement)
+        private void readCoordinatorList(TaRoster taRoster, Element coordinatorsElement)
             throws JDOMException{
             List<Coordinator> coordinatorList;
             if (coordinatorsElement == null) {
@@ -182,10 +182,10 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                     }
                 }
             }
-            nurseRoster.setCoordinatorList(coordinatorList);
+            taRoster.setCoordinatorList(coordinatorList);
         }
 
-        private void generateCourseDayList(NurseRoster nurseRoster) {
+        private void generateCourseDayList(TaRoster taRoster) {
             int courseDaySize = DayOfWeek.values().length;
             List<CourseDay> courseDayList = new ArrayList<>(courseDaySize);
             courseDayMap = new HashMap<>(courseDaySize);
@@ -204,10 +204,10 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                 id++;
                 dayIndex++;
             }
-            nurseRoster.setCourseDayList(courseDayList);
+            taRoster.setCourseDayList(courseDayList);
         }
 
-        private void readCourseTypeList(NurseRoster nurseRoster, Element courseTypesElement) throws JDOMException {
+        private void readCourseTypeList(TaRoster taRoster, Element courseTypesElement) throws JDOMException {
             List<Element> courseTypeElementList = courseTypesElement.getChildren();
             List<CourseType> courseTypeList = new ArrayList<>(courseTypeElementList.size());
             courseTypeMap = new HashMap<>(courseTypeElementList.size());
@@ -244,15 +244,15 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                 id++;
                 index++;
             }
-            nurseRoster.setCourseTypeList(courseTypeList);
+            taRoster.setCourseTypeList(courseTypeList);
         }
 
 
-        private void generateCourseList(NurseRoster nurseRoster) throws JDOMException {
+        private void generateCourseList(TaRoster taRoster) throws JDOMException {
             List<Course> courseList = new ArrayList<>();
             long id = 0L;
             int index = 0;
-            for (CourseType courseType : nurseRoster.getCourseTypeList()) {
+            for (CourseType courseType : taRoster.getCourseTypeList()) {
                 Set<DayOfWeek> dayOfWeekSet = courseTypeToDayOfWeekCoverMap.get(courseType);
                 if (dayOfWeekSet != null) {
                     int preferredSize = courseTypeToRequiredTaSizeMap.get(courseType);
@@ -272,10 +272,10 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                 }
             }
 
-            nurseRoster.setCourseList(courseList);
+            taRoster.setCourseList(courseList);
         }
 
-        private void readContractList(NurseRoster nurseRoster, Element contractsElement) throws JDOMException {
+        private void readContractList(TaRoster taRoster, Element contractsElement) throws JDOMException {
             int contractLineTypeListSize = ContractLineType.values().length;
             List<Element> contractElementList = contractsElement.getChildren();
             List<Contract> contractList = new ArrayList<>(contractElementList.size());
@@ -305,8 +305,8 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                 contractMap.put(contract.getCode(), contract);
                 id++;
             }
-            nurseRoster.setContractList(contractList);
-            nurseRoster.setContractLineList(contractLineList);
+            taRoster.setContractList(contractList);
+            taRoster.setContractLineList(contractLineList);
         }
 
         private long readMinMaxContractLine(Contract contract, List<ContractLine> contractLineList,
@@ -381,7 +381,7 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
             return contractLineId;
         }
 
-        private void readTaList(NurseRoster nurseRoster, Element tasElement) throws JDOMException {
+        private void readTaList(TaRoster taRoster, Element tasElement) throws JDOMException {
             List<Element> taElementList = tasElement.getChildren();
             List<Ta> taList = new ArrayList<>(taElementList.size());
             taMap = new HashMap<>(taElementList.size());
@@ -412,10 +412,10 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                 taMap.put(ta.getCode(), ta);
                 id++;
             }
-            nurseRoster.setTaList(taList);
+            taRoster.setTaList(taList);
         }
 
-        private void readCourseTypeCoverRequirements(NurseRoster nurseRoster, Element coverRequirementsElement) {
+        private void readCourseTypeCoverRequirements(TaRoster taRoster, Element coverRequirementsElement) {
             courseTypeToRequiredTaSizeMap = new HashMap<>();
             courseTypeToDayOfWeekCoverMap = new HashMap<>();
             List<Element> coverRequirementElementList = coverRequirementsElement.getChildren();
@@ -451,7 +451,7 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
             }
         }
 
-        private void readCourseOffRequestList(NurseRoster nurseRoster, Element courseOffRequestsElement) throws JDOMException {
+        private void readCourseOffRequestList(TaRoster taRoster, Element courseOffRequestsElement) throws JDOMException {
             List<CourseOffRequest> courseOffRequestList;
             if (courseOffRequestsElement == null) {
                 courseOffRequestList = Collections.emptyList();
@@ -471,7 +471,7 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                     }
 
                     Element courseTypeElement = element.getChild("CourseTypeID");
-                    List<Course> courseList = nurseRoster.getCourseList();
+                    List<Course> courseList = taRoster.getCourseList();
                     for (Course crs : courseList) {
                         if (crs.getCourseType().getCode().equals(courseTypeElement.getText())){
                             CourseOffRequest courseOffRequest = new CourseOffRequest();
@@ -485,10 +485,10 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                     }
                 }
             }
-            nurseRoster.setCourseOffRequestList(courseOffRequestList);
+            taRoster.setCourseOffRequestList(courseOffRequestList);
         }
 
-        private void readCourseOnRequestList(NurseRoster nurseRoster, Element courseOnRequestsElement) throws JDOMException {
+        private void readCourseOnRequestList(TaRoster taRoster, Element courseOnRequestsElement) throws JDOMException {
             List<CourseOnRequest> courseOnRequestList;
             if (courseOnRequestsElement == null) {
                 courseOnRequestList = Collections.emptyList();
@@ -507,7 +507,7 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                     }
 
                     Element courseTypeElement = element.getChild("CourseTypeID");
-                    List<Course> courseList = nurseRoster.getCourseList();
+                    List<Course> courseList = taRoster.getCourseList();
                     for (Course crs : courseList) {
                         if (crs.getCourseType().getCode().equals(courseTypeElement.getText())){
                             CourseOnRequest courseOnRequest = new CourseOnRequest();
@@ -522,11 +522,11 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                     }
                 }
             }
-            nurseRoster.setCourseOnRequestList(courseOnRequestList);
+            taRoster.setCourseOnRequestList(courseOnRequestList);
         }
 
-        private void createCourseAssignmentList(NurseRoster nurseRoster) {
-            List<Course> courseList = nurseRoster.getCourseList();
+        private void createCourseAssignmentList(TaRoster taRoster) {
+            List<Course> courseList = taRoster.getCourseList();
             List<CourseAssignment> courseAssignmentList = new ArrayList<>(courseList.size());
             long id = 0L;
             for (Course course : courseList) {
@@ -541,7 +541,7 @@ public class NurseRosteringImporter extends AbstractXmlSolutionImporter {
                 }
             }
             courseAssignmentList = sortCourseAssignmentByDay(courseAssignmentList);
-            nurseRoster.setCourseAssignmentList(courseAssignmentList);
+            taRoster.setCourseAssignmentList(courseAssignmentList);
         }
 
         private List<CourseAssignment> sortCourseAssignmentByDay(List<CourseAssignment> caList) {

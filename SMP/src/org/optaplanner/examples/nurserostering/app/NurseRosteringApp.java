@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.optaplanner.examples.nurserostering.app;
+package org.optaplanner.examples.tarostering.app;
 
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.api.solver.SolverFactory;
@@ -23,26 +23,26 @@ import org.optaplanner.examples.common.persistence.AbstractSolutionExporter;
 import org.optaplanner.examples.common.persistence.AbstractSolutionImporter;
 import org.optaplanner.examples.common.persistence.SolutionDao;
 import org.optaplanner.examples.common.swingui.SolutionPanel;
-import org.optaplanner.examples.nurserostering.persistence.NurseRosteringDao;
-import org.optaplanner.examples.nurserostering.persistence.NurseRosteringExporter;
-import org.optaplanner.examples.nurserostering.persistence.NurseRosteringImporter;
-import org.optaplanner.examples.nurserostering.swingui.NurseRosteringPanel;
+import org.optaplanner.examples.tarostering.persistence.TaRosteringDao;
+import org.optaplanner.examples.tarostering.persistence.TaRosteringExporter;
+import org.optaplanner.examples.tarostering.persistence.TaRosteringImporter;
+import org.optaplanner.examples.tarostering.swingui.TaRosteringPanel;
 
-public class NurseRosteringApp extends CommonApp {
+public class TaRosteringApp extends CommonApp {
 
     public static final String SOLVER_CONFIG
-            = "nurseRosteringSolverConfig.xml";
+            = "taRosteringSolverConfig.xml";
 
     public static void main(String[] args) {
         prepareSwingEnvironment();
-        new NurseRosteringApp().init();
+        new TaRosteringApp().init();
     }
 
-    public NurseRosteringApp() {
+    public TaRosteringApp() {
         super("Ta rostering",
-                "Official competition name: INRC2010 - Nurse rostering\n\n" +
+                "Official competition name: INRC2010 - Ta rostering\n\n" +
                         "Assign courses to tas.",
-                NurseRosteringPanel.LOGO_PATH);
+                TaRosteringPanel.LOGO_PATH);
     }
 
     @Override
@@ -53,22 +53,22 @@ public class NurseRosteringApp extends CommonApp {
 
     @Override
     protected SolutionPanel createSolutionPanel() {
-        return new NurseRosteringPanel();
+        return new TaRosteringPanel();
     }
 
     @Override
     protected SolutionDao createSolutionDao() {
-        return new NurseRosteringDao();
+        return new TaRosteringDao();
     }
 
     @Override
     protected AbstractSolutionImporter createSolutionImporter() {
-        return new NurseRosteringImporter();
+        return new TaRosteringImporter();
     }
 
     @Override
     protected AbstractSolutionExporter createSolutionExporter() {
-        return new NurseRosteringExporter();
+        return new TaRosteringExporter();
     }
 
 }

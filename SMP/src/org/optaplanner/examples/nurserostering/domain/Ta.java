@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package org.optaplanner.examples.nurserostering.domain;
+package org.optaplanner.examples.tarostering.domain;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import java.util.Map;
 import org.optaplanner.examples.common.domain.AbstractPersistable;
 import org.optaplanner.examples.common.swingui.components.Labeled;
-import org.optaplanner.examples.nurserostering.domain.contract.Contract;
-import org.optaplanner.examples.nurserostering.domain.request.CourseOffRequest;
-import org.optaplanner.examples.nurserostering.domain.request.CourseOnRequest;
+import org.optaplanner.examples.tarostering.domain.contract.Contract;
+import org.optaplanner.examples.tarostering.domain.request.CourseOffRequest;
+import org.optaplanner.examples.tarostering.domain.request.CourseOnRequest;
 
 @XStreamAlias("Ta")
 public class Ta extends AbstractPersistable implements Labeled {

@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plannerBenchmark>
-  <benchmarkDirectory>local/data/nurserostering/long</benchmarkDirectory>
+  <benchmarkDirectory>local/data/tarostering/long</benchmarkDirectory>
   <parallelBenchmarkCount>AUTO</parallelBenchmarkCount>
   <warmUpSecondsSpentLimit>30</warmUpSecondsSpentLimit>
 
   <inheritedSolverBenchmark>
     <problemBenchmarks>
-      <xStreamAnnotatedClass>org.optaplanner.examples.nurserostering.domain.NurseRoster</xStreamAnnotatedClass>
-      <inputSolutionFile>data/nurserostering/unsolved/long01.xml</inputSolutionFile>
-      <inputSolutionFile>data/nurserostering/unsolved/long02.xml</inputSolutionFile>
-      <!--<inputSolutionFile>data/nurserostering/unsolved/long03.xml</inputSolutionFile>-->
-      <!--<inputSolutionFile>data/nurserostering/unsolved/long04.xml</inputSolutionFile>-->
-      <!--<inputSolutionFile>data/nurserostering/unsolved/long05.xml</inputSolutionFile>-->
-      <inputSolutionFile>data/nurserostering/unsolved/long_hint01.xml</inputSolutionFile>
-      <inputSolutionFile>data/nurserostering/unsolved/long_hint02.xml</inputSolutionFile>
-      <!--<inputSolutionFile>data/nurserostering/unsolved/long_hint03.xml</inputSolutionFile>-->
-      <!--<inputSolutionFile>data/nurserostering/unsolved/long_late01.xml</inputSolutionFile>-->
-      <!--<inputSolutionFile>data/nurserostering/unsolved/long_late02.xml</inputSolutionFile>-->
-      <!--<inputSolutionFile>data/nurserostering/unsolved/long_late03.xml</inputSolutionFile>-->
-      <!--<inputSolutionFile>data/nurserostering/unsolved/long_late04.xml</inputSolutionFile>-->
-      <!--<inputSolutionFile>data/nurserostering/unsolved/long_late05.xml</inputSolutionFile>-->
+      <xStreamAnnotatedClass>org.optaplanner.examples.tarostering.domain.TaRoster</xStreamAnnotatedClass>
+      <inputSolutionFile>data/tarostering/unsolved/long01.xml</inputSolutionFile>
+      <inputSolutionFile>data/tarostering/unsolved/long02.xml</inputSolutionFile>
+      <!--<inputSolutionFile>data/tarostering/unsolved/long03.xml</inputSolutionFile>-->
+      <!--<inputSolutionFile>data/tarostering/unsolved/long04.xml</inputSolutionFile>-->
+      <!--<inputSolutionFile>data/tarostering/unsolved/long05.xml</inputSolutionFile>-->
+      <inputSolutionFile>data/tarostering/unsolved/long_hint01.xml</inputSolutionFile>
+      <inputSolutionFile>data/tarostering/unsolved/long_hint02.xml</inputSolutionFile>
+      <!--<inputSolutionFile>data/tarostering/unsolved/long_hint03.xml</inputSolutionFile>-->
+      <!--<inputSolutionFile>data/tarostering/unsolved/long_late01.xml</inputSolutionFile>-->
+      <!--<inputSolutionFile>data/tarostering/unsolved/long_late02.xml</inputSolutionFile>-->
+      <!--<inputSolutionFile>data/tarostering/unsolved/long_late03.xml</inputSolutionFile>-->
+      <!--<inputSolutionFile>data/tarostering/unsolved/long_late04.xml</inputSolutionFile>-->
+      <!--<inputSolutionFile>data/tarostering/unsolved/long_late05.xml</inputSolutionFile>-->
       <problemStatisticType>BEST_SCORE</problemStatisticType>
       <!--<problemStatisticType>STEP_SCORE</problemStatisticType>-->
       <!--<problemStatisticType>CALCULATE_COUNT_PER_SECOND</problemStatisticType>-->
@@ -33,11 +33,11 @@
     </problemBenchmarks>
 
     <solver>
-      <solutionClass>org.optaplanner.examples.nurserostering.domain.NurseRoster</solutionClass>
-      <entityClass>org.optaplanner.examples.nurserostering.domain.CourseAssignment</entityClass>
+      <solutionClass>org.optaplanner.examples.tarostering.domain.TaRoster</solutionClass>
+      <entityClass>org.optaplanner.examples.tarostering.domain.CourseAssignment</entityClass>
       <scoreDirectorFactory>
         <scoreDefinitionType>HARD_SOFT</scoreDefinitionType>
-        <scoreDrl>org/optaplanner/examples/nurserostering/solver/nurseRosteringScoreRules.drl</scoreDrl>
+        <scoreDrl>org/optaplanner/examples/tarostering/solver/taRosteringScoreRules.drl</scoreDrl>
       </scoreDirectorFactory>
       <termination>
         <!--
@@ -59,23 +59,23 @@
         <unionMoveSelector>
           <moveListFactory>
             <cacheType>PHASE</cacheType>
-            <moveListFactoryClass>org.optaplanner.examples.nurserostering.solver.move.factory.TaChangeMoveFactory</moveListFactoryClass>
+            <moveListFactoryClass>org.optaplanner.examples.tarostering.solver.move.factory.TaChangeMoveFactory</moveListFactoryClass>
           </moveListFactory>
           <moveListFactory>
             <cacheType>PHASE</cacheType>
-            <moveListFactoryClass>org.optaplanner.examples.nurserostering.solver.move.factory.CourseAssignmentSwapMoveFactory</moveListFactoryClass>
+            <moveListFactoryClass>org.optaplanner.examples.tarostering.solver.move.factory.CourseAssignmentSwapMoveFactory</moveListFactoryClass>
           </moveListFactory>
           <moveListFactory>
             <cacheType>STEP</cacheType>
-            <moveListFactoryClass>org.optaplanner.examples.nurserostering.solver.move.factory.CourseAssignmentPillarPartSwapMoveFactory</moveListFactoryClass>
+            <moveListFactoryClass>org.optaplanner.examples.tarostering.solver.move.factory.CourseAssignmentPillarPartSwapMoveFactory</moveListFactoryClass>
           </moveListFactory>
           <moveListFactory>
           <cacheType>STEP</cacheType>
-          <moveListFactoryClass>org.optaplanner.examples.nurserostering.solver.move.factory.CourseAssignmentSequenceSwitchLength2MoveFactory</moveListFactoryClass>
+          <moveListFactoryClass>org.optaplanner.examples.tarostering.solver.move.factory.CourseAssignmentSequenceSwitchLength2MoveFactory</moveListFactoryClass>
           </moveListFactory>
           <moveListFactory>
           <cacheType>STEP</cacheType>
-          <moveListFactoryClass>org.optaplanner.examples.nurserostering.solver.move.factory.CourseAssignmentSequenceSwitchLength3MoveFactory</moveListFactoryClass>
+          <moveListFactoryClass>org.optaplanner.examples.tarostering.solver.move.factory.CourseAssignmentSequenceSwitchLength3MoveFactory</moveListFactoryClass>
           </moveListFactory>
         </unionMoveSelector>
         <acceptor>

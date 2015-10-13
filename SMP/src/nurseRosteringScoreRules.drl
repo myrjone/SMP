@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package org.optaplanner.examples.nurserostering.solver;
+package org.optaplanner.examples.tarostering.solver;
     dialect "java"
 
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScoreHolder;
 
-import org.optaplanner.examples.nurserostering.domain.DayOfWeek;
-import org.optaplanner.examples.nurserostering.domain.Ta;
-import org.optaplanner.examples.nurserostering.domain.CourseAssignment;
-import org.optaplanner.examples.nurserostering.domain.NurseRoster;
-import org.optaplanner.examples.nurserostering.domain.Course;
-import org.optaplanner.examples.nurserostering.domain.CourseDay;
-import org.optaplanner.examples.nurserostering.domain.CourseType;
-import org.optaplanner.examples.nurserostering.domain.contract.Contract;
-import org.optaplanner.examples.nurserostering.domain.contract.ContractLine;
-import org.optaplanner.examples.nurserostering.domain.contract.ContractLineType;
-import org.optaplanner.examples.nurserostering.domain.contract.MinMaxContractLine;
-import org.optaplanner.examples.nurserostering.domain.request.CourseOffRequest;
-import org.optaplanner.examples.nurserostering.domain.request.CourseOnRequest;
-import org.optaplanner.examples.nurserostering.solver.drools.TaAssignmentTotal;
+import org.optaplanner.examples.tarostering.domain.DayOfWeek;
+import org.optaplanner.examples.tarostering.domain.Ta;
+import org.optaplanner.examples.tarostering.domain.CourseAssignment;
+import org.optaplanner.examples.tarostering.domain.TaRoster;
+import org.optaplanner.examples.tarostering.domain.Course;
+import org.optaplanner.examples.tarostering.domain.CourseDay;
+import org.optaplanner.examples.tarostering.domain.CourseType;
+import org.optaplanner.examples.tarostering.domain.contract.Contract;
+import org.optaplanner.examples.tarostering.domain.contract.ContractLine;
+import org.optaplanner.examples.tarostering.domain.contract.ContractLineType;
+import org.optaplanner.examples.tarostering.domain.contract.MinMaxContractLine;
+import org.optaplanner.examples.tarostering.domain.request.CourseOffRequest;
+import org.optaplanner.examples.tarostering.domain.request.CourseOnRequest;
+import org.optaplanner.examples.tarostering.solver.drools.TaAssignmentTotal;
 
 global HardSoftScoreHolder scoreHolder;
 

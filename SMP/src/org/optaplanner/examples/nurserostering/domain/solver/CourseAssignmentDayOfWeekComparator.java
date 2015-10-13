@@ -1,8 +1,8 @@
-package org.optaplanner.examples.nurserostering.domain.solver;
+package org.optaplanner.examples.tarostering.domain.solver;
 
 import java.util.Comparator;
-import org.optaplanner.examples.nurserostering.domain.CourseAssignment;
-import org.optaplanner.examples.nurserostering.domain.DayOfWeek;
+import org.optaplanner.examples.tarostering.domain.CourseAssignment;
+import org.optaplanner.examples.tarostering.domain.DayOfWeek;
 
 public class CourseAssignmentDayOfWeekComparator implements Comparator<CourseAssignment>{
     @Override

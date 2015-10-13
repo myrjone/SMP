@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.optaplanner.examples.nurserostering.solver.move;
+package org.optaplanner.examples.tarostering.solver.move;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,8 +24,8 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.optaplanner.core.impl.heuristic.move.AbstractMove;
 import org.optaplanner.core.impl.heuristic.move.Move;
 import org.optaplanner.core.impl.score.director.ScoreDirector;
-import org.optaplanner.examples.nurserostering.domain.CourseAssignment;
-import org.optaplanner.examples.nurserostering.domain.Ta;
+import org.optaplanner.examples.tarostering.domain.CourseAssignment;
+import org.optaplanner.examples.tarostering.domain.Ta;
 
 public class CourseAssignmentSwapMove extends AbstractMove {
 
@@ -51,8 +51,8 @@ public class CourseAssignmentSwapMove extends AbstractMove {
     public void doMove(ScoreDirector scoreDirector) {
         Ta oldLeftTa = leftCourseAssignment.getTa();
         Ta oldRightTa = rightCourseAssignment.getTa();
-        NurseRosteringMoveHelper.moveTa(scoreDirector, leftCourseAssignment, oldRightTa);
-        NurseRosteringMoveHelper.moveTa(scoreDirector, rightCourseAssignment, oldLeftTa);
+        TaRosteringMoveHelper.moveTa(scoreDirector, leftCourseAssignment, oldRightTa);
+        TaRosteringMoveHelper.moveTa(scoreDirector, rightCourseAssignment, oldLeftTa);
     }
 
     @Override

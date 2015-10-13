@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.optaplanner.examples.nurserostering.domain.solver;
+package org.optaplanner.examples.tarostering.domain.solver;
 
 import java.io.Serializable;
 import java.util.Comparator;
 import org.apache.commons.lang.builder.CompareToBuilder;
-import org.optaplanner.examples.nurserostering.domain.Ta;
+import org.optaplanner.examples.tarostering.domain.Ta;
 
 public class TaStrengthComparator implements Comparator<Ta>, Serializable {
 

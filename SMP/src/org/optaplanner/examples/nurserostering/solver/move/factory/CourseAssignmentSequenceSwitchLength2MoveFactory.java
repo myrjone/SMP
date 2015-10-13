@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.optaplanner.examples.nurserostering.solver.move.factory;
+package org.optaplanner.examples.tarostering.solver.move.factory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,26 +24,26 @@ import java.util.Map;
 import org.optaplanner.core.impl.heuristic.move.CompositeMove;
 import org.optaplanner.core.impl.heuristic.move.Move;
 import org.optaplanner.core.impl.heuristic.selector.move.factory.MoveListFactory;
-import org.optaplanner.examples.nurserostering.domain.CourseAssignment;
-import org.optaplanner.examples.nurserostering.domain.NurseRoster;
-import org.optaplanner.examples.nurserostering.domain.Ta;
-import org.optaplanner.examples.nurserostering.solver.drools.TaWorkSequence;
-import org.optaplanner.examples.nurserostering.solver.move.TaChangeMove;
+import org.optaplanner.examples.tarostering.domain.CourseAssignment;
+import org.optaplanner.examples.tarostering.domain.TaRoster;
+import org.optaplanner.examples.tarostering.domain.Ta;
+import org.optaplanner.examples.tarostering.solver.drools.TaWorkSequence;
+import org.optaplanner.examples.tarostering.solver.move.TaChangeMove;
 
-public class CourseAssignmentSequenceSwitchLength2MoveFactory implements MoveListFactory<NurseRoster> {
+public class CourseAssignmentSequenceSwitchLength2MoveFactory implements MoveListFactory<TaRoster> {
 
     @Override
-    public List<Move> createMoveList(NurseRoster nurseRoster) {
-        List<Ta> taList = nurseRoster.getTaList();
+    public List<Move> createMoveList(TaRoster taRoster) {
+        List<Ta> taList = taRoster.getTaList();
         // This code assumes the courseAssignmentList is sorted
         // Filter out every immovable CourseAssignment
         List<CourseAssignment> courseAssignmentList = new ArrayList<>(
-                nurseRoster.getCourseAssignmentList());
+                taRoster.getCourseAssignmentList());
 
         // Hash the assignments per ta
         Map<Ta, List<AssignmentSequence>> taToAssignmentSequenceListMap
                 = new HashMap<>(taList.size());
-        int assignmentSequenceCapacity = nurseRoster.getCourseDayList().size() + 1 / 2;
+        int assignmentSequenceCapacity = taRoster.getCourseDayList().size() + 1 / 2;
         for (Ta ta : taList) {
             taToAssignmentSequenceListMap.put(ta,
                     new ArrayList<AssignmentSequence>(assignmentSequenceCapacity));

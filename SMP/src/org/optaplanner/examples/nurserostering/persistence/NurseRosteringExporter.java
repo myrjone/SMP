@@ -14,37 +14,37 @@
  * limitations under the License.
  */
 
-package org.optaplanner.examples.nurserostering.persistence;
+package org.optaplanner.examples.tarostering.persistence;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import org.optaplanner.core.api.domain.solution.Solution;
 import org.optaplanner.examples.common.persistence.AbstractTxtSolutionExporter;
-import org.optaplanner.examples.nurserostering.domain.Coordinator;
-import org.optaplanner.examples.nurserostering.domain.CourseAssignment;
-import org.optaplanner.examples.nurserostering.domain.CourseType;
-import org.optaplanner.examples.nurserostering.domain.NurseRoster;
-import org.optaplanner.examples.nurserostering.domain.Ta;
+import org.optaplanner.examples.tarostering.domain.Coordinator;
+import org.optaplanner.examples.tarostering.domain.CourseAssignment;
+import org.optaplanner.examples.tarostering.domain.CourseType;
+import org.optaplanner.examples.tarostering.domain.TaRoster;
+import org.optaplanner.examples.tarostering.domain.Ta;
 
-public class NurseRosteringExporter extends AbstractTxtSolutionExporter{
-    public NurseRosteringExporter() {
-        super(new NurseRosteringDao());
+public class TaRosteringExporter extends AbstractTxtSolutionExporter{
+    public TaRosteringExporter() {
+        super(new TaRosteringDao());
     }
     
     private class SaveTxtOutputBuilder extends TxtOutputBuilder {
         
-        private NurseRoster nurseRoster;
+        private TaRoster taRoster;
 
         @Override
         public void setSolution(Solution solution) {
-            nurseRoster = (NurseRoster) solution;
+            taRoster = (TaRoster) solution;
         }
 
         @Override
         public void writeSolution() throws IOException {
 
-            List<CourseAssignment> courseAssign = nurseRoster.getCourseAssignmentList();
+            List<CourseAssignment> courseAssign = taRoster.getCourseAssignmentList();
 
             for (CourseAssignment ca : courseAssign) {
                 CourseType courseType = ca.getCourse().getCourseType();
@@ -58,7 +58,7 @@ public class NurseRosteringExporter extends AbstractTxtSolutionExporter{
                 bufferedWriter.write(courseType.getBldg() + ",");
                 bufferedWriter.write(courseType.getRm() + ",");
 
-                List<Coordinator> coordinatorList = nurseRoster.getCoordinatorList();
+                List<Coordinator> coordinatorList = taRoster.getCoordinatorList();
                 for (Coordinator coord : coordinatorList){
                     List<CourseType> coordCourseTypeList = coord.getCourseTypes();
                     for (CourseType ct : coordCourseTypeList){

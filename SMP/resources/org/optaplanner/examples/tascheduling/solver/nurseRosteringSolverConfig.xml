@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <solver>
   <!--<environmentMode>FAST_ASSERT</environmentMode>-->
-  <solutionClass>org.optaplanner.examples.nurserostering.domain.NurseRoster</solutionClass>
-  <entityClass>org.optaplanner.examples.nurserostering.domain.CourseAssignment</entityClass>
+  <solutionClass>org.optaplanner.examples.tarostering.domain.TaRoster</solutionClass>
+  <entityClass>org.optaplanner.examples.tarostering.domain.CourseAssignment</entityClass>
 
   <scoreDirectorFactory>
     <scoreDefinitionType>HARD_SOFT</scoreDefinitionType>
-    <scoreDrl>org/optaplanner/examples/nurserostering/solver/nurseRosteringScoreRules.drl</scoreDrl>
+    <scoreDrl>org/optaplanner/examples/tarostering/solver/taRosteringScoreRules.drl</scoreDrl>
   </scoreDirectorFactory>
 
   <termination>
@@ -24,23 +24,23 @@
     <unionMoveSelector>
       <moveListFactory>
         <cacheType>PHASE</cacheType>
-        <moveListFactoryClass>org.optaplanner.examples.nurserostering.solver.move.factory.TaChangeMoveFactory</moveListFactoryClass>
+        <moveListFactoryClass>org.optaplanner.examples.tarostering.solver.move.factory.TaChangeMoveFactory</moveListFactoryClass>
       </moveListFactory>
       <moveListFactory>
         <cacheType>PHASE</cacheType>
-        <moveListFactoryClass>org.optaplanner.examples.nurserostering.solver.move.factory.CourseAssignmentSwapMoveFactory</moveListFactoryClass>
+        <moveListFactoryClass>org.optaplanner.examples.tarostering.solver.move.factory.CourseAssignmentSwapMoveFactory</moveListFactoryClass>
       </moveListFactory>
       <moveListFactory>
         <cacheType>STEP</cacheType>
-        <moveListFactoryClass>org.optaplanner.examples.nurserostering.solver.move.factory.CourseAssignmentPillarPartSwapMoveFactory</moveListFactoryClass>
+        <moveListFactoryClass>org.optaplanner.examples.tarostering.solver.move.factory.CourseAssignmentPillarPartSwapMoveFactory</moveListFactoryClass>
       </moveListFactory>
       <!--<moveListFactory>-->
         <!--<cacheType>STEP</cacheType>-->
-        <!--<moveListFactoryClass>org.optaplanner.examples.nurserostering.solver.move.factory.CourseAssignmentSequenceSwitchLength2MoveFactory</moveListFactoryClass>-->
+        <!--<moveListFactoryClass>org.optaplanner.examples.tarostering.solver.move.factory.CourseAssignmentSequenceSwitchLength2MoveFactory</moveListFactoryClass>-->
       <!--</moveListFactory>-->
       <!--<moveListFactory>-->
         <!--<cacheType>STEP</cacheType>-->
-        <!--<moveListFactoryClass>org.optaplanner.examples.nurserostering.solver.move.factory.CourseAssignmentSequenceSwitchLength3MoveFactory</moveListFactoryClass>-->
+        <!--<moveListFactoryClass>org.optaplanner.examples.tarostering.solver.move.factory.CourseAssignmentSequenceSwitchLength3MoveFactory</moveListFactoryClass>-->
       <!--</moveListFactory>-->
     </unionMoveSelector>
     <acceptor>

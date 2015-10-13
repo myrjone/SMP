@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.optaplanner.examples.nurserostering.domain;
+package org.optaplanner.examples.tarostering.domain;
 
 import java.util.Calendar;
 

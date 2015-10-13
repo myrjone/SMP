@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package org.optaplanner.examples.nurserostering.persistence;
+package org.optaplanner.examples.tarostering.persistence;
 
 import org.optaplanner.examples.common.persistence.XStreamSolutionDao;
-import org.optaplanner.examples.nurserostering.domain.NurseRoster;
+import org.optaplanner.examples.tarostering.domain.TaRoster;
 
-public class NurseRosteringDao extends XStreamSolutionDao {
+public class TaRosteringDao extends XStreamSolutionDao {
 
-    public NurseRosteringDao() {
-        super("nurserostering", NurseRoster.class);
+    public TaRosteringDao() {
+        super("tarostering", TaRoster.class);
     }
 
 }

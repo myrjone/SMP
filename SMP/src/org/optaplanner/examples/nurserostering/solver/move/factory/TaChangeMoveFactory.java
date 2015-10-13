@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package org.optaplanner.examples.nurserostering.solver.move.factory;
+package org.optaplanner.examples.tarostering.solver.move.factory;
 
 import java.util.ArrayList;
 import java.util.List;
 import org.optaplanner.core.impl.heuristic.move.Move;
 import org.optaplanner.core.impl.heuristic.selector.move.factory.MoveListFactory;
-import org.optaplanner.examples.nurserostering.domain.CourseAssignment;
-import org.optaplanner.examples.nurserostering.domain.NurseRoster;
-import org.optaplanner.examples.nurserostering.domain.Ta;
-import org.optaplanner.examples.nurserostering.solver.move.TaChangeMove;
+import org.optaplanner.examples.tarostering.domain.CourseAssignment;
+import org.optaplanner.examples.tarostering.domain.TaRoster;
+import org.optaplanner.examples.tarostering.domain.Ta;
+import org.optaplanner.examples.tarostering.solver.move.TaChangeMove;
 
-public class TaChangeMoveFactory implements MoveListFactory<NurseRoster> {
+public class TaChangeMoveFactory implements MoveListFactory<TaRoster> {
 
     @Override
-    public List<Move> createMoveList(NurseRoster nurseRoster) {
+    public List<Move> createMoveList(TaRoster taRoster) {
         List<Move> moveList = new ArrayList<>();
-        List<Ta> taList = nurseRoster.getTaList();
-        for (CourseAssignment courseAssignment : nurseRoster.getCourseAssignmentList()) {
+        List<Ta> taList = taRoster.getTaList();
+        for (CourseAssignment courseAssignment : taRoster.getCourseAssignmentList()) {
             for (Ta ta : taList) {
                 moveList.add(new TaChangeMove(courseAssignment, ta));
             }

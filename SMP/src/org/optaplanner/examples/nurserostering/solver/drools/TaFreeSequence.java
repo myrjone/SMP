@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.optaplanner.examples.nurserostering.solver.drools;
+package org.optaplanner.examples.tarostering.solver.drools;
 
 import java.io.Serializable;
 import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.optaplanner.examples.nurserostering.domain.Ta;
+import org.optaplanner.examples.tarostering.domain.Ta;
 
 public class TaFreeSequence implements Comparable<TaFreeSequence>, Serializable {
 

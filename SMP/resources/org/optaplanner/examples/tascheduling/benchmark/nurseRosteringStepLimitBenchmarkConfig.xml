@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plannerBenchmark>
-  <benchmarkDirectory>local/data/nurserostering/stepLimit</benchmarkDirectory>
+  <benchmarkDirectory>local/data/tarostering/stepLimit</benchmarkDirectory>
 
   <inheritedSolverBenchmark>
     <problemBenchmarks>
-      <xStreamAnnotatedClass>org.optaplanner.examples.nurserostering.domain.NurseRoster</xStreamAnnotatedClass>
-      <inputSolutionFile>data/nurserostering/unsolved/medium_late01_initialized.xml</inputSolutionFile>
+      <xStreamAnnotatedClass>org.optaplanner.examples.tarostering.domain.TaRoster</xStreamAnnotatedClass>
+      <inputSolutionFile>data/tarostering/unsolved/medium_late01_initialized.xml</inputSolutionFile>
     </problemBenchmarks>
 
     <solver>
       <!--<environmentMode>FAST_ASSERT</environmentMode>-->
-      <solutionClass>org.optaplanner.examples.nurserostering.domain.NurseRoster</solutionClass>
-      <entityClass>org.optaplanner.examples.nurserostering.domain.CourseAssignment</entityClass>
+      <solutionClass>org.optaplanner.examples.tarostering.domain.TaRoster</solutionClass>
+      <entityClass>org.optaplanner.examples.tarostering.domain.CourseAssignment</entityClass>
       <scoreDirectorFactory>
         <scoreDefinitionType>HARD_SOFT</scoreDefinitionType>
-        <scoreDrl>org/optaplanner/examples/nurserostering/solver/nurseRosteringScoreRules.drl</scoreDrl>
+        <scoreDrl>org/optaplanner/examples/tarostering/solver/taRosteringScoreRules.drl</scoreDrl>
       </scoreDirectorFactory>
     </solver>
   </inheritedSolverBenchmark>
@@ -31,11 +31,11 @@
         <unionMoveSelector>
           <moveListFactory>
             <cacheType>PHASE</cacheType>
-            <moveListFactoryClass>org.optaplanner.examples.nurserostering.solver.move.factory.TaChangeMoveFactory</moveListFactoryClass>
+            <moveListFactoryClass>org.optaplanner.examples.tarostering.solver.move.factory.TaChangeMoveFactory</moveListFactoryClass>
           </moveListFactory>
           <moveListFactory>
             <cacheType>PHASE</cacheType>
-            <moveListFactoryClass>org.optaplanner.examples.nurserostering.solver.move.factory.CourseAssignmentSwapMoveFactory</moveListFactoryClass>
+            <moveListFactoryClass>org.optaplanner.examples.tarostering.solver.move.factory.CourseAssignmentSwapMoveFactory</moveListFactoryClass>
           </moveListFactory>
         </unionMoveSelector>
         <acceptor>

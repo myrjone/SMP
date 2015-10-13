@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.optaplanner.examples.nurserostering.domain.contract;
+package org.optaplanner.examples.tarostering.domain.contract;
 
 public enum ContractLineType {
     TOTAL_ASSIGNMENTS;

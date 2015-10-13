@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.optaplanner.examples.nurserostering.solver.move;
+package org.optaplanner.examples.tarostering.solver.move;
 
 import org.optaplanner.core.impl.score.director.ScoreDirector;
-import org.optaplanner.examples.nurserostering.domain.CourseAssignment;
-import org.optaplanner.examples.nurserostering.domain.Ta;
+import org.optaplanner.examples.tarostering.domain.CourseAssignment;
+import org.optaplanner.examples.tarostering.domain.Ta;
 
-public class NurseRosteringMoveHelper {
+public class TaRosteringMoveHelper {
 
     public static void moveTa(ScoreDirector scoreDirector, CourseAssignment courseAssignment, Ta toTa) {
         scoreDirector.beforeVariableChanged(courseAssignment, "ta");
@@ -28,7 +28,7 @@ public class NurseRosteringMoveHelper {
         scoreDirector.afterVariableChanged(courseAssignment, "ta");
     }
 
-    private NurseRosteringMoveHelper() {
+    private TaRosteringMoveHelper() {
     }
 
 }

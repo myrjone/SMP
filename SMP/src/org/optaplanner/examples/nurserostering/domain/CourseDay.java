@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.optaplanner.examples.nurserostering.domain;
+package org.optaplanner.examples.tarostering.domain;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import java.util.List;

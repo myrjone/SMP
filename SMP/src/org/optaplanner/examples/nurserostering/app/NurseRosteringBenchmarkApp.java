@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 
-package org.optaplanner.examples.nurserostering.app;
+package org.optaplanner.examples.tarostering.app;
 
 import org.optaplanner.examples.common.app.CommonBenchmarkApp;
 
-public class NurseRosteringBenchmarkApp extends CommonBenchmarkApp {
+public class TaRosteringBenchmarkApp extends CommonBenchmarkApp {
 
     public static void main(String[] args) {
-        new NurseRosteringBenchmarkApp().buildAndBenchmark(args);
+        new TaRosteringBenchmarkApp().buildAndBenchmark(args);
     }
 
-    public NurseRosteringBenchmarkApp() {
+    public TaRosteringBenchmarkApp() {
         super(
                 new ArgOption("sprint",
-                        "org/optaplanner/examples/nurserostering/benchmark/nurseRosteringSprintBenchmarkConfig.xml"),
+                        "org/optaplanner/examples/tarostering/benchmark/taRosteringSprintBenchmarkConfig.xml"),
                 new ArgOption("medium",
-                        "org/optaplanner/examples/nurserostering/benchmark/nurseRosteringMediumBenchmarkConfig.xml"),
+                        "org/optaplanner/examples/tarostering/benchmark/taRosteringMediumBenchmarkConfig.xml"),
                 new ArgOption("long",
-                        "org/optaplanner/examples/nurserostering/benchmark/nurseRosteringLongBenchmarkConfig.xml"),
+                        "org/optaplanner/examples/tarostering/benchmark/taRosteringLongBenchmarkConfig.xml"),
                 new ArgOption("stepLimit",
-                        "org/optaplanner/examples/nurserostering/benchmark/nurseRosteringStepLimitBenchmarkConfig.xml")
+                        "org/optaplanner/examples/tarostering/benchmark/taRosteringStepLimitBenchmarkConfig.xml")
         );
     }
 

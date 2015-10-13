@@ -14,46 +14,46 @@
  * limitations under the License.
  */
 
-package org.optaplanner.examples.nurserostering.solver;
+package org.optaplanner.examples.tarostering.solver;
     dialect "java"
 
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScoreHolder;
 
-import org.optaplanner.examples.nurserostering.domain.DayOfWeek;
-import org.optaplanner.examples.nurserostering.domain.Ta;
-import org.optaplanner.examples.nurserostering.domain.CourseAssignment;
-import org.optaplanner.examples.nurserostering.domain.NurseRoster;
-import org.optaplanner.examples.nurserostering.domain.NurseRosterParametrization;
-import org.optaplanner.examples.nurserostering.domain.Course;
-import org.optaplanner.examples.nurserostering.domain.CourseDay;
-import org.optaplanner.examples.nurserostering.domain.CourseType;
-import org.optaplanner.examples.nurserostering.domain.CourseTypeSkillRequirement;
-import org.optaplanner.examples.nurserostering.domain.Skill;
-import org.optaplanner.examples.nurserostering.domain.SkillProficiency;
-import org.optaplanner.examples.nurserostering.domain.WeekendDefinition;
-import org.optaplanner.examples.nurserostering.domain.pattern.FreeBefore2DaysWithAWorkDayPattern;
-import org.optaplanner.examples.nurserostering.domain.pattern.Pattern;
-import org.optaplanner.examples.nurserostering.domain.pattern.CourseType2DaysPattern;
-import org.optaplanner.examples.nurserostering.domain.pattern.CourseType3DaysPattern;
-import org.optaplanner.examples.nurserostering.domain.pattern.WorkBeforeFreeSequencePattern;
-import org.optaplanner.examples.nurserostering.domain.contract.Contract;
-import org.optaplanner.examples.nurserostering.domain.contract.BooleanContractLine;
-import org.optaplanner.examples.nurserostering.domain.contract.ContractLine;
-import org.optaplanner.examples.nurserostering.domain.contract.ContractLineType;
-import org.optaplanner.examples.nurserostering.domain.contract.MinMaxContractLine;
-import org.optaplanner.examples.nurserostering.domain.contract.PatternContractLine;
-import org.optaplanner.examples.nurserostering.domain.request.DayOffRequest;
-import org.optaplanner.examples.nurserostering.domain.request.DayOnRequest;
-import org.optaplanner.examples.nurserostering.domain.request.CourseOffRequest;
-import org.optaplanner.examples.nurserostering.domain.request.CourseOnRequest;
-import org.optaplanner.examples.nurserostering.solver.drools.TaAssignmentTotal;
-import org.optaplanner.examples.nurserostering.solver.drools.TaConsecutiveAssignmentEnd;
-import org.optaplanner.examples.nurserostering.solver.drools.TaConsecutiveAssignmentStart;
-import org.optaplanner.examples.nurserostering.solver.drools.TaConsecutiveWeekendAssignmentEnd;
-import org.optaplanner.examples.nurserostering.solver.drools.TaConsecutiveWeekendAssignmentStart;
-import org.optaplanner.examples.nurserostering.solver.drools.TaFreeSequence;
-import org.optaplanner.examples.nurserostering.solver.drools.TaWeekendSequence;
-import org.optaplanner.examples.nurserostering.solver.drools.TaWorkSequence;
+import org.optaplanner.examples.tarostering.domain.DayOfWeek;
+import org.optaplanner.examples.tarostering.domain.Ta;
+import org.optaplanner.examples.tarostering.domain.CourseAssignment;
+import org.optaplanner.examples.tarostering.domain.TaRoster;
+import org.optaplanner.examples.tarostering.domain.TaRosterParametrization;
+import org.optaplanner.examples.tarostering.domain.Course;
+import org.optaplanner.examples.tarostering.domain.CourseDay;
+import org.optaplanner.examples.tarostering.domain.CourseType;
+import org.optaplanner.examples.tarostering.domain.CourseTypeSkillRequirement;
+import org.optaplanner.examples.tarostering.domain.Skill;
+import org.optaplanner.examples.tarostering.domain.SkillProficiency;
+import org.optaplanner.examples.tarostering.domain.WeekendDefinition;
+import org.optaplanner.examples.tarostering.domain.pattern.FreeBefore2DaysWithAWorkDayPattern;
+import org.optaplanner.examples.tarostering.domain.pattern.Pattern;
+import org.optaplanner.examples.tarostering.domain.pattern.CourseType2DaysPattern;
+import org.optaplanner.examples.tarostering.domain.pattern.CourseType3DaysPattern;
+import org.optaplanner.examples.tarostering.domain.pattern.WorkBeforeFreeSequencePattern;
+import org.optaplanner.examples.tarostering.domain.contract.Contract;
+import org.optaplanner.examples.tarostering.domain.contract.BooleanContractLine;
+import org.optaplanner.examples.tarostering.domain.contract.ContractLine;
+import org.optaplanner.examples.tarostering.domain.contract.ContractLineType;
+import org.optaplanner.examples.tarostering.domain.contract.MinMaxContractLine;
+import org.optaplanner.examples.tarostering.domain.contract.PatternContractLine;
+import org.optaplanner.examples.tarostering.domain.request.DayOffRequest;
+import org.optaplanner.examples.tarostering.domain.request.DayOnRequest;
+import org.optaplanner.examples.tarostering.domain.request.CourseOffRequest;
+import org.optaplanner.examples.tarostering.domain.request.CourseOnRequest;
+import org.optaplanner.examples.tarostering.solver.drools.TaAssignmentTotal;
+import org.optaplanner.examples.tarostering.solver.drools.TaConsecutiveAssignmentEnd;
+import org.optaplanner.examples.tarostering.solver.drools.TaConsecutiveAssignmentStart;
+import org.optaplanner.examples.tarostering.solver.drools.TaConsecutiveWeekendAssignmentEnd;
+import org.optaplanner.examples.tarostering.solver.drools.TaConsecutiveWeekendAssignmentStart;
+import org.optaplanner.examples.tarostering.solver.drools.TaFreeSequence;
+import org.optaplanner.examples.tarostering.solver.drools.TaWeekendSequence;
+import org.optaplanner.examples.tarostering.solver.drools.TaWorkSequence;
 
 global HardSoftScoreHolder scoreHolder;
 
@@ -62,7 +62,7 @@ global HardSoftScoreHolder scoreHolder;
 // ############################################################################
 
 // This rule is build in
-// All demanded courses must be assigned to a nurse
+// All demanded courses must be assigned to a ta
 //rule "requiredTaSizePerCourse"
 //    when
 //        $course : Course(requiredTaSize > 0, $requiredTaSize : requiredTaSize)
@@ -76,7 +76,7 @@ global HardSoftScoreHolder scoreHolder;
 //                - Math.abs($requiredTaSize - $totalTaSize.intValue());
 //end
 
-// a nurse can only work one course per day, i.e. no two course can be assigned to the same nurse on a day.
+// a ta can only work one course per day, i.e. no two course can be assigned to the same ta on a day.
 rule "oneCoursePerDay"
     when
         $leftAssignment : CourseAssignment($leftId : id, $ta : ta, $courseDay : courseDay, ta != null)
@@ -252,7 +252,7 @@ rule "insertFirstTaFreeSequence"
             ta == $ta,
             courseDayDayIndex < $lastDayIndexPlusOne
         )
-        NurseRosterParametrization(firstCourseDayDayIndex < $lastDayIndexPlusOne, $firstDayIndex : firstCourseDayDayIndex)
+        TaRosterParametrization(firstCourseDayDayIndex < $lastDayIndexPlusOne, $firstDayIndex : firstCourseDayDayIndex)
     then
         insertLogical(new TaFreeSequence($ta, $firstDayIndex, $lastDayIndexPlusOne - 1));
 end
@@ -269,7 +269,7 @@ rule "insertLastTaFreeSequence"
             ta == $ta,
             courseDayDayIndex > $firstDayIndexMinusOne
         )
-        NurseRosterParametrization(lastCourseDayDayIndex > $firstDayIndexMinusOne, $lastDayIndex : lastCourseDayDayIndex)
+        TaRosterParametrization(lastCourseDayDayIndex > $firstDayIndexMinusOne, $lastDayIndex : lastCourseDayDayIndex)
     then
         insertLogical(new TaFreeSequence($ta, $firstDayIndexMinusOne + 1, $lastDayIndex));
 end
@@ -281,7 +281,7 @@ rule "insertEntireTaFreeSequence"
         not TaConsecutiveAssignmentStart(
             ta == $ta
         )
-        NurseRosterParametrization($firstDayIndex : firstCourseDayDayIndex, $lastDayIndex : lastCourseDayDayIndex)
+        TaRosterParametrization($firstDayIndex : firstCourseDayDayIndex, $lastDayIndex : lastCourseDayDayIndex)
     then
         insertLogical(new TaFreeSequence($ta, $firstDayIndex, $lastDayIndex));
 end

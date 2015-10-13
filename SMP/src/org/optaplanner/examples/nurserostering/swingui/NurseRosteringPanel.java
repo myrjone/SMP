@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.optaplanner.examples.nurserostering.swingui;
+package org.optaplanner.examples.tarostering.swingui;
 
 import java.awt.BorderLayout;
 import java.util.ArrayList;
@@ -35,15 +35,15 @@ import org.optaplanner.core.api.domain.solution.Solution;
 import org.optaplanner.core.impl.score.director.ScoreDirector;
 import org.optaplanner.core.impl.solver.ProblemFactChange;
 import org.optaplanner.examples.common.swingui.SolutionPanel;
-import org.optaplanner.examples.nurserostering.domain.Course;
-import org.optaplanner.examples.nurserostering.domain.CourseAssignment;
-import org.optaplanner.examples.nurserostering.domain.CourseDay;
-import org.optaplanner.examples.nurserostering.domain.NurseRoster;
-import org.optaplanner.examples.nurserostering.domain.Ta;
+import org.optaplanner.examples.tarostering.domain.Course;
+import org.optaplanner.examples.tarostering.domain.CourseAssignment;
+import org.optaplanner.examples.tarostering.domain.CourseDay;
+import org.optaplanner.examples.tarostering.domain.TaRoster;
+import org.optaplanner.examples.tarostering.domain.Ta;
 
-public class NurseRosteringPanel extends SolutionPanel {
+public class TaRosteringPanel extends SolutionPanel {
 
-    public static final String LOGO_PATH = "/org/optaplanner/examples/nurserostering/swingui/nurseRosteringLogo.png";
+    public static final String LOGO_PATH = "/org/optaplanner/examples/tarostering/swingui/taRosteringLogo.png";
 
     private final ImageIcon taIcon;
     private final ImageIcon deleteTaIcon;
@@ -53,7 +53,7 @@ public class NurseRosteringPanel extends SolutionPanel {
     private TaPanel unassignedPanel;
     private Map<Ta, TaPanel> taToPanelMap;
 
-    public NurseRosteringPanel() {
+    public TaRosteringPanel() {
         taIcon = new ImageIcon(getClass().getResource("ta.png"));
         deleteTaIcon = new ImageIcon(getClass().getResource("deleteTa.png"));
         GroupLayout layout = new GroupLayout(this);
@@ -99,13 +99,13 @@ public class NurseRosteringPanel extends SolutionPanel {
         return true;
     }
 
-    public NurseRoster getNurseRoster() {
-        return (NurseRoster) solutionBusiness.getSolution();
+    public TaRoster getTaRoster() {
+        return (TaRoster) solutionBusiness.getSolution();
     }
 
     @Override
     public void resetPanel(Solution solution) {
-        NurseRoster nurseRoster = (NurseRoster) solution;
+        TaRoster taRoster = (TaRoster) solution;
         for (TaPanel taPanel : taToPanelMap.values()) {
             if (taPanel.getTa() != null) {
                 taListPanel.remove(taPanel);
@@ -114,20 +114,20 @@ public class NurseRosteringPanel extends SolutionPanel {
         taToPanelMap.clear();
         taToPanelMap.put(null, unassignedPanel);
         unassignedPanel.clearCourseAssignments();
-        List<CourseDay> courseDayList = nurseRoster.getCourseDayList();
-        List<Course> courseList = nurseRoster.getCourseList();
+        List<CourseDay> courseDayList = taRoster.getCourseDayList();
+        List<Course> courseList = taRoster.getCourseList();
         unassignedPanel.setCourseDayListAndCourseList(courseDayList, courseList);
-        updatePanel(nurseRoster);
+        updatePanel(taRoster);
     }
 
     @Override
     public void updatePanel(Solution solution) {
-        NurseRoster nurseRoster = (NurseRoster) solution;
-        List<CourseDay> courseDayList = nurseRoster.getCourseDayList();
-        List<Course> courseList = nurseRoster.getCourseList();
+        TaRoster taRoster = (TaRoster) solution;
+        List<CourseDay> courseDayList = taRoster.getCourseDayList();
+        List<Course> courseList = taRoster.getCourseList();
         Set<Ta> deadTaSet = new LinkedHashSet<>(taToPanelMap.keySet());
         deadTaSet.remove(null);
-        for (Ta ta : nurseRoster.getTaList()) {
+        for (Ta ta : taRoster.getTaList()) {
             deadTaSet.remove(ta);
             TaPanel taPanel = taToPanelMap.get(ta);
             if (taPanel == null) {
@@ -138,7 +138,7 @@ public class NurseRosteringPanel extends SolutionPanel {
             taPanel.clearCourseAssignments();
         }
         unassignedPanel.clearCourseAssignments();
-        for (CourseAssignment courseAssignment : nurseRoster.getCourseAssignmentList()) {
+        for (CourseAssignment courseAssignment : taRoster.getCourseAssignmentList()) {
             Ta ta = courseAssignment.getTa();
             TaPanel taPanel = taToPanelMap.get(ta);
             taPanel.addCourseAssignment(courseAssignment);
@@ -157,9 +157,9 @@ public class NurseRosteringPanel extends SolutionPanel {
         doProblemFactChange(new ProblemFactChange() {
             @Override
             public void doChange(ScoreDirector scoreDirector) {
-                NurseRoster nurseRoster = (NurseRoster) scoreDirector.getWorkingSolution();
+                TaRoster taRoster = (TaRoster) scoreDirector.getWorkingSolution();
                 // First remove the planning fact from all planning entities that use it
-                for (CourseAssignment courseAssignment : nurseRoster.getCourseAssignmentList()) {
+                for (CourseAssignment courseAssignment : taRoster.getCourseAssignmentList()) {
                     if (ObjectUtils.equals(courseAssignment.getTa(), ta)) {
                         scoreDirector.beforeVariableChanged(courseAssignment, "ta");
                         courseAssignment.setTa(null);
@@ -168,9 +168,9 @@ public class NurseRosteringPanel extends SolutionPanel {
                 }
                 // A SolutionCloner does not clone problem fact lists (such as taList)
                 // Shallow clone the taList so only workingSolution is affected, not bestSolution or guiSolution
-                nurseRoster.setTaList(new ArrayList<>(nurseRoster.getTaList()));
+                taRoster.setTaList(new ArrayList<>(taRoster.getTaList()));
                 // Remove it the planning fact itself
-                for (Iterator<Ta> it = nurseRoster.getTaList().iterator(); it.hasNext(); ) {
+                for (Iterator<Ta> it = taRoster.getTaList().iterator(); it.hasNext(); ) {
                     Ta workingTa = it.next();
                     if (ObjectUtils.equals(workingTa, ta)) {
                         scoreDirector.beforeProblemFactRemoved(workingTa);
