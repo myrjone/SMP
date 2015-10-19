@@ -17,7 +17,6 @@
 package org.optaplanner.examples.tarostering.persistence;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -37,8 +36,8 @@ import org.optaplanner.examples.tarostering.domain.CourseAssignment;
 import org.optaplanner.examples.tarostering.domain.CourseDay;
 import org.optaplanner.examples.tarostering.domain.CourseType;
 import org.optaplanner.examples.tarostering.domain.DayOfWeek;
-import org.optaplanner.examples.tarostering.domain.TaRoster;
 import org.optaplanner.examples.tarostering.domain.Ta;
+import org.optaplanner.examples.tarostering.domain.TaRoster;
 import org.optaplanner.examples.tarostering.domain.contract.Contract;
 import org.optaplanner.examples.tarostering.domain.contract.ContractLine;
 import org.optaplanner.examples.tarostering.domain.contract.ContractLineType;
@@ -90,23 +89,7 @@ public class TaRosteringImporter extends AbstractXmlSolutionImporter {
             readCoordinatorList(taRoster, schedulingPeriodElement.getChild("Coordinators"));
             readCoordinatorToCourseTypeMapping(taRoster, schedulingPeriodElement.getChild("CoordinatorToCourseType"));
             readContractList(taRoster, schedulingPeriodElement.getChild("Contracts"));
-            readTaList(taRoster, schedulingPeriodElement.getChild("Tas"));
-            readCourseOffRequestList(taRoster, schedulingPeriodElement.getChild("CourseOffRequests"));
-            readCourseOnRequestList(taRoster, schedulingPeriodElement.getChild("CourseOnRequests"));
-            createCourseAssignmentList(taRoster);
 
-            BigInteger possibleSolutionSize = BigInteger.valueOf(taRoster.getTaList().size()).pow(
-                    taRoster.getCourseAssignmentList().size());
-            logger.info("TaRoster {} has {} courseTypes, {} contracts, {} tas," +
-                    " {} courseDays, {} courseAssignments and {} requests with a search space of {}.",
-                    getInputId(),
-                    taRoster.getCourseTypeList().size(),
-                    taRoster.getContractList().size(),
-                    taRoster.getTaList().size(),
-                    taRoster.getCourseDayList().size(),
-                    taRoster.getCourseAssignmentList().size(),
-                    taRoster.getCourseOffRequestList().size() + taRoster.getCourseOnRequestList().size(),
-                    getFlooredPossibleSolutionSize(possibleSolutionSize));
             return taRoster;
         }
 

@@ -25,7 +25,7 @@ import org.optaplanner.examples.common.persistence.SolutionDao;
 import org.optaplanner.examples.common.swingui.SolutionPanel;
 import org.optaplanner.examples.tarostering.persistence.TaRosteringDao;
 import org.optaplanner.examples.tarostering.persistence.TaRosteringExporter;
-import org.optaplanner.examples.tarostering.persistence.TaRosteringTaImporter;
+import org.optaplanner.examples.tarostering.persistence.TaRosteringImporter;
 import org.optaplanner.examples.tarostering.swingui.TaRosteringPanel;
 
 public class TaRosteringApp extends CommonApp {
@@ -63,7 +63,7 @@ public class TaRosteringApp extends CommonApp {
 
     @Override
     protected AbstractSolutionImporter createSolutionImporter() {
-        return new TaRosteringTaImporter();
+        return new TaRosteringImporter();
     }
 
     @Override

@@ -56,6 +56,11 @@ import org.optaplanner.core.api.domain.solution.Solution;
 import org.optaplanner.core.api.score.FeasibilityScore;
 import org.optaplanner.core.api.score.Score;
 import org.optaplanner.examples.common.business.SolutionBusiness;
+import org.optaplanner.examples.common.persistence.AbstractTxtSolutionImporter;
+import org.optaplanner.examples.common.persistence.AbstractXmlSolutionImporter;
+import org.optaplanner.examples.tarostering.domain.TaRoster;
+import org.optaplanner.examples.tarostering.persistence.TaRosteringImporter;
+import org.optaplanner.examples.tarostering.persistence.TaRosteringTaImporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -499,18 +504,21 @@ public class SolverAndPersistenceFrame extends JFrame {
 
     private class ImportAction extends AbstractAction {
         private static final String NAME = "Import...";
-        private JFileChooser fileChooser;
-        
+        private JFileChooser courseFileChooser;
+        private JFileChooser taFileChooser;
+        private Solution solution;
+
+
         ImportAction() {
             super(NAME, new ImageIcon(SolverAndPersistenceFrame.class.getResource("importAction.png")));
             if (!solutionBusiness.hasImporter()) {
-                fileChooser = null;
+                courseFileChooser = null;
                 return;
             }
-            fileChooser = new JFileChooser(solutionBusiness.getImportDataDir());
-            FileFilter filter;
+            courseFileChooser = new JFileChooser(solutionBusiness.getImportDataDir());
+            FileFilter courseFilter;
             if (solutionBusiness.isImportFileDirectory()) {
-                filter = new FileFilter() {
+                courseFilter = new FileFilter() {
                     @Override
                     public boolean accept(File file) {
                         return file.isDirectory();
@@ -521,9 +529,9 @@ public class SolverAndPersistenceFrame extends JFrame {
                         return "Import directory";
                     }
                 };
-                fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                courseFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             } else {
-                filter = new FileFilter() {
+                courseFilter = new FileFilter() {
                     @Override
                     public boolean accept(File file) {
                         return file.isDirectory() || solutionBusiness.acceptImportFile(file);
@@ -535,17 +543,60 @@ public class SolverAndPersistenceFrame extends JFrame {
                     }
                 };
             }
-            fileChooser.setFileFilter(filter);
-            fileChooser.setDialogTitle(NAME);
+            courseFileChooser.setFileFilter(courseFilter);
+            courseFileChooser.setDialogTitle(NAME);
+
+            taFileChooser = new JFileChooser(solutionBusiness.getImportDataDir());
+            FileFilter taFilter;
+            if (solutionBusiness.isImportFileDirectory()) {
+                taFilter = new FileFilter() {
+                    @Override
+                    public boolean accept(File file) {
+                        return file.isDirectory();
+                    }
+
+                    @Override
+                    public String getDescription() {
+                        return "Import directory";
+                    }
+                };
+                taFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            } else {
+                taFilter = new FileFilter() {
+                    @Override
+                    public boolean accept(File file) {
+                        return file.isDirectory() || solutionBusiness.acceptImportFile(file);
+                    }
+
+                    @Override
+                    public String getDescription() {
+                        return "Import files (*." + solutionBusiness.getImportFileSuffix() + ")";
+                    }
+                };
+            }
+            taFileChooser.setFileFilter(taFilter);
+            taFileChooser.setDialogTitle(NAME);
         }
         @Override
         public void actionPerformed(ActionEvent e) {
-            int approved = fileChooser.showOpenDialog(SolverAndPersistenceFrame.this);
+            int approved = courseFileChooser.showOpenDialog(SolverAndPersistenceFrame.this);
             if (approved == JFileChooser.APPROVE_OPTION) {
                 setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 try {
-                    solutionBusiness.importSolution(fileChooser.getSelectedFile());
-                    setSolutionLoaded();
+                    AbstractXmlSolutionImporter axsi = new TaRosteringImporter();
+                    solution = axsi.readSolution(courseFileChooser.getSelectedFile());
+                    int approved2 = taFileChooser.showOpenDialog(SolverAndPersistenceFrame.this);
+                    if (approved2 == JFileChooser.APPROVE_OPTION) {
+                        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                        try {
+                            AbstractTxtSolutionImporter taImporter = new TaRosteringTaImporter((TaRoster) solution);
+                            solution = taImporter.readSolution(taFileChooser.getSelectedFile());
+                            solutionBusiness.setSolution(solution);
+                            setSolutionLoaded();
+                        } finally {
+                            setCursor(Cursor.getDefaultCursor());
+                        }
+                    }
                 } finally {
                     setCursor(Cursor.getDefaultCursor());
                 }
@@ -554,11 +605,11 @@ public class SolverAndPersistenceFrame extends JFrame {
 
     }
 
-    
+
     private class ExportAction extends AbstractAction {
         private static final String NAME = "Export as...";
         private final JFileChooser fileChooser;
-        
+
         ExportAction() {
             super(NAME, new ImageIcon(SolverAndPersistenceFrame.class.getResource("exportAction.png")));
             if (!solutionBusiness.hasExporter()) {
@@ -599,7 +650,7 @@ public class SolverAndPersistenceFrame extends JFrame {
     }
 
     private class ShowConstraintMatchesDialogAction extends AbstractAction {
-        
+
         ShowConstraintMatchesDialogAction() {
             super("Constraint matches", new ImageIcon(SolverAndPersistenceFrame.class.getResource("showConstraintMatchesDialogAction.png")));
         }
