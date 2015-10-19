@@ -130,7 +130,7 @@ public class TaPanel extends JPanel {
         courseDayListPanel = new JPanel(new GridLayout(1, 0));
         courseDayPanelMap = new LinkedHashMap<>(courseDayList.size());
         for (CourseDay courseDay : courseDayList) {
-            JPanel courseDayPanel = new JPanel(new GridLayout(1, 0));
+            JPanel courseDayPanel = new JPanel(new GridLayout(0, 2));
             Color backgroundColor = courseDayPanel.getBackground();
             courseDayPanel.setBackground(backgroundColor);
             courseDayPanel.setEnabled(true);
