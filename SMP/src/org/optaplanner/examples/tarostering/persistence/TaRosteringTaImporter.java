@@ -71,6 +71,8 @@ public class TaRosteringTaImporter extends AbstractTxtSolutionImporter {
         courseType.setCode("00000");
         courseType.setStartTimeString("08:00:00");
         courseType.setEndTimeString("11:50:00");
+        courseType.setCrs("124A");
+        courseType.setSec("001");
         courseTypeList.add(courseType);
         CourseType courseType2 = new CourseType();
         courseType2.setId(id++);
@@ -78,6 +80,8 @@ public class TaRosteringTaImporter extends AbstractTxtSolutionImporter {
         courseType2.setCode("00001");
         courseType2.setStartTimeString("01:10:00");
         courseType2.setEndTimeString("15:30:00");
+        courseType2.setCrs("215A");
+        courseType2.setSec("001");
         courseTypeList.add(courseType2);
         CourseType courseType3 = new CourseType();
         courseType3.setId(id++);
@@ -85,6 +89,8 @@ public class TaRosteringTaImporter extends AbstractTxtSolutionImporter {
         courseType3.setCode("00002");
         courseType3.setStartTimeString("08:00:00");
         courseType3.setEndTimeString("09:50:00");
+        courseType3.setCrs("124A");
+        courseType3.setSec("002");
         courseTypeList.add(courseType3);
         CourseType courseType4 = new CourseType();
         courseType4.setId(id++);
@@ -92,6 +98,8 @@ public class TaRosteringTaImporter extends AbstractTxtSolutionImporter {
         courseType4.setCode("00003");
         courseType4.setStartTimeString("01:10:00");
         courseType4.setEndTimeString("15:30:00");
+        courseType4.setCrs("124B");
+        courseType4.setSec("001");
         courseTypeList.add(courseType4);
         taRoster.setCourseTypeList(courseTypeList);
 
@@ -108,7 +116,7 @@ public class TaRosteringTaImporter extends AbstractTxtSolutionImporter {
         Course course2 = new Course();
         course2.setId(id++);
         course2.setIndex(index++);
-        course2.setCourseDay(taRoster.getCourseDayList().get(4));
+        course2.setCourseDay(taRoster.getCourseDayList().get(2));
         course2.setCourseType(courseType2);
         course2.setRequiredTaSize(1);
         courseList.add(course2);
@@ -122,7 +130,7 @@ public class TaRosteringTaImporter extends AbstractTxtSolutionImporter {
         Course course4 = new Course();
         course4.setId(id++);
         course4.setIndex(index++);
-        course4.setCourseDay(taRoster.getCourseDayList().get(4));
+        course4.setCourseDay(taRoster.getCourseDayList().get(2));
         course4.setCourseType(courseType4);
         course4.setRequiredTaSize(2);
         courseList.add(course4);

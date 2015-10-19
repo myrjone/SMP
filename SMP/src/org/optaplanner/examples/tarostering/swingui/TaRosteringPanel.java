@@ -38,8 +38,8 @@ import org.optaplanner.examples.common.swingui.SolutionPanel;
 import org.optaplanner.examples.tarostering.domain.Course;
 import org.optaplanner.examples.tarostering.domain.CourseAssignment;
 import org.optaplanner.examples.tarostering.domain.CourseDay;
-import org.optaplanner.examples.tarostering.domain.TaRoster;
 import org.optaplanner.examples.tarostering.domain.Ta;
+import org.optaplanner.examples.tarostering.domain.TaRoster;
 
 public class TaRosteringPanel extends SolutionPanel {
 
