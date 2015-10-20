@@ -59,6 +59,7 @@ import org.optaplanner.examples.common.business.SolutionBusiness;
 import org.optaplanner.examples.common.persistence.AbstractTxtSolutionImporter;
 import org.optaplanner.examples.common.persistence.AbstractXmlSolutionImporter;
 import org.optaplanner.examples.tarostering.domain.TaRoster;
+import org.optaplanner.examples.tarostering.persistence.TaRosteringCourseImporter;
 import org.optaplanner.examples.tarostering.persistence.TaRosteringImporter;
 import org.optaplanner.examples.tarostering.persistence.TaRosteringTaImporter;
 import org.slf4j.Logger;
@@ -583,20 +584,17 @@ public class SolverAndPersistenceFrame extends JFrame {
             if (approved == JFileChooser.APPROVE_OPTION) {
                 setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 try {
-                    AbstractXmlSolutionImporter axsi = new TaRosteringImporter();
-                    solution = axsi.readSolution(courseFileChooser.getSelectedFile());
+                    AbstractTxtSolutionImporter courseImporter = new TaRosteringCourseImporter();
+                    solution = courseImporter.readSolution(courseFileChooser.getSelectedFile());
+
                     int approved2 = taFileChooser.showOpenDialog(SolverAndPersistenceFrame.this);
-                    if (approved2 == JFileChooser.APPROVE_OPTION) {
-                        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                        try {
-                            AbstractTxtSolutionImporter taImporter = new TaRosteringTaImporter((TaRoster) solution);
-                            solution = taImporter.readSolution(taFileChooser.getSelectedFile());
-                            solutionBusiness.setSolution(solution);
-                            setSolutionLoaded();
-                        } finally {
-                            setCursor(Cursor.getDefaultCursor());
-                        }
-                    }
+                    if (approved2 != JFileChooser.APPROVE_OPTION) return;
+                    setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                    AbstractTxtSolutionImporter taImporter = new TaRosteringTaImporter((TaRoster) solution);
+                    solution = taImporter.readSolution(taFileChooser.getSelectedFile());
+                    solutionBusiness.setSolution(solution);
+                    setSolutionLoaded();
+                    setCursor(Cursor.getDefaultCursor());
                 } finally {
                     setCursor(Cursor.getDefaultCursor());
                 }

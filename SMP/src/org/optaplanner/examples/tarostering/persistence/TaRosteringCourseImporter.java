@@ -16,9 +16,9 @@ import java.util.*;
 /**
  * Created by ahooper on 10/13/2015.
  */
-public class CourseImporter extends AbstractTxtSolutionImporter {
+public class TaRosteringCourseImporter extends AbstractTxtSolutionImporter {
 
-    protected CourseImporter() {
+    public TaRosteringCourseImporter() {
         super(new TaRosteringDao());
     }
 
