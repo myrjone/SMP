@@ -26,8 +26,17 @@ public class CourseDay extends AbstractPersistable {
     private int dayIndex;
     private String dayString;
     private DayOfWeek dayOfWeek;
-
     private List<Course> courseList;
+
+    public CourseDay() {}
+
+    public CourseDay(long id, int dayIndex, String dayString, DayOfWeek dayOfWeek, List<Course> courseList) {
+        this.id = id;
+        this.dayIndex = dayIndex;
+        this.dayString = dayString;
+        this.dayOfWeek = dayOfWeek;
+        this.courseList = courseList;
+    }
 
     public int getDayIndex() {
         return dayIndex;

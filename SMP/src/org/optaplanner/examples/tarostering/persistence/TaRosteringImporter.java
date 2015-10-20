@@ -165,7 +165,7 @@ public class TaRosteringImporter extends AbstractXmlSolutionImporter {
                     }
                 }
             }
-            taRoster.setCoordinatorList(coordinatorList);
+//            taRoster.setCoordinatorList(coordinatorList);
         }
 
         private void generateCourseDayList(TaRoster taRoster) {
@@ -201,22 +201,20 @@ public class TaRosteringImporter extends AbstractXmlSolutionImporter {
                 CourseType courseType = new CourseType();
                 courseType.setId(id);
                 courseType.setCode(element.getAttribute("ID").getValue());
-                courseType.setIndex(index);
                 String startTimeString = element.getChild("StartTime").getText();
                 courseType.setStartTimeString(startTimeString);
                 String endTimeString = element.getChild("EndTime").getText();
                 courseType.setEndTimeString(endTimeString);
-                courseType.setNight(startTimeString.compareTo(endTimeString) > 0);
                 String dept = element.getChild("Dept").getText();
-                courseType.setDept(dept);
+                courseType.setDepartment(dept);
                 String crs = element.getChild("Crs").getText();
-                courseType.setCrs(crs);
+                courseType.setCourseNumber(crs);
                 String sec = element.getChild("Sec").getText();
-                courseType.setSec(sec);
+                courseType.setSectionNumber(sec);
                 String bldg = element.getChild("Bldg").getText();
-                courseType.setBldg(bldg);
+                courseType.setBuilding(bldg);
                 String rm = element.getChild("Rm").getText();
-                courseType.setRm(rm);
+                courseType.setRoomNumber(rm);
 
                 courseTypeList.add(courseType);
                 if (courseTypeMap.containsKey(courseType.getCode())) {
@@ -245,7 +243,6 @@ public class TaRosteringImporter extends AbstractXmlSolutionImporter {
                         CourseDay courseDay = courseDayMap.get(d.getCode());
                         course.setCourseDay(courseDay);
                         courseDay.getCourseList().add(course);
-                        course.setIndex(index);
                         course.setRequiredTaSize(preferredSize);
                         course.setCourseType(courseType);
                         courseList.add(course);

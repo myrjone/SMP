@@ -18,10 +18,9 @@ package org.optaplanner.examples.tarostering.persistence;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
+
 import org.optaplanner.core.api.domain.solution.Solution;
 import org.optaplanner.examples.common.persistence.AbstractTxtSolutionExporter;
-import org.optaplanner.examples.tarostering.domain.Coordinator;
 import org.optaplanner.examples.tarostering.domain.CourseAssignment;
 import org.optaplanner.examples.tarostering.domain.CourseType;
 import org.optaplanner.examples.tarostering.domain.TaRoster;
@@ -49,25 +48,26 @@ public class TaRosteringExporter extends AbstractTxtSolutionExporter{
             for (CourseAssignment ca : courseAssign) {
                 CourseType courseType = ca.getCourse().getCourseType();
                 bufferedWriter.write(courseType.getCode() + ",");
-                bufferedWriter.write(courseType.getDept() + ",");
-                bufferedWriter.write(courseType.getCrs() + ",");
-                bufferedWriter.write(courseType.getSec() + ",");
+                bufferedWriter.write(courseType.getDepartment() + ",");
+                bufferedWriter.write(courseType.getCourseNumber() + ",");
+                bufferedWriter.write(courseType.getSectionNumber() + ",");
                 bufferedWriter.write(ca.getCourseDay().getDayString() + ",");             
                 bufferedWriter.write(courseType.getStartTimeString() + ",");              
                 bufferedWriter.write(courseType.getEndTimeString() + ",");     
-                bufferedWriter.write(courseType.getBldg() + ",");
-                bufferedWriter.write(courseType.getRm() + ",");
+                bufferedWriter.write(courseType.getBuilding() + ",");
+                bufferedWriter.write(courseType.getRoomNumber() + ",");
+                bufferedWriter.write(courseType.getCoordinatorName());
 
-                List<Coordinator> coordinatorList = taRoster.getCoordinatorList();
-                for (Coordinator coord : coordinatorList){
-                    List<CourseType> coordCourseTypeList = coord.getCourseTypes();
-                    for (CourseType ct : coordCourseTypeList){
-                         if (Objects.equals(courseType.getId(), ct.getId())){
-                             bufferedWriter.write(coord.getName() + ",");
-                             break;
-                        }
-                    }
-                }
+//                List<Coordinator> coordinatorList = taRoster.getCoordinatorList();
+//                for (Coordinator coord : coordinatorList){
+//                    List<CourseType> coordCourseTypeList = coord.getCourseTypes();
+//                    for (CourseType ct : coordCourseTypeList){
+//                         if (Objects.equals(courseType.getId(), ct.getId())){
+//                             bufferedWriter.write(coord.getName() + ",");
+//                             break;
+//                        }
+//                    }
+//                }
 
                 Ta ta = ca.getTa();
                 bufferedWriter.write(ta.getName() + ",");               
