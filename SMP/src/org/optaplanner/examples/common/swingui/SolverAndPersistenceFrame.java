@@ -544,7 +544,7 @@ public class SolverAndPersistenceFrame extends JFrame {
                 };
             }
             courseFileChooser.setFileFilter(courseFilter);
-            courseFileChooser.setDialogTitle(NAME);
+            courseFileChooser.setDialogTitle("Import Course List");
 
             taFileChooser = new JFileChooser(solutionBusiness.getImportDataDir());
             FileFilter taFilter;
@@ -575,7 +575,7 @@ public class SolverAndPersistenceFrame extends JFrame {
                 };
             }
             taFileChooser.setFileFilter(taFilter);
-            taFileChooser.setDialogTitle(NAME);
+            taFileChooser.setDialogTitle("Import TA List");
         }
         @Override
         public void actionPerformed(ActionEvent e) {
