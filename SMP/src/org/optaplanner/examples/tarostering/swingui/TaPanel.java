@@ -23,6 +23,8 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -42,6 +44,8 @@ import org.optaplanner.examples.tarostering.domain.CourseAssignment;
 import org.optaplanner.examples.tarostering.domain.CourseDay;
 import org.optaplanner.examples.tarostering.domain.CourseType;
 import org.optaplanner.examples.tarostering.domain.Ta;
+import org.optaplanner.examples.tarostering.domain.TaRoster;
+import org.optaplanner.examples.tarostering.domain.contract.MinMaxContractLine;
 
 public class TaPanel extends JPanel {
 
@@ -60,11 +64,14 @@ public class TaPanel extends JPanel {
     private Map<Course, JPanel> coursePanelMap;
     private JLabel numberOfCourseAssignmentsLabel;
 
+    private final TaRoster taRoster;
+
     private final Map<CourseAssignment, JButton> courseAssignmentButtonMap = new HashMap<> ();
 
     public TaPanel(TaRosteringPanel taRosteringPanel, List<CourseDay> courseDayList, List<Course> courseList,
-            Ta ta) {
+            Ta ta, TaRoster taRoster) {
         super(new BorderLayout());
+        this.taRoster = taRoster;
         this.taRosteringPanel = taRosteringPanel;
         this.courseDayList = courseDayList;
         this.courseList = courseList;
@@ -94,7 +101,15 @@ public class TaPanel extends JPanel {
     private void createUI() {
         JPanel labelAndDeletePanel = new JPanel(new BorderLayout(5, 0));
         if (ta != null) {
-            labelAndDeletePanel.add(new JLabel(taRosteringPanel.getTaIcon()), BorderLayout.WEST);
+            JLabel taJLabel = new JLabel(taRosteringPanel.getTaIcon());
+            taJLabel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    //String result = JOptionPane.showInputDialog(deleteButton, ta.getName());
+                    new ConstraintFrame((MinMaxContractLine) taRoster.getContractLineList().get(0));
+                }
+            });
+            labelAndDeletePanel.add(taJLabel, BorderLayout.WEST);
         }
         taLabel = new JLabel(getTaLabel());
         taLabel.setEnabled(false);

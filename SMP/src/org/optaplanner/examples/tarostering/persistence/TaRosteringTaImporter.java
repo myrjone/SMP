@@ -25,32 +25,32 @@ import org.optaplanner.examples.tarostering.domain.request.CourseOnRequest;
 import org.optaplanner.examples.tarostering.domain.solver.CourseAssignmentDayOfWeekComparator;
 
 public class TaRosteringTaImporter extends AbstractTxtSolutionImporter {
+    private static final int REQUIRED_COL_SIZE = 5;
     protected TaRoster taRoster;
+    protected final Map<String, Ta> taMap;
+    protected final Map<String, Long> timeStringToTimeValueMap;
+    protected final Map<Integer, String> columnToTimeStringMap;
+    protected final Map<CourseType, String> courseTypeToTimeStringMap;
+
+    // Maps a ta to a map of days to times available
+    protected Map<Ta, Map<DayOfWeek,List<String>>> taToAvailabilityMap;
 
     public TaRosteringTaImporter(TaRoster taRoster) {
         super(new TaRosteringDao());
         this.taRoster = taRoster;
+        this.taMap = new HashMap<>();
+        this.taToAvailabilityMap = new HashMap<>();
+        this.timeStringToTimeValueMap = new HashMap<>();
+        this.columnToTimeStringMap = new HashMap<>();
+        this.courseTypeToTimeStringMap = new HashMap<>();
     }
 
     protected class TaImporterTxtInputBuilder extends TxtInputBuilder {
-        private static final int REQUIRED_COL_SIZE = 5;
+
         private int numOfColumns;
-        protected TaRoster taRoster;
-        protected final Map<String, Ta> taMap;
-        protected final Map<String, Long> timeStringToTimeValueMap;
-        protected final Map<Integer, String> columnToTimeStringMap;
-        protected final Map<CourseType, String> courseTypeToTimeStringMap;
 
-        // Maps a ta to a map of days to times available
-        protected Map<Ta, Map<DayOfWeek,List<String>>> taToAvailabilityMap;
 
-        public TaImporterTxtInputBuilder(TaRoster taRoster) {
-            this.taRoster = taRoster;
-            this.taMap = new HashMap<>();
-            this.taToAvailabilityMap = new HashMap<>();
-            this.timeStringToTimeValueMap = new HashMap<>();
-            this.columnToTimeStringMap = new HashMap<>();
-            this.courseTypeToTimeStringMap = new HashMap<>();
+        public TaImporterTxtInputBuilder() {
             this.numOfColumns = REQUIRED_COL_SIZE - 1;
         }
 
@@ -79,7 +79,6 @@ public class TaRosteringTaImporter extends AbstractTxtSolutionImporter {
                 id++;
                 code++;
             }
-            generateTaList();
             generateCourseOffRequests();
             generateCourseAssignment();
             taRoster.setCourseOnRequestList(Collections.<CourseOnRequest>emptyList());
@@ -116,14 +115,6 @@ public class TaRosteringTaImporter extends AbstractTxtSolutionImporter {
                 Collections.sort(temp, comp);
                 return temp;
             }
-        }
-
-        private void generateTaList() {
-            List<Ta> taList = new ArrayList<>();
-            for (String email : this.taMap.keySet()) {
-                taList.add(taMap.get(email));
-            }
-            taRoster.setTaList(taList);
         }
 
         private void generateFileTimeLookupMap(String[] tokens, int line) {
@@ -255,6 +246,12 @@ public class TaRosteringTaImporter extends AbstractTxtSolutionImporter {
                         + "file " + super.inputFile.getName() + " - "
                         + " number of columns must be " + numOfColumns);
             }
+
+            if (taRoster.getTaList() == null) {
+                List<Ta> taList = new ArrayList<>();
+                taRoster.setTaList(taList);
+            }
+
             Ta ta;
             Map<DayOfWeek, List<String>> availabilityMap;
             if (taMap.containsKey(tokens[2])) {
@@ -271,6 +268,7 @@ public class TaRosteringTaImporter extends AbstractTxtSolutionImporter {
                 ta.setCourseOffRequestMap(new HashMap<Course, CourseOffRequest>());
                 ta.setCourseOnRequestMap(Collections.<Course, CourseOnRequest>emptyMap());
                 taMap.put(tokens[2], ta);
+                taRoster.getTaList().add(ta);
                 availabilityMap = new HashMap<>();
                 taToAvailabilityMap.put(ta, availabilityMap);
             }
@@ -304,7 +302,7 @@ public class TaRosteringTaImporter extends AbstractTxtSolutionImporter {
     }
     @Override
     public TxtInputBuilder createTxtInputBuilder() {
-        return new TaImporterTxtInputBuilder(taRoster);
+        return new TaImporterTxtInputBuilder();
     }
 
 }

@@ -34,6 +34,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -60,8 +61,10 @@ import org.optaplanner.examples.common.persistence.AbstractTxtSolutionImporter;
 import org.optaplanner.examples.common.persistence.AbstractXmlSolutionImporter;
 import org.optaplanner.examples.tarostering.domain.TaRoster;
 import org.optaplanner.examples.tarostering.persistence.TaRosteringCourseImporter;
+import org.optaplanner.examples.tarostering.domain.contract.MinMaxContractLine;
 import org.optaplanner.examples.tarostering.persistence.TaRosteringImporter;
 import org.optaplanner.examples.tarostering.persistence.TaRosteringTaImporter;
+import org.optaplanner.examples.tarostering.swingui.ConstraintFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,6 +97,8 @@ public class SolverAndPersistenceFrame extends JFrame {
     private JProgressBar progressBar;
     private JTextField scoreField;
     private ShowConstraintMatchesDialogAction showConstraintMatchesDialogAction;
+    private Action constraintAction;
+    private JButton constraintButton;
 
     public SolverAndPersistenceFrame(SolutionBusiness solutionBusiness, SolutionPanel solutionPanel) {
         super(solutionBusiness.getAppName() + " OptaPlanner example");
@@ -274,19 +279,35 @@ public class SolverAndPersistenceFrame extends JFrame {
     }
 
     private JPanel createScorePanel() {
-        JPanel scorePanel = new JPanel(new BorderLayout());
+        JPanel scorePanel = new JPanel();
+        GroupLayout layout = new GroupLayout(scorePanel);
+        scorePanel.setLayout(layout);
         scorePanel.setBorder(BorderFactory.createEtchedBorder());
         showConstraintMatchesDialogAction = new ShowConstraintMatchesDialogAction();
         showConstraintMatchesDialogAction.setEnabled(false);
-        scorePanel.add(new JButton(showConstraintMatchesDialogAction), BorderLayout.WEST);
+        JButton constraintMatchesButton = new JButton(showConstraintMatchesDialogAction);
+        constraintAction = new ConstraintAction();
+        constraintButton = new JButton(constraintAction);
+        constraintButton.setText("Edit Constraints");
+        constraintButton.setEnabled(false);
         scoreField = new JTextField("Score:");
         scoreField.setEditable(false);
         scoreField.setForeground(Color.BLACK);
         scoreField.setBorder(BorderFactory.createLoweredBevelBorder());
-        scorePanel.add(scoreField, BorderLayout.CENTER);
         refreshScreenDuringSolvingCheckBox = new JCheckBox("Refresh screen during solving",
                 solutionPanel.isRefreshScreenDuringSolving());
-        scorePanel.add(refreshScreenDuringSolvingCheckBox, BorderLayout.EAST);
+        layout.setHorizontalGroup(
+                layout.createSequentialGroup()
+                    .addComponent(constraintMatchesButton)
+                    .addComponent(constraintButton)
+                    .addComponent(scoreField)
+                    .addComponent(refreshScreenDuringSolvingCheckBox));
+        layout.setVerticalGroup(
+                layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(constraintMatchesButton)
+                    .addComponent(constraintButton)
+                    .addComponent(scoreField)
+                    .addComponent(refreshScreenDuringSolvingCheckBox));
         return scorePanel;
     }
 
@@ -297,6 +318,7 @@ public class SolverAndPersistenceFrame extends JFrame {
         saveAction.setEnabled(true);
         exportAction.setEnabled(solutionBusiness.hasExporter());
         showConstraintMatchesDialogAction.setEnabled(true);
+        constraintButton.setEnabled(true);
         resetScreen();
     }
 
@@ -515,8 +537,7 @@ public class SolverAndPersistenceFrame extends JFrame {
             if (!solutionBusiness.hasImporter()) {
                 courseFileChooser = null;
                 return;
-            }
-            courseFileChooser = new JFileChooser(solutionBusiness.getImportDataDir());
+            }            courseFileChooser = new JFileChooser(solutionBusiness.getImportDataDir());
             FileFilter courseFilter;
             if (solutionBusiness.isImportFileDirectory()) {
                 courseFilter = new FileFilter() {
@@ -561,7 +582,6 @@ public class SolverAndPersistenceFrame extends JFrame {
                         return "Import directory";
                     }
                 };
-                taFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             } else {
                 taFilter = new FileFilter() {
                     @Override
@@ -577,6 +597,7 @@ public class SolverAndPersistenceFrame extends JFrame {
             }
             taFileChooser.setFileFilter(taFilter);
             taFileChooser.setDialogTitle("Import TA List");
+            taFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         }
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -588,13 +609,20 @@ public class SolverAndPersistenceFrame extends JFrame {
                     solution = courseImporter.readSolution(courseFileChooser.getSelectedFile());
 
                     int approved2 = taFileChooser.showOpenDialog(SolverAndPersistenceFrame.this);
-                    if (approved2 != JFileChooser.APPROVE_OPTION) return;
-                    setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                    AbstractTxtSolutionImporter taImporter = new TaRosteringTaImporter((TaRoster) solution);
-                    solution = taImporter.readSolution(taFileChooser.getSelectedFile());
-                    solutionBusiness.setSolution(solution);
-                    setSolutionLoaded();
-                    setCursor(Cursor.getDefaultCursor());
+                    if (approved2 == JFileChooser.APPROVE_OPTION) {
+                        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                        AbstractTxtSolutionImporter taImporter = new TaRosteringTaImporter((TaRoster) solution);
+                        File directory = taFileChooser.getSelectedFile();
+                        String suffix = solutionBusiness.getImportFileSuffix();
+                        for (File file : directory.listFiles()) {
+                            String fileExtension = FilenameUtils.getExtension(file.getAbsolutePath());
+                            if (suffix.equals(fileExtension)) {
+                                solution = taImporter.readSolution(file);
+                            }
+                        }
+                        solutionBusiness.setSolution(solution);
+                        setSolutionLoaded();
+                    }
                 } finally {
                     setCursor(Cursor.getDefaultCursor());
                 }
@@ -657,6 +685,14 @@ public class SolverAndPersistenceFrame extends JFrame {
         public void actionPerformed(ActionEvent e) {
             constraintMatchesDialog.resetContentPanel();
             constraintMatchesDialog.setVisible(true);
+        }
+    }
+
+    private class ConstraintAction extends AbstractAction {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            TaRoster taRoster = (TaRoster) solutionBusiness.getSolution();
+            new ConstraintFrame((MinMaxContractLine) taRoster.getContractLineList().get(0));
         }
     }
 

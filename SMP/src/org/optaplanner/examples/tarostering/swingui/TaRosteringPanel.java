@@ -88,7 +88,7 @@ public class TaRosteringPanel extends SolutionPanel {
         taListPanel = new JPanel();
         taListPanel.setLayout(new BoxLayout(taListPanel, BoxLayout.Y_AXIS));
         unassignedPanel = new TaPanel(this, Collections.<CourseDay>emptyList(), Collections.<Course>emptyList(),
-                null);
+                null, (TaRoster) null);
         taListPanel.add(unassignedPanel);
         taToPanelMap = new LinkedHashMap<>();
         taToPanelMap.put(null, unassignedPanel);
@@ -131,7 +131,7 @@ public class TaRosteringPanel extends SolutionPanel {
             deadTaSet.remove(ta);
             TaPanel taPanel = taToPanelMap.get(ta);
             if (taPanel == null) {
-                taPanel = new TaPanel(this, courseDayList, courseList, ta);
+                taPanel = new TaPanel(this, courseDayList, courseList, ta, (TaRoster) solutionBusiness.getSolution());
                 taListPanel.add(taPanel);
                 taToPanelMap.put(ta, taPanel);
             }
