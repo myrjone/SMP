@@ -17,26 +17,25 @@ import java.util.*;
  * Created by ahooper on 10/13/2015.
  */
 public class TaRosteringCourseImporter extends AbstractTxtSolutionImporter {
+    protected TaRoster taRoster;
 
     public TaRosteringCourseImporter() {
         super(new TaRosteringDao());
     }
 
-    @Override
-    public TxtInputBuilder createTxtInputBuilder() {
-        return null;
-    }
 
-    public static class TaRosteringInputBuilder extends TxtInputBuilder {
+    public static class CourseImporterTxtInputBuilder extends TxtInputBuilder {
+        protected TaRoster taRoster;
         protected Map<String, CourseDay> courseDayMap;
         protected Map<String, CourseType> courseTypeMap;
-        protected Map<CourseType, Integer> courseTypeToRequiredTaSizeMap;
-        protected Map<CourseType, Set<DayOfWeek>> courseTypeToDayOfWeekCoverMap;
         protected Map<String, Contract> contractMap;
-        protected Map<String, Ta> taMap;
-        protected Map<String, Coordinator> coordinatorMap;
-        protected Map<String, String> courseTypeToCoordinatorMap; // Map coordinator id to courseTYpeId
 
+        public CourseImporterTxtInputBuilder(TaRoster taRoster) {
+            this.taRoster = taRoster;
+            this.courseDayMap = new HashMap<>();
+            this.courseTypeMap = new HashMap<>();
+            this.contractMap = new HashMap<>();
+        }
 
         @Override
         public Solution readSolution() throws IOException {
@@ -59,9 +58,8 @@ public class TaRosteringCourseImporter extends AbstractTxtSolutionImporter {
             for (DayOfWeek day : DayOfWeek.values()) {
                 String dayString = day.getCode();
                 CourseDay courseDay = new CourseDay(id, dayIndex, dayString, day, new ArrayList<>());
-                id++;
                 courseDayList.add(courseDay);
-                courseDayMap.put(dayString, courseDay);
+                courseDayMap.put(day.getAbbrev(), courseDay);
                 id++;
                 dayIndex++;
             }
@@ -71,7 +69,6 @@ public class TaRosteringCourseImporter extends AbstractTxtSolutionImporter {
         private void readCourseList(TaRoster taRoster) throws IOException {
             List<Course> courseList = new ArrayList<>();
             List<CourseType> courseTypeList = new ArrayList<>();
-            List<CourseDay> courseDayList = taRoster.getCourseDayList();
             String expectedLegend = "CRN,DEPT,CRS,SEC,DAY,START,END,BLDG,RM,COORD";
             String crn, department, courseNumber, sectionNumber, days, startTime, endTime, building, room, coordinatorName;
             int courseIndex;
@@ -79,44 +76,41 @@ public class TaRosteringCourseImporter extends AbstractTxtSolutionImporter {
 
             try {
                 String line = bufferedReader.readLine();
-                if (line != expectedLegend) throw new IOException("Unexpected file format.");
+                if (!line.equals(expectedLegend)) throw new IOException("Unexpected file format.");
 
                 while ((line = bufferedReader.readLine()) != null) {
                     String[] values = line.split(",");
                     curLine++;
 
-                    if (values.length > 0) {
-                        courseIndex = courseList.size();
-                        crn = values[0];
-                        department = values[1];
-                        courseNumber = values[2];
-                        sectionNumber = values[3];
-                        days = values[4];
-                        startTime = parseTimeString(values[5], curLine);
-                        endTime = parseTimeString(values[6], curLine);
-                        building = values[7];
-                        room = values[8];
-                        coordinatorName = values[9];
+                    if (values.length <= 1) continue;
+                    courseIndex = courseList.size();
+                    crn = values[0];
+                    department = values[1];
+                    courseNumber = values[2];
+                    sectionNumber = values[3];
+                    days = values[4];
+                    startTime = parseTimeString(values[5], curLine);
+                    endTime = parseTimeString(values[6], curLine);
+                    building = values[7];
+                    room = values[8];
+                    coordinatorName = values[9];
 
-                        CourseType ct = new CourseType(courseIndex, crn, startTime, endTime, department, courseNumber,
-                                sectionNumber, building, room, coordinatorName);
-                        courseTypeList.add(ct);
+                    CourseType ct = new CourseType(courseIndex, crn, startTime, endTime, department, courseNumber,
+                            sectionNumber, building, room, coordinatorName);
+                    courseTypeList.add(ct);
+                    courseTypeMap.put(crn, ct);
 
-                        for (char d : days.toCharArray()) {
-                            DayOfWeek dayOfWeek = DayOfWeek.valueOfAbbrev(String.valueOf(d));
-                            if (dayOfWeek == null) throw new IllegalArgumentException("Invalid day on line " + curLine);
+                    for (char d : days.toCharArray()) {
+                        DayOfWeek dayOfWeek = DayOfWeek.valueOfAbbrev(String.valueOf(d));
+                        if (dayOfWeek == null) throw new IllegalArgumentException("Invalid day on line " + curLine);
 
-                            for (CourseDay cd : courseDayList) {
-                                if (cd.getDayOfWeek() != dayOfWeek) continue;
-                                Course course = new Course();
-                                course.setCourseType(ct);
-                                course.setCourseDay(cd);
-
-                                courseList.add(course);
-                                break;
-                            }
-
-                        }
+                        CourseDay cd = courseDayMap.get(String.valueOf(d));
+                        Course course = new Course();
+                        course.setCourseType(ct);
+                        course.setCourseDay(cd);
+                        cd.getCourseList().add(course);
+                        course.setRequiredTaSize(1);
+                        courseList.add(course);
                     }
                 }
 
@@ -160,9 +154,11 @@ public class TaRosteringCourseImporter extends AbstractTxtSolutionImporter {
             char[] vals = time.toCharArray();
 
             if (time.length() == 3) {
-                parsedTime = "0" + vals[0] + ":" + vals[1] + vals[2] + ":00";
+                parsedTime = "0" + String.valueOf(vals[0]) + ":" +
+                        String.valueOf(vals[1]) + String.valueOf(vals[2]) + ":00";
             } else if (time.length() == 4) {
-                parsedTime = vals[0] + vals[1] + ":" + vals[2] + vals[3] + ":00";
+                parsedTime = String.valueOf(vals[0]) + String.valueOf(vals[1]) + ":" +
+                        String.valueOf(vals[2]) + String.valueOf(vals[3]) + ":00";
             } else throw new IOException(String.format("Invalid time format on line {0}.", lineNum));
 
             return parsedTime;
@@ -170,5 +166,9 @@ public class TaRosteringCourseImporter extends AbstractTxtSolutionImporter {
 
     }
 
+    @Override
+    public TxtInputBuilder createTxtInputBuilder() {
+        return new CourseImporterTxtInputBuilder(taRoster);
+    }
 
 }
