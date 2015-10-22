@@ -10,7 +10,6 @@ import org.optaplanner.examples.tarostering.domain.contract.ContractLineType;
 import org.optaplanner.examples.tarostering.domain.contract.MinMaxContractLine;
 
 import java.io.IOException;
-import java.time.*;
 import java.util.*;
 
 /**
@@ -57,7 +56,7 @@ public class TaRosteringCourseImporter extends AbstractTxtSolutionImporter {
             int dayIndex = 0;
             for (DayOfWeek day : DayOfWeek.values()) {
                 String dayString = day.getCode();
-                CourseDay courseDay = new CourseDay(id, dayIndex, dayString, day, new ArrayList<>());
+                CourseDay courseDay = new CourseDay(id, dayIndex, dayString, day, new ArrayList<Course>());
                 courseDayList.add(courseDay);
                 courseDayMap.put(day.getAbbrev(), courseDay);
                 id++;
