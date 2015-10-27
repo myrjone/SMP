@@ -25,14 +25,14 @@ public class ConstraintFrame extends JFrame {
     private Action cancelAction;
 
     public ConstraintFrame(MinMaxContractLine contractLine) {
-        super("Constraint Editior");
+        super("Constraint Editor");
         this.contractLine = contractLine;
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setSize(400,200);
         this.setResizable(false);
 
-        submitAction = new SubmitAction();
+        submitAction = new SubmitAction(this);
         cancelAction = new CancelAction(this);
         minLabel = new JLabel(MINSTRING);
         maxLabel = new JLabel(MAXSTRING);
@@ -96,10 +96,17 @@ public class ConstraintFrame extends JFrame {
     }
 
     private class SubmitAction extends AbstractAction {
+        private final JFrame jFrame;
+
+        public SubmitAction(JFrame jFrame) {
+            this.jFrame = jFrame;
+        }
+        
         @Override
         public void actionPerformed(ActionEvent e) {
             contractLine.setMinimumValue(Integer.parseInt(minField.getText()));
             contractLine.setMaximumValue(Integer.parseInt(maxField.getText()));
+            jFrame.dispose();
         }
     }
 
