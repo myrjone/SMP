@@ -101,7 +101,7 @@ public class SolverAndPersistenceFrame extends JFrame {
     private JButton constraintButton;
 
     public SolverAndPersistenceFrame(SolutionBusiness solutionBusiness, SolutionPanel solutionPanel) {
-        super(solutionBusiness.getAppName() + " OptaPlanner example");
+        super(solutionBusiness.getAppName());
         this.solutionBusiness = solutionBusiness;
         this.solutionPanel = solutionPanel;
         setIconImage(OPTA_PLANNER_ICON.getImage());
@@ -260,7 +260,7 @@ public class SolverAndPersistenceFrame extends JFrame {
         usageExplanationPanel.add(usageExplanationLabel, BorderLayout.CENTER);
         JPanel descriptionPanel = new JPanel(new BorderLayout(2, 2));
         descriptionPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        descriptionPanel.add(new JLabel("Example description"), BorderLayout.NORTH);
+        descriptionPanel.add(new JLabel("Description"), BorderLayout.NORTH);
         JTextArea descriptionTextArea = new JTextArea(8, 70);
         descriptionTextArea.setEditable(false);
         descriptionTextArea.setText(solutionBusiness.getAppDescription());
@@ -606,8 +606,9 @@ public class SolverAndPersistenceFrame extends JFrame {
                 setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 try {
                     AbstractTxtSolutionImporter courseImporter = new TaRosteringCourseImporter();
-                    solution = courseImporter.readSolution(courseFileChooser.getSelectedFile());
-
+                    File courseFile = courseFileChooser.getSelectedFile();
+                    solution = courseImporter.readSolution(courseFile);
+                    solutionBusiness.setSolutionFileName("Course File: " + courseFile.getName());
                     int approved2 = taFileChooser.showOpenDialog(SolverAndPersistenceFrame.this);
                     if (approved2 == JFileChooser.APPROVE_OPTION) {
                         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -620,6 +621,7 @@ public class SolverAndPersistenceFrame extends JFrame {
                                 solution = taImporter.readSolution(file);
                             }
                         }
+                        solutionBusiness.setSolutionFileName(solutionBusiness.getSolutionFileName() + ", TA Directory: " + directory.getName());
                         solutionBusiness.setSolution(solution);
                         setSolutionLoaded();
                     }
