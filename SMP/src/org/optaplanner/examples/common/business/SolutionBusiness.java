@@ -203,6 +203,10 @@ public class SolutionBusiness {
         return solutionFileName;
     }
 
+    public void setSolutionFileName(String solutionFileName) {
+        this.solutionFileName = solutionFileName;
+    }
+
     public Score getScore() {
         return guiScoreDirector.calculateScore();
     }
