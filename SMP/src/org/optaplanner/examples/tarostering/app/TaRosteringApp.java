@@ -39,10 +39,7 @@ public class TaRosteringApp extends CommonApp {
     }
 
     public TaRosteringApp() {
-        super("Ta rostering",
-                "Official competition name: INRC2010 - Ta rostering\n\n" +
-                        "Assign courses to tas.",
-                TaRosteringPanel.LOGO_PATH);
+        super("Schedule Maker Pro", "Assign courses to TAs.", TaRosteringPanel.LOGO_PATH);
     }
 
     @Override

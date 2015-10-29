@@ -79,7 +79,7 @@ public class TaRosteringPanel extends SolutionPanel {
 
     private JPanel createHeaderPanel() {
         JPanel headerPanel = new JPanel(new BorderLayout(20, 0));
-        JLabel courseTypeExplanation = new JLabel("E = Early course, L = Late course, ...");
+        JLabel courseTypeExplanation = new JLabel("Hover over items to get more information");
         headerPanel.add(courseTypeExplanation, BorderLayout.CENTER);
         return headerPanel;
     }
