@@ -102,6 +102,7 @@ public class TaPanel extends JPanel {
         JPanel labelAndDeletePanel = new JPanel(new BorderLayout(5, 0));
         if (ta != null) {
             JLabel taJLabel = new JLabel(taRosteringPanel.getTaIcon());
+
             taJLabel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
@@ -110,15 +111,22 @@ public class TaPanel extends JPanel {
                 }
             });
             labelAndDeletePanel.add(taJLabel, BorderLayout.WEST);
+
         }
         taLabel = new JLabel(getTaLabel());
-        taLabel.setEnabled(false);
+        taLabel.setEnabled(true);
         labelAndDeletePanel.add(taLabel, BorderLayout.CENTER);
         if (ta != null) {
             JPanel deletePanel = new JPanel(new BorderLayout());
+
+            taLabel.setToolTipText("<html>Name: " + ta.getName() + "<br/>"
+                    + "Email: " + ta.getEmail()
+                    + "</html>");
+
+
             deleteButton = new JButton(taRosteringPanel.getDeleteTaIcon());
             deleteButton.setToolTipText("Delete");
-            deleteButton.addActionListener(new ActionListener() {
+            deleteButton.addActionListener(new ActionListener(){
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     taRosteringPanel.deleteTa(ta);
