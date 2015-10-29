@@ -24,6 +24,7 @@ import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import org.optaplanner.examples.tarostering.domain.contract.MinMaxContractLine;
@@ -118,12 +119,21 @@ public class ConstraintFrame extends JFrame {
         public SubmitAction(JFrame jFrame) {
             this.jFrame = jFrame;
         }
-        
+
         @Override
         public void actionPerformed(ActionEvent e) {
-            contractLine.setMinimumValue(Integer.parseInt(minField.getText()));
-            contractLine.setMaximumValue(Integer.parseInt(maxField.getText()));
-            jFrame.dispose();
+            int min = Integer.parseInt(minField.getText());
+            int max = Integer.parseInt(maxField.getText());
+            if (max >= min) {
+                contractLine.setMinimumValue(min);
+                contractLine.setMaximumValue(max);
+                jFrame.dispose();
+            }
+            else {
+                JOptionPane.showMessageDialog(jFrame, "Error: " + "Maximum value should be greater than"
+                        + "or equal to the minimum value",
+                "Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 
