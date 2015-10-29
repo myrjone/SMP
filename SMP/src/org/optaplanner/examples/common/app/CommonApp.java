@@ -18,7 +18,6 @@ package org.optaplanner.examples.common.app;
 
 import java.awt.Component;
 import javax.swing.WindowConstants;
-import org.optaplanner.benchmark.impl.aggregator.swingui.SwingUncaughtExceptionHandler;
 import org.optaplanner.benchmark.impl.aggregator.swingui.SwingUtils;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.examples.common.business.SolutionBusiness;
@@ -39,7 +38,8 @@ public abstract class CommonApp extends LoggingMain {
      * For example, TaRosteringPanel is incompatible with Mac.
      */
     public static void prepareSwingEnvironment() {
-        SwingUncaughtExceptionHandler.register();
+        //SwingUncaughtExceptionHandler.register();
+        Thread.setDefaultUncaughtExceptionHandler(new CustomExceptionHandler());
         SwingUtils.fixateLookAndFeel();
     }
 
