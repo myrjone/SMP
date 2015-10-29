@@ -17,17 +17,22 @@
 
 package org.optaplanner.examples.tarostering.persistence;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.optaplanner.core.api.domain.solution.Solution;
 import org.optaplanner.examples.common.persistence.AbstractTxtSolutionImporter;
-import org.optaplanner.examples.tarostering.domain.*;
+import org.optaplanner.examples.tarostering.domain.Course;
+import org.optaplanner.examples.tarostering.domain.CourseDay;
+import org.optaplanner.examples.tarostering.domain.CourseType;
 import org.optaplanner.examples.tarostering.domain.DayOfWeek;
+import org.optaplanner.examples.tarostering.domain.TaRoster;
 import org.optaplanner.examples.tarostering.domain.contract.Contract;
 import org.optaplanner.examples.tarostering.domain.contract.ContractLine;
 import org.optaplanner.examples.tarostering.domain.contract.ContractLineType;
 import org.optaplanner.examples.tarostering.domain.contract.MinMaxContractLine;
-
-import java.io.IOException;
-import java.util.*;
 
 /**
  * Created by ahooper on 10/13/2015.
@@ -156,7 +161,7 @@ public class TaRosteringCourseImporter extends AbstractTxtSolutionImporter {
             cl.setMinimumWeight(1);
             cl.setMaximumEnabled(true);
             cl.setMaximumValue(1);
-            cl.setMaximumWeight(2);
+            cl.setMaximumWeight(1);
 
             contractList.add(contract);
             contractLineList.add(cl);

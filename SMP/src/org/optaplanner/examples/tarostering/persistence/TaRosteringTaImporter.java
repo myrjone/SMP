@@ -37,6 +37,7 @@ import org.optaplanner.examples.tarostering.domain.CourseType;
 import org.optaplanner.examples.tarostering.domain.DayOfWeek;
 import org.optaplanner.examples.tarostering.domain.Ta;
 import org.optaplanner.examples.tarostering.domain.TaRoster;
+import org.optaplanner.examples.tarostering.domain.contract.MinMaxContractLine;
 import org.optaplanner.examples.tarostering.domain.request.CourseOffRequest;
 import org.optaplanner.examples.tarostering.domain.request.CourseOnRequest;
 import org.optaplanner.examples.tarostering.domain.solver.CourseAssignmentDayOfWeekComparator;
@@ -99,6 +100,14 @@ public class TaRosteringTaImporter extends AbstractTxtSolutionImporter {
             generateCourseOffRequests();
             generateCourseAssignment();
             taRoster.setCourseOnRequestList(Collections.<CourseOnRequest>emptyList());
+
+            // Dynamically set the max course assignments
+            int totalAssignments = taRoster.getCourseAssignmentList().size();
+            int totalTas = taRoster.getTaList().size();
+            int maxAssignments = (totalAssignments + totalTas - 1) / totalTas;
+            MinMaxContractLine mmcl = (MinMaxContractLine) taRoster.getContractLineList().get(0);
+            mmcl.setMaximumValue(maxAssignments > 1 ? maxAssignments : 1);
+            taRoster.getContractLineList().set(0, mmcl);
             return taRoster;
         }
 
