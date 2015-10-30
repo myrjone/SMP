@@ -42,6 +42,7 @@ import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
@@ -97,6 +98,7 @@ public class SolverAndPersistenceFrame extends JFrame {
     private ShowConstraintMatchesDialogAction showConstraintMatchesDialogAction;
     private Action constraintAction;
     private JButton constraintButton;
+    private JButton emailAllButton;
 
     public SolverAndPersistenceFrame(SolutionBusiness solutionBusiness, SolutionPanel solutionPanel) {
         super(solutionBusiness.getAppName());
@@ -227,6 +229,10 @@ public class SolverAndPersistenceFrame extends JFrame {
         exportAction = new ExportAction();
         exportAction.setEnabled(false);
         toolBar.add(new JButton(exportAction));
+        toolBar.addSeparator();
+        emailAllButton = new JButton("Email All");
+        emailAllButton.setEnabled(false);
+        toolBar.add(emailAllButton);
         toolBar.addSeparator();
 
         progressBar = new JProgressBar(0, 100);
@@ -377,6 +383,7 @@ public class SolverAndPersistenceFrame extends JFrame {
             try {
                 solutionBusiness.openSolution(file);
                 setSolutionLoaded();
+                TaRoster ta = (TaRoster)solutionBusiness.getSolution();
             } finally {
                 setCursor(Cursor.getDefaultCursor());
             }
@@ -441,6 +448,7 @@ public class SolverAndPersistenceFrame extends JFrame {
             progressBar.setString("Terminating...");
             // This async, so it doesn't stop the solving immediately
             solutionBusiness.terminateSolvingEarly();
+            emailAllButton.setEnabled(true);
         }
 
     }
@@ -606,7 +614,6 @@ public class SolverAndPersistenceFrame extends JFrame {
                     AbstractTxtSolutionImporter courseImporter = new TaRosteringCourseImporter();
                     File courseFile = courseFileChooser.getSelectedFile();
                     solution = courseImporter.readSolution(courseFile);
-                    solutionBusiness.setSolutionFileName("Course File: " + courseFile.getName());
                     int approved2 = taFileChooser.showOpenDialog(SolverAndPersistenceFrame.this);
                     if (approved2 == JFileChooser.APPROVE_OPTION) {
                         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -619,9 +626,14 @@ public class SolverAndPersistenceFrame extends JFrame {
                                 solution = taImporter.readSolution(file);
                             }
                         }
-                        solutionBusiness.setSolutionFileName(solutionBusiness.getSolutionFileName() + ", TA Directory: " + directory.getName());
                         solutionBusiness.setSolution(solution);
+                        JFrame frame = new JFrame();
+                        Object result = JOptionPane.showInputDialog(frame, "Enter the schedule title");
+                        TaRoster taRoster = (TaRoster) solution;
+                        taRoster.setCode(result.toString());
+                        solutionBusiness.setSolutionFileName(result.toString());
                         setSolutionLoaded();
+                        emailAllButton.setEnabled(false);
                     }
                 } finally {
                     setCursor(Cursor.getDefaultCursor());

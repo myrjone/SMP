@@ -59,6 +59,7 @@ public class TaPanel extends JPanel {
 
     private JLabel taLabel;
     private JButton deleteButton;
+    private JButton emailButton;
     private JPanel courseDayListPanel = null;
     private Map<CourseDay,JPanel> courseDayPanelMap;
     private Map<Course, JPanel> coursePanelMap;
@@ -134,6 +135,19 @@ public class TaPanel extends JPanel {
             });
             deleteButton.setMargin(new Insets(0, 0, 0, 0));
             deletePanel.add(deleteButton, BorderLayout.NORTH);
+
+            emailButton = new JButton("E");
+            emailButton.setEnabled(false);
+            emailButton.setToolTipText("Email individual schedule to: " + ta.getEmail());
+            /*
+            emailButton.addActionListener(new ActionListener(){
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    taRosteringPanel.deleteTa(ta);
+                }
+            }); */
+            emailButton.setMargin(new Insets(0, 0, 0, 0));
+            deletePanel.add(emailButton, BorderLayout.SOUTH);
             labelAndDeletePanel.add(deletePanel, BorderLayout.EAST);
         }
         labelAndDeletePanel.setPreferredSize(new Dimension(WEST_HEADER_WIDTH,
