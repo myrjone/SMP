@@ -244,11 +244,19 @@ public class TaPanel extends JPanel {
             Course course = courseAssignment.getCourse();
             CourseType courseType = course.getCourseType();
             // Tooltip
-            putValue(SHORT_DESCRIPTION, "<html>Day: " + course.getCourseDay().getLabel() + "<br/>"
-                    + "Course type: " + courseType.getLabel() + " (from " + courseType.getStartTimeString()
-                    + " to " + courseType.getEndTimeString() + ")<br/>"
+            putValue(SHORT_DESCRIPTION, "<html>CRN: " + courseType.getCode() + "<br/>"
+                    + "Department: " + courseType.getDepartment() + "<br/>"
+                    + "Crs: " + courseType.getCourseNumber() + "<br/>"
+                    + "Section: " + courseType.getSectionNumber() + "<br/>"
+                    + "Day" + course.getCourseDay().getLabel() + "<br/>"
+                    + "Start Time: " + courseType.getStartTimeString() + "<br/>"
+                    + "End Time: " + courseType.getEndTimeString() + "<br/>"
+                    + "Building: " + courseType.getBuilding() + "<br/>"
+                    + "Room: " + courseType.getRoomNumber() + "<br/>"
+                    + "Coordinator: " + courseType.getCoordinatorName() + "<br/>"
                     + "Ta: " + (ta == null ? "unassigned" : ta.getLabel())
                     + "</html>");
+
         }
 
         @Override
