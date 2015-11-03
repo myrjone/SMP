@@ -58,5 +58,6 @@ nb-configuration.xml
 
 ##MISC
 binaries/
+data/
 *.swp
 tags

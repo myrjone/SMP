@@ -45,9 +45,10 @@ public class TaRosteringExporter extends AbstractTxtSolutionExporter{
 
             List<CourseAssignment> courseAssign = taRoster.getCourseAssignmentList();
 
+
             for (CourseAssignment ca : courseAssign) {
                 CourseType courseType = ca.getCourse().getCourseType();
-                bufferedWriter.write(courseType.getCode() + ",");
+                bufferedWriter.write(courseType.getCrn() + ",");
                 bufferedWriter.write(courseType.getDepartment() + ",");
                 bufferedWriter.write(courseType.getCourseNumber() + ",");
                 bufferedWriter.write(courseType.getSectionNumber() + ",");

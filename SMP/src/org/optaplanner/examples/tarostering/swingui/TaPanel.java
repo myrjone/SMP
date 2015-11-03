@@ -253,7 +253,7 @@ public class TaPanel extends JPanel {
         private final CourseAssignment courseAssignment;
 
         CourseAssignmentAction(CourseAssignment courseAssignment) {
-            super(courseAssignment.getCourse().getCourseType().getCode());
+            super(courseAssignment.getCourse().getCourseType().getCrn());
             this.courseAssignment = courseAssignment;
             Course course = courseAssignment.getCourse();
             CourseType courseType = course.getCourseType();

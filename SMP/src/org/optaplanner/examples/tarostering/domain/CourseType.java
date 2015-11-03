@@ -19,12 +19,10 @@ package org.optaplanner.examples.tarostering.domain;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.optaplanner.examples.common.domain.AbstractPersistable;
 
-import java.util.UUID;
-
 @XStreamAlias("CourseType")
 public class CourseType extends AbstractPersistable {
 
-    private String code;
+    private String crn;
     private int index;
     private String startTimeString;
     private String endTimeString;
@@ -40,7 +38,7 @@ public class CourseType extends AbstractPersistable {
     /***
      *
      * @param index unique identifier
-     * @param code CRN number for the course
+     * @param crn CRN number for the course
      * @param startTimeString
      * @param endTimeString
      * @param department
@@ -50,10 +48,10 @@ public class CourseType extends AbstractPersistable {
      * @param roomNumber
      * @param coordinatorName
      */
-    public CourseType(int index, String code, String startTimeString, String endTimeString, String department, String courseNumber,
+    public CourseType(int index, String crn, String startTimeString, String endTimeString, String department, String courseNumber,
                       String sectionNumber, String building, String roomNumber, String coordinatorName) {
         this.index = index;
-        this.code = code;
+        this.crn = crn;
         this.startTimeString = startTimeString;
         this.endTimeString = endTimeString;
         this.department = department;
@@ -112,12 +110,12 @@ public class CourseType extends AbstractPersistable {
         this.roomNumber = roomNumber;
     }
 
-    public String getCode() {
-        return code;
+    public String getCrn() {
+        return crn;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setCrn(String crn) {
+        this.crn = crn;
     }
 
     public int getIndex() {
@@ -132,6 +130,11 @@ public class CourseType extends AbstractPersistable {
         return startTimeString;
     }
 
+    public String getStartTimeFormatted() {
+        String[] split = startTimeString.split(":");
+        return split[0] + split[1];
+    }
+
     public void setStartTimeString(String startTimeString) {
         this.startTimeString = startTimeString;
     }
@@ -140,17 +143,23 @@ public class CourseType extends AbstractPersistable {
         return endTimeString;
     }
 
+    public String getEndTimeFormatted() {
+        String[] split = endTimeString.split(":");
+        return split[0] + split[1];
+    }
+
+
     public void setEndTimeString(String endTimeString) {
         this.endTimeString = endTimeString;
     }
 
     public String getLabel() {
-        return code + " (" + department + " " + courseNumber + ")";
+        return crn + " (" + department + " " + courseNumber + ")";
     }
 
     @Override
     public String toString() {
-        return code;
+        return crn;
     }
 
 }

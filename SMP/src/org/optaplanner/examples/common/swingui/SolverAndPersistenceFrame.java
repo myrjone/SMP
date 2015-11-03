@@ -71,6 +71,7 @@ import org.optaplanner.examples.common.persistence.AbstractTxtSolutionImporter;
 import org.optaplanner.examples.tarostering.domain.TaRoster;
 import org.optaplanner.examples.tarostering.domain.contract.MinMaxContractLine;
 import org.optaplanner.examples.tarostering.persistence.TaRosteringCourseImporter;
+import org.optaplanner.examples.tarostering.persistence.TaRosteringPdfExporter;
 import org.optaplanner.examples.tarostering.persistence.TaRosteringTaImporter;
 import org.optaplanner.examples.tarostering.swingui.ConstraintFrame;
 import org.slf4j.Logger;
@@ -692,7 +693,26 @@ public class SolverAndPersistenceFrame extends JFrame {
             if (approved == JFileChooser.APPROVE_OPTION) {
                 setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 try {
-                    solutionBusiness.exportSolution(fileChooser.getSelectedFile());
+                    File exportFile = fileChooser.getSelectedFile();
+                    String path = exportFile.getPath();
+                    String[] splitPath = path.split("\\\\");
+                    String fileName = splitPath[splitPath.length-1];
+
+                    String[] fileNameSplit = fileName.split("\\.");
+                    String fileExtension = fileNameSplit[fileNameSplit.length-1];
+
+                    if (fileExtension.equals("csv") || fileExtension.equals("txt")) {
+                        solutionBusiness.exportSolution(fileChooser.getSelectedFile());
+                    }
+                    else if (fileExtension.equals("pdf")) {
+                        TaRosteringPdfExporter taRosteringPdfExporter = new TaRosteringPdfExporter((TaRoster) solutionBusiness.getSolution());
+                        taRosteringPdfExporter.ExportToPdf("Spring 2015", path);
+
+                        splitPath[splitPath.length - 1] = "TaSchedules";
+                        String newPath = String.join("\\\\", splitPath);
+
+                        taRosteringPdfExporter.ExportTaPdfs("Spring 2015", newPath);
+                    }
                 } finally {
                     setCursor(Cursor.getDefaultCursor());
                 }
