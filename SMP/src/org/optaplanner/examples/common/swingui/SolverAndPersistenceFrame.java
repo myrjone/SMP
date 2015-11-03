@@ -28,8 +28,16 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.ExecutionException;
+import javax.mail.Authenticator;
+import javax.mail.Message;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -44,6 +52,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -99,6 +108,9 @@ public class SolverAndPersistenceFrame extends JFrame {
     private Action constraintAction;
     private JButton constraintButton;
     private JButton emailAllButton;
+    private Action emailAction;
+    private String password;
+    private String username;
 
     public SolverAndPersistenceFrame(SolutionBusiness solutionBusiness, SolutionPanel solutionPanel) {
         super(solutionBusiness.getAppName());
@@ -230,8 +242,10 @@ public class SolverAndPersistenceFrame extends JFrame {
         exportAction.setEnabled(false);
         toolBar.add(new JButton(exportAction));
         toolBar.addSeparator();
+        emailAction = new EmailAction();
         emailAllButton = new JButton("Email All");
         emailAllButton.setEnabled(false);
+        emailAllButton.setAction(emailAction);
         toolBar.add(emailAllButton);
         toolBar.addSeparator();
 
@@ -707,5 +721,56 @@ public class SolverAndPersistenceFrame extends JFrame {
             new ConstraintFrame((MinMaxContractLine) taRoster.getContractLineList().get(0));
         }
     }
+
+    private class EmailAction extends AbstractAction {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JPanel panel = new JPanel();
+            JLabel label = new JLabel("Enter a password:");
+            JPasswordField pass = new JPasswordField(20);
+            panel.add(label);
+            panel.add(pass);
+            String[] options = new String[]{"OK", "Cancel"};
+            int option = JOptionPane.showOptionDialog(null, panel, "SIUE password",
+                                     JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+                                     null, options, options[1]);
+            if(option == 0)
+            {
+                char[] cPassword = pass.getPassword();
+                username = "sfurlow";
+                password = String.valueOf(cPassword);
+                try
+                {
+                    Properties props = System.getProperties();
+                    props.put("mail.transport.protocol", "smtp" );
+                    props.put("mail.smtp.starttls.enable","true" );
+                    props.put("mail.smtp.host","smtp.office365.com");
+                    props.put("mail.smtp.auth", "true" );
+                    props.put("mail.smtp.port", 587);
+                    Authenticator auth = new SMTPAuthenticator();
+                    Session session = Session.getInstance(props, auth);
+                    Message msg = new MimeMessage(session);
+                    msg.setFrom(new InternetAddress("sfurlow@siue.edu"));
+                    msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse("sfurlow@siue.edu", false));
+                    msg.setSubject("Testing3");
+                    msg.setText("Testing2");
+                    msg.setHeader("MyMail", "Mr. XYZ" );
+                    msg.setSentDate(new Date());
+                    Transport.send(msg);
+                }
+                catch (Exception ex)
+                {
+                  throw new RuntimeException("Error sending emails");
+                }
+            }
+        }
+    }
+
+    private class SMTPAuthenticator extends javax.mail.Authenticator {
+            @Override
+            public javax.mail.PasswordAuthentication getPasswordAuthentication() {
+                return new javax.mail.PasswordAuthentication(username + "@siue.edu", password);
+            }
+      }
 
 }
