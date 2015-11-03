@@ -45,7 +45,10 @@ public class TaRosteringPdfExporter {
         this.taRoster = taRoster;
     }
 
-    public void ExportToPdf(String scheduleName, String fileName) {
+    public void ExportToPdf(String fileName) {
+        String scheduleName = taRoster.getCode();
+        if (scheduleName.isEmpty()) scheduleName = "";
+
         Document document = new Document();
         int pageNumber = 1;
         try
@@ -87,8 +90,10 @@ public class TaRosteringPdfExporter {
         }
     }
 
-    public void ExportTaPdfs(String scheduleName, String path) {
+    public void ExportTaPdfs(String path) {
         List<Ta> taList = taRoster.getTaList();
+        String scheduleName = taRoster.getCode();
+        if (scheduleName.isEmpty()) scheduleName = "";
 
         int pageNumber = 1;
         try

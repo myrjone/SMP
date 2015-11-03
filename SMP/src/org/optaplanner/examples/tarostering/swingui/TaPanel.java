@@ -258,7 +258,7 @@ public class TaPanel extends JPanel {
             Course course = courseAssignment.getCourse();
             CourseType courseType = course.getCourseType();
             // Tooltip
-            putValue(SHORT_DESCRIPTION, "<html>CRN: " + courseType.getCode() + "<br/>"
+            putValue(SHORT_DESCRIPTION, "<html>CRN: " + courseType.getCrn() + "<br/>"
                     + "Department: " + courseType.getDepartment() + "<br/>"
                     + "Crs: " + courseType.getCourseNumber() + "<br/>"
                     + "Section: " + courseType.getSectionNumber() + "<br/>"

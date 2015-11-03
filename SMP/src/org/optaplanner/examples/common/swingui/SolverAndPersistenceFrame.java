@@ -62,6 +62,8 @@ import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 import org.apache.commons.io.FilenameUtils;
 import org.optaplanner.core.api.domain.solution.Solution;
 import org.optaplanner.core.api.score.FeasibilityScore;
@@ -323,10 +325,10 @@ public class SolverAndPersistenceFrame extends JFrame {
                     .addComponent(refreshScreenDuringSolvingCheckBox));
         layout.setVerticalGroup(
                 layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(constraintMatchesButton)
-                    .addComponent(constraintButton)
-                    .addComponent(scoreField)
-                    .addComponent(refreshScreenDuringSolvingCheckBox));
+                        .addComponent(constraintMatchesButton)
+                        .addComponent(constraintButton)
+                        .addComponent(scoreField)
+                        .addComponent(refreshScreenDuringSolvingCheckBox));
         return scorePanel;
     }
 
@@ -670,25 +672,24 @@ public class SolverAndPersistenceFrame extends JFrame {
                 return;
             }
             fileChooser = new JFileChooser(solutionBusiness.getExportDataDir());
-            fileChooser.setFileFilter(new FileFilter() {
-                @Override
-                public boolean accept(File file) {
-                    return file.isDirectory() || file.getName().endsWith("." + solutionBusiness.getExportFileSuffix());
-                }
 
-                @Override
-                public String getDescription() {
-                    return "Export files (*." + solutionBusiness.getExportFileSuffix() + ")";
-                }
-            });
             fileChooser.setDialogTitle(NAME);
         }
+        
         @Override
         public void actionPerformed(ActionEvent e) {
             fileChooser.setSelectedFile(new File(solutionBusiness.getExportDataDir(),
                     FilenameUtils.getBaseName(solutionBusiness.getSolutionFileName())
-                            + "." + solutionBusiness.getExportFileSuffix()
+                            + ".pdf"
             ));
+
+            FileNameExtensionFilter csvFilter = new FileNameExtensionFilter("CSV Files", "csv", "txt");
+            FileNameExtensionFilter pdfFilter = new FileNameExtensionFilter("PDF Files", "pdf");
+            fileChooser.addChoosableFileFilter(pdfFilter);
+            fileChooser.addChoosableFileFilter(csvFilter);
+            fileChooser.setFileFilter(pdfFilter);
+
+
             int approved = fileChooser.showSaveDialog(SolverAndPersistenceFrame.this);
             if (approved == JFileChooser.APPROVE_OPTION) {
                 setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -706,12 +707,12 @@ public class SolverAndPersistenceFrame extends JFrame {
                     }
                     else if (fileExtension.equals("pdf")) {
                         TaRosteringPdfExporter taRosteringPdfExporter = new TaRosteringPdfExporter((TaRoster) solutionBusiness.getSolution());
-                        taRosteringPdfExporter.ExportToPdf("Spring 2015", path);
+                        taRosteringPdfExporter.ExportToPdf(path);
 
                         splitPath[splitPath.length - 1] = "TaSchedules";
-                        String newPath = String.join("\\\\", splitPath);
+                        String newPath = String.join("\\", splitPath);
 
-                        taRosteringPdfExporter.ExportTaPdfs("Spring 2015", newPath);
+                        taRosteringPdfExporter.ExportTaPdfs(newPath);
                     }
                 } finally {
                     setCursor(Cursor.getDefaultCursor());
