@@ -110,7 +110,6 @@ public class SolverAndPersistenceFrame extends JFrame {
     private ShowConstraintMatchesDialogAction showConstraintMatchesDialogAction;
     private Action constraintAction;
     private JButton constraintButton;
-    private JButton emailAllButton;
     private Action emailAction;
     private String password;
     private String username;
@@ -246,10 +245,8 @@ public class SolverAndPersistenceFrame extends JFrame {
         toolBar.add(new JButton(exportAction));
         toolBar.addSeparator();
         emailAction = new EmailAction();
-        emailAllButton = new JButton("Email All");
-        emailAllButton.setEnabled(false);
-        emailAllButton.setAction(emailAction);
-        toolBar.add(emailAllButton);
+        emailAction.setEnabled(false);
+        toolBar.add(new JButton(emailAction));
         toolBar.addSeparator();
 
         progressBar = new JProgressBar(0, 100);
@@ -465,7 +462,7 @@ public class SolverAndPersistenceFrame extends JFrame {
             progressBar.setString("Terminating...");
             // This async, so it doesn't stop the solving immediately
             solutionBusiness.terminateSolvingEarly();
-            emailAllButton.setEnabled(true);
+            emailAction.setEnabled(true);
         }
 
     }
@@ -650,7 +647,7 @@ public class SolverAndPersistenceFrame extends JFrame {
                         taRoster.setCode(result.toString());
                         solutionBusiness.setSolutionFileName(result.toString());
                         setSolutionLoaded();
-                        emailAllButton.setEnabled(false);
+                        emailAction.setEnabled(false);
                     }
                 } finally {
                     setCursor(Cursor.getDefaultCursor());
@@ -744,17 +741,26 @@ public class SolverAndPersistenceFrame extends JFrame {
     }
 
     private class EmailAction extends AbstractAction {
+
+        public EmailAction() {
+            super("Email Action", new ImageIcon(SolverAndPersistenceFrame.class.getResource("mailIcon.jpg")));
+        }
         @Override
         public void actionPerformed(ActionEvent e) {
             JPanel panel = new JPanel();
             JLabel label = new JLabel("Enter a password:");
             JPasswordField pass = new JPasswordField(20);
+            pass.requestFocusInWindow();
             panel.add(label);
             panel.add(pass);
             String[] options = new String[]{"OK", "Cancel"};
-            int option = JOptionPane.showOptionDialog(null, panel, "SIUE password",
-                                     JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE,
-                                     null, options, options[1]);
+            int option = JOptionPane.showOptionDialog(
+                    null,
+                    panel,
+                    "SIUE password",
+                    JOptionPane.NO_OPTION,
+                    JOptionPane.PLAIN_MESSAGE,
+                    null,options,null);
             if(option == 0)
             {
                 char[] cPassword = pass.getPassword();
@@ -773,7 +779,7 @@ public class SolverAndPersistenceFrame extends JFrame {
                     Message msg = new MimeMessage(session);
                     msg.setFrom(new InternetAddress("sfurlow@siue.edu"));
                     msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse("sfurlow@siue.edu", false));
-                    msg.setSubject("Testing3");
+                    msg.setSubject("Testing4");
                     msg.setText("Testing2");
                     msg.setHeader("MyMail", "Mr. XYZ" );
                     msg.setSentDate(new Date());
