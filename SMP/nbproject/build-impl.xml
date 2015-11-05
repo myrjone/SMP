@@ -11,7 +11,6 @@ is divided into following sections:
   - jar
   - execution
   - debugging
-  - javadoc
   - test compilation
   - test execution
   - test debugging
@@ -27,7 +26,7 @@ is divided into following sections:
             </not>
         </condition>
     </fail>
-    <target depends="test,jar,javadoc" description="Build and test whole project." name="default"/>
+    <target depends="test,jar" description="Build and test whole project." name="default"/>
     <!-- 
                 ======================
                 INITIALIZATION SECTION 
@@ -1226,48 +1225,6 @@ is divided into following sections:
                 JAVADOC SECTION
                 ===============
             -->
-    <target depends="init" if="have.sources" name="-javadoc-build">
-        <mkdir dir="${dist.javadoc.dir}"/>
-        <condition else="" property="javadoc.endorsed.classpath.cmd.line.arg" value="-J${endorsed.classpath.cmd.line.arg}">
-            <and>
-                <isset property="endorsed.classpath.cmd.line.arg"/>
-                <not>
-                    <equals arg1="${endorsed.classpath.cmd.line.arg}" arg2=""/>
-                </not>
-            </and>
-        </condition>
-        <exec executable="${platform.java}" failonerror="false" outputproperty="platform.version.output">
-            <arg value="-version"/>
-        </exec>
-        <condition else="" property="bug5101868workaround" value="*.java">
-            <matches multiline="true" pattern="1\.[56](\..*)?" string="${platform.version.output}"/>
-        </condition>
-        <javadoc additionalparam="-J-Dfile.encoding=${file.encoding} ${javadoc.additionalparam}" author="${javadoc.author}" charset="UTF-8" destdir="${dist.javadoc.dir}" docencoding="UTF-8" encoding="${javadoc.encoding.used}" executable="${platform.javadoc}" failonerror="true" noindex="${javadoc.noindex}" nonavbar="${javadoc.nonavbar}" notree="${javadoc.notree}" private="${javadoc.private}" source="${javac.source}" splitindex="${javadoc.splitindex}" use="${javadoc.use}" useexternalfile="true" version="${javadoc.version}" windowtitle="${javadoc.windowtitle}">
-            <classpath>
-                <path path="${javac.classpath}"/>
-            </classpath>
-            <fileset dir="${src.dir}" excludes="${bug5101868workaround},${excludes}" includes="${includes}">
-                <filename name="**/*.java"/>
-            </fileset>
-            <fileset dir="${build.generated.sources.dir}" erroronmissingdir="false">
-                <include name="**/*.java"/>
-                <exclude name="*.java"/>
-            </fileset>
-            <arg line="${javadoc.endorsed.classpath.cmd.line.arg}"/>
-        </javadoc>
-        <copy todir="${dist.javadoc.dir}">
-            <fileset dir="${src.dir}" excludes="${excludes}" includes="${includes}">
-                <filename name="**/doc-files/**"/>
-            </fileset>
-            <fileset dir="${build.generated.sources.dir}" erroronmissingdir="false">
-                <include name="**/doc-files/**"/>
-            </fileset>
-        </copy>
-    </target>
-    <target depends="init,-javadoc-build" if="netbeans.home" name="-javadoc-browse" unless="no.javadoc.preview">
-        <nbbrowse file="${dist.javadoc.dir}/index.html"/>
-    </target>
-    <target depends="init,-javadoc-build,-javadoc-browse" description="Build Javadoc." name="javadoc"/>
     <!--
                 =========================
                 TEST COMPILATION SECTION
