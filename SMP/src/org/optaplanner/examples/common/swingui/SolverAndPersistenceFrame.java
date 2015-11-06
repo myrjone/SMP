@@ -22,22 +22,15 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Properties;
 import java.util.concurrent.ExecutionException;
-import javax.mail.Authenticator;
-import javax.mail.Message;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -63,13 +56,13 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
 import org.apache.commons.io.FilenameUtils;
 import org.optaplanner.core.api.domain.solution.Solution;
 import org.optaplanner.core.api.score.FeasibilityScore;
 import org.optaplanner.core.api.score.Score;
 import org.optaplanner.examples.common.business.SolutionBusiness;
 import org.optaplanner.examples.common.persistence.AbstractTxtSolutionImporter;
+import org.optaplanner.examples.tarostering.domain.Ta;
 import org.optaplanner.examples.tarostering.domain.TaRoster;
 import org.optaplanner.examples.tarostering.domain.contract.MinMaxContractLine;
 import org.optaplanner.examples.tarostering.persistence.TaRosteringCourseImporter;
@@ -672,7 +665,7 @@ public class SolverAndPersistenceFrame extends JFrame {
 
             fileChooser.setDialogTitle(NAME);
         }
-        
+
         @Override
         public void actionPerformed(ActionEvent e) {
             fileChooser.setSelectedFile(new File(solutionBusiness.getExportDataDir(),
@@ -741,63 +734,36 @@ public class SolverAndPersistenceFrame extends JFrame {
     }
 
     private class EmailAction extends AbstractAction {
-
         public EmailAction() {
             super("Email Action", new ImageIcon(SolverAndPersistenceFrame.class.getResource("mailIcon.jpg")));
         }
         @Override
         public void actionPerformed(ActionEvent e) {
-            JPanel panel = new JPanel();
-            JLabel label = new JLabel("Enter a password:");
-            JPasswordField pass = new JPasswordField(20);
-            pass.requestFocusInWindow();
-            panel.add(label);
-            panel.add(pass);
+            TaRoster taRoster = (TaRoster) solutionBusiness.getSolution();
+            List<Ta> taList = taRoster.getTaList();
+            List<String> emailToList = new ArrayList<>();
+            for (Ta ta : taList) {
+                emailToList.add(ta.getEmail());
+            }
+
+            JPanel credentialPanel = new JPanel(new GridLayout(2,2));
+            JLabel eidLabel = new JLabel("Enter your E-ID: ");
+            JLabel passwordLabel = new JLabel("Enter your password: ");
+            JTextField eidField = new JTextField(20);
+            JPasswordField passField = new JPasswordField(20);
+            credentialPanel.add(eidLabel);
+            credentialPanel.add(eidField);
+            credentialPanel.add(passwordLabel);
+            credentialPanel.add(passField);
             String[] options = new String[]{"OK", "Cancel"};
-            int option = JOptionPane.showOptionDialog(
-                    null,
-                    panel,
-                    "SIUE password",
-                    JOptionPane.NO_OPTION,
-                    JOptionPane.PLAIN_MESSAGE,
-                    null,options,null);
-            if(option == 0)
+            int option = JOptionPane.showOptionDialog(null, credentialPanel, "Email Credentials",
+                                     JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+                                     null, options, options[0]);
+            if(option == 0) // pressing OK button
             {
-                char[] cPassword = pass.getPassword();
-                username = "sfurlow";
-                password = String.valueOf(cPassword);
-                try
-                {
-                    Properties props = System.getProperties();
-                    props.put("mail.transport.protocol", "smtp" );
-                    props.put("mail.smtp.starttls.enable","true" );
-                    props.put("mail.smtp.host","smtp.office365.com");
-                    props.put("mail.smtp.auth", "true" );
-                    props.put("mail.smtp.port", 587);
-                    Authenticator auth = new SMTPAuthenticator();
-                    Session session = Session.getInstance(props, auth);
-                    Message msg = new MimeMessage(session);
-                    msg.setFrom(new InternetAddress("sfurlow@siue.edu"));
-                    msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse("sfurlow@siue.edu", false));
-                    msg.setSubject("Testing4");
-                    msg.setText("Testing2");
-                    msg.setHeader("MyMail", "Mr. XYZ" );
-                    msg.setSentDate(new Date());
-                    Transport.send(msg);
-                }
-                catch (Exception ex)
-                {
-                  throw new RuntimeException("Error sending emails");
-                }
+                char[] password = passField.getPassword();
+                new EmailFrame(eidField.getText(), password, solutionBusiness, emailToList);
             }
         }
     }
-
-    private class SMTPAuthenticator extends javax.mail.Authenticator {
-            @Override
-            public javax.mail.PasswordAuthentication getPasswordAuthentication() {
-                return new javax.mail.PasswordAuthentication(username + "@siue.edu", password);
-            }
-      }
-
 }
