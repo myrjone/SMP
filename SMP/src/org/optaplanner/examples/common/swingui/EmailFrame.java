@@ -33,6 +33,7 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -181,29 +182,50 @@ public class EmailFrame extends JFrame {
                 Message msg = new MimeMessage(session);
                 msg.setFrom(new InternetAddress(fromField.getText()));
 
-                String[] toAddressArray = toField.getText().split(";");
+                String toFieldString = toField.getText();
+                toFieldString = toFieldString.replace(",", ";");
+                String[] toAddressArray = toFieldString.split(";");
                 for (String address : toAddressArray) {
                     msg.addRecipients(Message.RecipientType.TO, InternetAddress.parse(address));
+                }
+
+                String ccFieldString = ccField.getText();
+                ccFieldString = ccFieldString.replace(",",";");
+                String[] ccArray = ccFieldString.split(";");
+                for (String address : ccArray) {
+                    msg.addRecipients(Message.RecipientType.CC, InternetAddress.parse(address));
+                }
+
+                String bccFieldString = bccField.getText();
+                bccFieldString = bccFieldString.replace(",",";");
+                String[] bccArray = bccFieldString.split(";");
+                for (String address : bccArray) {
+                    msg.addRecipients(Message.RecipientType.BCC, InternetAddress.parse(address));
                 }
 
                 msg.setSubject(subjectField.getText());
                 msg.setHeader("Chemistry Schedule", "Myron Jones" );
                 msg.setSentDate(new Date());
 
+                Multipart multipart = new MimeMultipart();
+
                 BodyPart messageBodyPart = new MimeBodyPart();
                 messageBodyPart.setText(bodyArea.getText());
                 messageBodyPart.setContent(bodyArea.getText(), "text/html");
-                BodyPart attachmentBodyPart = new MimeBodyPart();
-                DataSource source = new FileDataSource(attachmentField.getText());
-                attachmentBodyPart.setDataHandler(new DataHandler(source));
-                attachmentBodyPart.setFileName(new File(attachmentField.getText()).getName());
-
-                Multipart multipart = new MimeMultipart();
                 multipart.addBodyPart(messageBodyPart);
-                multipart.addBodyPart(attachmentBodyPart);
+
+                BodyPart attachmentBodyPart = new MimeBodyPart();
+                String attachmentPath = attachmentField.getText();
+                if (!("".equals(attachmentPath))) {
+                    DataSource source = new FileDataSource(attachmentPath);
+                    attachmentBodyPart.setDataHandler(new DataHandler(source));
+                    attachmentBodyPart.setFileName(new File(attachmentPath).getName());
+                    multipart.addBodyPart(attachmentBodyPart);
+                }
 
                 msg.setContent(multipart);
                 Transport.send(msg);
+                JOptionPane.showMessageDialog(jFrame, "Emails sent successfully!");
                 jFrame.dispose();
             }
             catch (Exception ex)

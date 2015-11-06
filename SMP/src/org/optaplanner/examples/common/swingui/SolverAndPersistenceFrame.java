@@ -391,6 +391,7 @@ public class SolverAndPersistenceFrame extends JFrame {
                 solutionBusiness.openSolution(file);
                 setSolutionLoaded();
                 TaRoster ta = (TaRoster)solutionBusiness.getSolution();
+                emailAction.setEnabled(true);
             } finally {
                 setCursor(Cursor.getDefaultCursor());
             }
@@ -488,6 +489,7 @@ public class SolverAndPersistenceFrame extends JFrame {
                 try {
                     solutionBusiness.openSolution(fileChooser.getSelectedFile());
                     setSolutionLoaded();
+                    emailAction.setEnabled(true);
                 } finally {
                     setCursor(Cursor.getDefaultCursor());
                 }
@@ -640,7 +642,7 @@ public class SolverAndPersistenceFrame extends JFrame {
                         taRoster.setCode(result.toString());
                         solutionBusiness.setSolutionFileName(result.toString());
                         setSolutionLoaded();
-                        emailAction.setEnabled(false);
+                        emailAction.setEnabled(true);
                     }
                 } finally {
                     setCursor(Cursor.getDefaultCursor());
