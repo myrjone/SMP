@@ -46,8 +46,7 @@ public class ConstraintFrame extends JFrame {
         super("Constraint Editor");
         this.contractLine = contractLine;
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setSize(400,200);
+        //setSize(400,200);
         this.setResizable(false);
 
         submitAction = new SubmitAction(this);
@@ -108,8 +107,9 @@ public class ConstraintFrame extends JFrame {
         );
         constraintPanel.setLayout(layout);
         add(constraintPanel);
-        setVisible(true);
         pack();
+        setLocationRelativeTo(null);
+        setVisible(true);
 
     }
 

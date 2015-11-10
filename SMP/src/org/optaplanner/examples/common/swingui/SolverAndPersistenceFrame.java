@@ -28,8 +28,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.nio.file.FileSystems;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -51,6 +54,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
@@ -104,8 +108,7 @@ public class SolverAndPersistenceFrame extends JFrame {
     private Action constraintAction;
     private JButton constraintButton;
     private Action emailAction;
-    private String password;
-    private String username;
+    private JToggleButton homeButton;
 
     public SolverAndPersistenceFrame(SolutionBusiness solutionBusiness, SolutionPanel solutionPanel) {
         super(solutionBusiness.getAppName());
@@ -301,6 +304,8 @@ public class SolverAndPersistenceFrame extends JFrame {
         constraintButton = new JButton(constraintAction);
         constraintButton.setText("Edit Constraints");
         constraintButton.setEnabled(false);
+        homeButton = new JToggleButton(new HomeAction());
+        homeButton.setSelected(true);
         scoreField = new JTextField("Score:");
         scoreField.setEditable(false);
         scoreField.setForeground(Color.BLACK);
@@ -312,13 +317,15 @@ public class SolverAndPersistenceFrame extends JFrame {
                     .addComponent(constraintMatchesButton)
                     .addComponent(constraintButton)
                     .addComponent(scoreField)
-                    .addComponent(refreshScreenDuringSolvingCheckBox));
+                    .addComponent(refreshScreenDuringSolvingCheckBox)
+                    .addComponent(homeButton));
         layout.setVerticalGroup(
                 layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                         .addComponent(constraintMatchesButton)
                         .addComponent(constraintButton)
                         .addComponent(scoreField)
-                        .addComponent(refreshScreenDuringSolvingCheckBox));
+                        .addComponent(refreshScreenDuringSolvingCheckBox)
+                        .addComponent(homeButton));
         return scorePanel;
     }
 
@@ -330,6 +337,7 @@ public class SolverAndPersistenceFrame extends JFrame {
         exportAction.setEnabled(solutionBusiness.hasExporter());
         showConstraintMatchesDialogAction.setEnabled(true);
         constraintButton.setEnabled(true);
+        homeButton.setSelected(false);
         resetScreen();
     }
 
@@ -611,7 +619,7 @@ public class SolverAndPersistenceFrame extends JFrame {
                 };
             }
             taFileChooser.setFileFilter(taFilter);
-            taFileChooser.setDialogTitle("Import TA List");
+            taFileChooser.setDialogTitle("Import TA Directory");
             taFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         }
         @Override
@@ -688,7 +696,7 @@ public class SolverAndPersistenceFrame extends JFrame {
                 try {
                     File exportFile = fileChooser.getSelectedFile();
                     String path = exportFile.getPath();
-                    String[] splitPath = path.split("\\\\");
+                    String[] splitPath = path.split(FileSystems.getDefault().getSeparator());
                     String fileName = splitPath[splitPath.length-1];
 
                     String[] fileNameSplit = fileName.split("\\.");
@@ -700,11 +708,6 @@ public class SolverAndPersistenceFrame extends JFrame {
                     else if (fileExtension.equals("pdf")) {
                         TaRosteringPdfExporter taRosteringPdfExporter = new TaRosteringPdfExporter((TaRoster) solutionBusiness.getSolution());
                         taRosteringPdfExporter.ExportToPdf(path);
-
-                        splitPath[splitPath.length - 1] = "TaSchedules";
-                        String newPath = String.join("\\", splitPath);
-
-                        taRosteringPdfExporter.ExportTaPdfs(newPath);
                     }
                 } finally {
                     setCursor(Cursor.getDefaultCursor());
@@ -737,15 +740,17 @@ public class SolverAndPersistenceFrame extends JFrame {
 
     private class EmailAction extends AbstractAction {
         public EmailAction() {
-            super("Email Action", new ImageIcon(SolverAndPersistenceFrame.class.getResource("mailIcon.jpg")));
+            super("Email All", new ImageIcon(SolverAndPersistenceFrame.class.getResource("mailIcon.jpg")));
         }
         @Override
         public void actionPerformed(ActionEvent e) {
             TaRoster taRoster = (TaRoster) solutionBusiness.getSolution();
             List<Ta> taList = taRoster.getTaList();
-            List<String> emailToList = new ArrayList<>();
-            for (Ta ta : taList) {
-                emailToList.add(ta.getEmail());
+            String taExportPath = solutionBusiness.getExportDataDir().getAbsoluteFile()
+                    + FileSystems.getDefault().getSeparator() + "TA_Files";
+            File taDirectory = new File(taExportPath);
+            if (!taDirectory.exists()) {
+                taDirectory.mkdir();
             }
 
             JPanel credentialPanel = new JPanel(new GridLayout(2,2));
@@ -764,7 +769,32 @@ public class SolverAndPersistenceFrame extends JFrame {
             if(option == 0) // pressing OK button
             {
                 char[] password = passField.getPassword();
-                new EmailFrame(eidField.getText(), password, solutionBusiness, emailToList);
+                EmailFrame emailFrame = new EmailFrame(eidField.getText(), password);
+                TaRosteringPdfExporter taRosteringPdfExporter = new TaRosteringPdfExporter((TaRoster) solutionBusiness.getSolution());
+                Map<String, String> taToFileLocMap = new HashMap<>();
+                for (Ta ta : taList) {
+                   String taFilePath = taRosteringPdfExporter.ExportTaPdf(ta, taExportPath);
+                   taToFileLocMap.put(ta.getEmail(), taFilePath);
+                }
+                emailFrame.emailAll(taToFileLocMap);
+                JOptionPane.showMessageDialog(new JFrame(), "Emails successfully sent.");
+            }
+        }
+    }
+
+    private class HomeAction extends AbstractAction {
+        public HomeAction() {
+            super("Home", new ImageIcon(SolverAndPersistenceFrame.class.getResource("home_icon.gif")));
+        }
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (!homeButton.isSelected()) {
+                ((CardLayout) middlePanel.getLayout()).show(middlePanel, "solutionPanel");
+                homeButton.setSelected(false);
+            }
+            else {
+                ((CardLayout) middlePanel.getLayout()).show(middlePanel, "usageExplanationPanel");
+                homeButton.setSelected(true);
             }
         }
     }

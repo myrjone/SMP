@@ -115,14 +115,15 @@ rule "courseOnRequest"
 end
 
 
-/* A TA should not be assigned to more than two courses per day */
-rule "noMoreThanTwoCoursesPerDay"
+/* A TA should not be assigned to more than three courses per day */
+rule "noMoreThanThreeCoursesPerDay"
     when
         $firstAssignment : CourseAssignment($firstId : id, $ta : ta, $courseDay : courseDay, ta != null)
-        $secondAssignment : CourseAssignment($secondId : id, ta == $ta, courseDay == $courseDay, id != $firstId)
-        $thirdAssignment : CourseAssignment($thirdId : id, ta == $ta, courseDay == $courseDay, id != $firstId, id != $secondId)
+        $secondAssignment : CourseAssignment($secondId : id, ta == $ta, courseDay == $courseDay, id > $firstId)
+        $thirdAssignment : CourseAssignment($thirdId : id, ta == $ta, courseDay == $courseDay, id > $secondId)
+        $fourthAssignment : CourseAssignment(ta == $ta, courseDay == $courseDay, id > $thirdId)
     then
-        scoreHolder.addHardConstraintMatch(kcontext, -2);
+        scoreHolder.addSoftConstraintMatch(kcontext, -2);
 end
 
 

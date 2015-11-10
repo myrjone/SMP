@@ -19,7 +19,7 @@ with open(filename,"w") as outfile:
     outfile.write("\n")
 
     dept = "CHEM"
-    for j in range(1,12):
+    for j in range(1,100):
         for item in sectionLetters:
             crsPrefix = random.randint(100,400)
             secMax = random.randint(1,8)

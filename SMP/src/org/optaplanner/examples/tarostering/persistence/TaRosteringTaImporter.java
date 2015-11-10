@@ -49,6 +49,7 @@ public class TaRosteringTaImporter extends AbstractTxtSolutionImporter {
     protected final Map<String, Long> timeStringToTimeValueMap;
     protected final Map<Integer, String> columnToTimeStringMap;
     protected final Map<CourseType, String> courseTypeToTimeStringMap;
+    private static long id = 0L;
 
     // Maps a ta to a map of days to times available
     protected Map<Ta, Map<DayOfWeek,List<String>>> taToAvailabilityMap;
@@ -77,8 +78,6 @@ public class TaRosteringTaImporter extends AbstractTxtSolutionImporter {
             String str;
             String [] tokens;
             int line = 1;
-            int code = 0;
-            long id = 0L;
             str = bufferedReader.readLine();
             str = str.replaceAll("\\s", "");
             if (str == null) {
@@ -92,10 +91,9 @@ public class TaRosteringTaImporter extends AbstractTxtSolutionImporter {
             while((str=bufferedReader.readLine())!=null && str.length()!=0) {
                 str = str.replaceAll("\\s", "");
                 tokens = str.split(",");
-                createTA(tokens, line, code, id);
+                createTA(tokens, line, id);
                 line++;
                 id++;
-                code++;
             }
             generateCourseOffRequests();
             generateCourseAssignment();
@@ -266,7 +264,7 @@ public class TaRosteringTaImporter extends AbstractTxtSolutionImporter {
             taRoster.setCourseOffRequestList(courseOffRequestList);
         }
 
-        private void createTA(String[] tokens, int line, int code, long id) {
+        private void createTA(String[] tokens, int line, long id) {
             if (tokens.length != numOfColumns) {
                 throw new IllegalArgumentException("Error on line " + line + " in "
                         + "file " + super.inputFile.getName() + " - "
@@ -287,8 +285,8 @@ public class TaRosteringTaImporter extends AbstractTxtSolutionImporter {
             else {
                 ta = new Ta();
                 ta.setId(id);
-                ta.setCode(String.valueOf(code));
-                ta.setName(tokens[0] + ", " + tokens[1]);
+                ta.setCode(String.valueOf(id));
+                ta.setName(tokens[1] + ", " + tokens[0]);
                 ta.setEmail(tokens[2]);
                 ta.setContract(taRoster.getContractList().get(0));
                 ta.setCourseOffRequestMap(new HashMap<Course, CourseOffRequest>());

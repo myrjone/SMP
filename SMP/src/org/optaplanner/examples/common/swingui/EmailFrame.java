@@ -27,6 +27,7 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -34,6 +35,7 @@ import javax.activation.FileDataSource;
 import javax.mail.Authenticator;
 import javax.mail.BodyPart;
 import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Session;
 import javax.mail.Transport;
@@ -46,8 +48,8 @@ import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -56,46 +58,76 @@ import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.apache.commons.io.FilenameUtils;
 import org.optaplanner.examples.common.business.SolutionBusiness;
+import org.optaplanner.examples.tarostering.domain.TaRoster;
 
-public class EmailFrame extends JFrame {
+public class EmailFrame extends JDialog {
     private final SolutionBusiness solutionBusiness;
+    private final TaRoster taRoster;
     private static final int TEXT_WIDTH = 30;
-    private static final String DEFAULT_FROM = "sfurlow@siue.edu";
-    private final JTextField toField;
-    private final JTextField ccField;
-    private final JTextField bccField;
-    private final JTextField fromField;
-    private final JTextField subjectField;
+    private static final String DEFAULT_BODY = "This is your assigned schedule for the upcoming semester.";
+    private static final String DEFAULT_SUBJECT = "Chemistry TA schedule";
+    private JTextField toField;
+    private JTextField ccField;
+    private JTextField bccField;
+    private JTextField fromField;
+    private JTextField subjectField;
     protected JTextField attachmentField;
-    private final JTextArea bodyArea;
-    private final JButton sendButton;
-    private final JButton cancelButton;
-    private final JButton attachButton;
-    private final Action sendAction;
-    private final Action cancelAction;
-    private final Action attachAction;
-    private String username;
-    private char[] password;
+    private JTextArea bodyArea;
+    private JButton sendButton;
+    private JButton cancelButton;
+    private JButton attachButton;
+    private Action sendAction;
+    private Action cancelAction;
+    private Action attachAction;
+    private final String username;
+    private final char[] password;
     protected final List<String> emailToList;
+    private String pathToPdf = "";
 
     public EmailFrame(String username, char[] password, SolutionBusiness solutionBusiness, List<String> emailToList) {
-        super("Send Email");
         this.username = username + "@siue.edu";
         this.password = password;
         this.solutionBusiness = solutionBusiness;
+        this.taRoster = (TaRoster) solutionBusiness.getSolution();
         this.emailToList = emailToList;
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        this.setResizable(false);
+        createUI();
+    }
 
+    public EmailFrame(String username, char[] password, TaRoster taRoster,
+            List<String> emailToList, String pathToPdf) {
+        this.username = username + "@siue.edu";
+        this.password = password;
+        this.solutionBusiness = null;
+        this.taRoster = taRoster;
+        this.emailToList = emailToList;
+        this.pathToPdf = pathToPdf;
+        createUI();
+    }
+
+    public EmailFrame(String username, char[] password) {
+        this.username = username + "@siue.edu";
+        this.password = password;
+        this.solutionBusiness = null;
+        this.taRoster = null;
+        this.emailToList = null;
+    }
+
+    private void createUI() {
+        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        this.setResizable(false);
+        this.setModal(true);
+        this.setTitle("Email Form");
         toField = new JTextField(TEXT_WIDTH);
         String[] toFieldArray = emailToList.toArray(new String[emailToList.size()]);
         toField.setText(String.join(";",toFieldArray));
         ccField = new JTextField(TEXT_WIDTH);
         bccField = new JTextField(TEXT_WIDTH);
         fromField = new JTextField(TEXT_WIDTH);
-        fromField.setText(DEFAULT_FROM);
+        fromField.setText(username);
         subjectField = new JTextField(TEXT_WIDTH);
+        subjectField.setText(DEFAULT_SUBJECT);
         bodyArea = new JTextArea(10,TEXT_WIDTH);
+        bodyArea.setText(DEFAULT_BODY);
 
         sendAction = new SendAction(this);
         cancelAction = new CancelAction(this);
@@ -109,6 +141,7 @@ public class EmailFrame extends JFrame {
 
         attachButton.setBorder(BorderFactory.createEmptyBorder());
         attachmentField = new JTextField(TEXT_WIDTH - 1);
+        attachmentField.setText(pathToPdf);
 
         JPanel emailPanel = new JPanel(new BorderLayout());
 
@@ -171,16 +204,55 @@ public class EmailFrame extends JFrame {
         emailPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         add(emailPanel);
-        setVisible(true);
         pack();
         setLocationRelativeTo(null);
+        setVisible(true);
+    }
+
+    public void emailAll(Map<String, String> emailToAttachmentMap) {
+        Authenticator auth = new SMTPAuthenticator();
+        Properties props = System.getProperties();
+        props.put("mail.transport.protocol", "smtp" );
+        props.put("mail.smtp.starttls.enable","true" );
+        props.put("mail.smtp.host","smtp.office365.com");
+        props.put("mail.smtp.auth", "true" );
+        props.put("mail.smtp.port", 587);
+        Session session = Session.getInstance(props, auth);
+        for (String to : emailToAttachmentMap.keySet()) {
+            try {
+                Message msg = new MimeMessage(session);
+                msg.setFrom(new InternetAddress(this.username));
+                msg.addRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
+
+                msg.setSubject(DEFAULT_SUBJECT);
+                msg.setHeader("Chemistry Schedule", "Myron Jones" );
+                msg.setSentDate(new Date());
+
+                Multipart multipart = new MimeMultipart();
+
+                BodyPart messageBodyPart = new MimeBodyPart();
+                messageBodyPart.setContent(DEFAULT_BODY, "text/html");
+                multipart.addBodyPart(messageBodyPart);
+
+                BodyPart attachmentBodyPart = new MimeBodyPart();
+                DataSource source = new FileDataSource(emailToAttachmentMap.get(to));
+                attachmentBodyPart.setDataHandler(new DataHandler(source));
+                attachmentBodyPart.setFileName(new File(emailToAttachmentMap.get(to)).getName());
+                multipart.addBodyPart(attachmentBodyPart);
+
+                msg.setContent(multipart);
+                Transport.send(msg);
+            } catch (MessagingException ex) {
+                throw new RuntimeException("Error sending email to " + to);
+            }
+        }
     }
 
     private class SendAction extends AbstractAction {
-        private final JFrame jFrame;
+        private final JDialog jDialog;
 
-        public SendAction(JFrame jFrame) {
-            this.jFrame = jFrame;
+        public SendAction(JDialog jDialog) {
+            this.jDialog = jDialog;
         }
 
         @Override
@@ -241,8 +313,8 @@ public class EmailFrame extends JFrame {
 
                 msg.setContent(multipart);
                 Transport.send(msg);
-                JOptionPane.showMessageDialog(jFrame, "Emails sent successfully!");
-                jFrame.dispose();
+                JOptionPane.showMessageDialog(jDialog, "Emails sent successfully!");
+                jDialog.dispose();
             }
             catch (Exception ex)
             {
@@ -252,15 +324,15 @@ public class EmailFrame extends JFrame {
     }
 
     private class CancelAction extends AbstractAction {
-        private final JFrame jFrame;
+        private final JDialog jDialog;
 
-        public CancelAction(JFrame jFrame) {
-            this.jFrame = jFrame;
+        public CancelAction(JDialog jDialog) {
+            this.jDialog = jDialog;
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            jFrame.dispose();
+            jDialog.dispose();
         }
     }
 
@@ -271,7 +343,12 @@ public class EmailFrame extends JFrame {
         AttachAction(EmailFrame emailFrame) {
             super("", new ImageIcon(EmailFrame.class.getResource("attachment_icon_black.gif")));
             this.emailFrame = emailFrame;
-            fileChooser = new JFileChooser(solutionBusiness.getExportDataDir());
+            if (solutionBusiness != null) {
+                fileChooser = new JFileChooser(solutionBusiness.getExportDataDir());
+            }
+            else {
+                fileChooser = new JFileChooser();
+            }
             fileChooser.setDialogTitle(NAME);
         }
 
@@ -312,7 +389,7 @@ public class EmailFrame extends JFrame {
     private class SMTPAuthenticator extends javax.mail.Authenticator {
         @Override
         public javax.mail.PasswordAuthentication getPasswordAuthentication() {
-            return new javax.mail.PasswordAuthentication(fromField.getText(), String.valueOf(password));
+            return new javax.mail.PasswordAuthentication(username, String.valueOf(password));
         }
     }
 }

@@ -16,22 +16,25 @@
 
 package org.optaplanner.examples.tarostering.persistence;
 
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-
-import com.itextpdf.text.Document;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
-import org.optaplanner.examples.tarostering.domain.*;
-
+import java.nio.file.FileSystems;
 import java.util.List;
+import org.optaplanner.examples.tarostering.domain.CourseAssignment;
+import org.optaplanner.examples.tarostering.domain.CourseDay;
+import org.optaplanner.examples.tarostering.domain.CourseType;
+import org.optaplanner.examples.tarostering.domain.Ta;
+import org.optaplanner.examples.tarostering.domain.TaRoster;
 
 /**
  * Created by ahooper on 10/27/2015.
@@ -90,54 +93,48 @@ public class TaRosteringPdfExporter {
         }
     }
 
-    public void ExportTaPdfs(String path) {
-        List<Ta> taList = taRoster.getTaList();
+    public String ExportTaPdf(Ta ta, String path) {
         String scheduleName = taRoster.getCode();
         if (scheduleName.isEmpty()) scheduleName = "";
 
         int pageNumber = 1;
         try
         {
-            for (Ta ta: taList) {
-                Document document = new Document();
-                String taName = ta.getName().replaceAll("\\s+","").replaceAll(",", "");
-
-                if (!(new File(path).exists())) {
-                    (new File(path)).mkdir();
-                }
-
-                PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(path + "\\\\" + taName + ".pdf"));
-                document.open();
-
-                PdfPTable table = AddPageHeader(document, pageNumber, scheduleName, ta.getName());
-                Font cellFont = new Font(Font.FontFamily.HELVETICA, 8);
-
-                List<CourseAssignment> list = taRoster.getCourseAssignmentList();
-
-                for (CourseAssignment ca: list) {
-                    if (ca.getTa().getCode() != ta.getCode()) continue;
-
-                    CourseType course = ca.getCourseType();
-                    CourseDay day = ca.getCourseDay();
-
-                    AddTableRow(table, course, day, ta, cellFont);
-                }
-
-                document.add(table);
-
-                document.close();
-                writer.close();
+            Document document = new Document();
+            String taName = ta.getName().replaceAll("\\s+","").replaceAll(",", "");
+            File taFile = new File(path + FileSystems.getDefault().getSeparator() + taName + ".pdf");
+            if (taFile.exists()) {
+                taFile.delete();
             }
-        } catch (DocumentException e)
+            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(taFile));
+            document.open();
+
+            PdfPTable table = AddPageHeader(document, pageNumber, scheduleName, ta.getName());
+            Font cellFont = new Font(Font.FontFamily.HELVETICA, 8);
+
+            List<CourseAssignment> list = taRoster.getCourseAssignmentList();
+
+            for (CourseAssignment ca: list) {
+                if (ca.getTa().getId() != ta.getId()) continue;
+
+                CourseType course = ca.getCourseType();
+                CourseDay day = ca.getCourseDay();
+
+                AddTableRow(table, course, day, ta, cellFont);
+            }
+
+            document.add(table);
+
+            document.close();
+            writer.close();
+            return taFile.getAbsolutePath();
+        } catch (DocumentException | FileNotFoundException e)
         {
-            e.printStackTrace();
-        } catch (FileNotFoundException e)
-        {
-            e.printStackTrace();
+            throw new RuntimeException("Error exporting ta schedule");
         }
 
     }
-    
+
     private static void AddTableRow(PdfPTable table, CourseType course, CourseDay day, Ta ta, Font font) {
         table.addCell(new Phrase(course.getCrn(), font)); //CRN
         table.addCell(new Phrase(course.getDepartment(), font)); //DEPT
