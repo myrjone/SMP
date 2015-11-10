@@ -25,6 +25,8 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -674,22 +676,30 @@ public class SolverAndPersistenceFrame extends JFrame {
             fileChooser = new JFileChooser(solutionBusiness.getExportDataDir());
 
             fileChooser.setDialogTitle(NAME);
+            FileNameExtensionFilter csvFilter = new FileNameExtensionFilter("CSV Files (.csv)", "csv");
+            FileNameExtensionFilter pdfFilter = new FileNameExtensionFilter("PDF Files (.pdf)", "pdf");
+            fileChooser.addChoosableFileFilter(pdfFilter);
+            fileChooser.addChoosableFileFilter(csvFilter);
+            fileChooser.setFileFilter(pdfFilter);
+            FileNameExtensionFilter selectedFilter = (FileNameExtensionFilter) fileChooser.getFileFilter();
+            fileChooser.setSelectedFile(new File(solutionBusiness.getExportDataDir(),
+                    FilenameUtils.getBaseName(solutionBusiness.getSolutionFileName())
+            + "." + selectedFilter.getExtensions()[0]));
+            fileChooser.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getClickCount() >= 1) {
+                        FileNameExtensionFilter selectedFilter = (FileNameExtensionFilter) fileChooser.getFileFilter();
+            fileChooser.setSelectedFile(new File(solutionBusiness.getExportDataDir(),
+                    FilenameUtils.getBaseName(solutionBusiness.getSolutionFileName())
+            + "." + selectedFilter.getExtensions()[0]));
+                    }
+                }
+            });
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            fileChooser.setSelectedFile(new File(solutionBusiness.getExportDataDir(),
-                    FilenameUtils.getBaseName(solutionBusiness.getSolutionFileName())
-                            + ".pdf"
-            ));
-
-            FileNameExtensionFilter csvFilter = new FileNameExtensionFilter("CSV Files", "csv", "txt");
-            FileNameExtensionFilter pdfFilter = new FileNameExtensionFilter("PDF Files", "pdf");
-            fileChooser.addChoosableFileFilter(pdfFilter);
-            fileChooser.addChoosableFileFilter(csvFilter);
-            fileChooser.setFileFilter(pdfFilter);
-
-
             int approved = fileChooser.showSaveDialog(SolverAndPersistenceFrame.this);
             if (approved == JFileChooser.APPROVE_OPTION) {
                 setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
