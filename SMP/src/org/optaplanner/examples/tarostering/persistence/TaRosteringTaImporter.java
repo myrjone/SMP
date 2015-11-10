@@ -93,8 +93,8 @@ public class TaRosteringTaImporter extends AbstractTxtSolutionImporter {
                 tokens = str.split(",");
                 createTA(tokens, line, id);
                 line++;
-                id++;
             }
+
             generateCourseOffRequests();
             generateCourseAssignment();
             taRoster.setCourseOnRequestList(Collections.<CourseOnRequest>emptyList());
@@ -106,6 +106,7 @@ public class TaRosteringTaImporter extends AbstractTxtSolutionImporter {
             MinMaxContractLine mmcl = (MinMaxContractLine) taRoster.getContractLineList().get(0);
             mmcl.setMaximumValue(maxAssignments > 1 ? maxAssignments : 1);
             taRoster.getContractLineList().set(0, mmcl);
+            id++;
             return taRoster;
         }
 

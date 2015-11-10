@@ -32,6 +32,8 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.nio.file.FileSystems;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -637,6 +639,7 @@ public class SolverAndPersistenceFrame extends JFrame {
                     if (approved2 == JFileChooser.APPROVE_OPTION) {
                         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                         AbstractTxtSolutionImporter taImporter = new TaRosteringTaImporter((TaRoster) solution);
+                        TaRoster taRoster = (TaRoster) solution;
                         File directory = taFileChooser.getSelectedFile();
                         String suffix = solutionBusiness.getImportFileSuffix();
                         for (File file : directory.listFiles()) {
@@ -645,10 +648,28 @@ public class SolverAndPersistenceFrame extends JFrame {
                                 solution = taImporter.readSolution(file);
                             }
                         }
+                        // Alphabetically sort the list
+                        List<Ta> tempTaList = taRoster.getTaList();
+                        Collections.sort(tempTaList, new Comparator<Ta>() {
+                            @Override
+                            public int compare(Ta t1, Ta t2) {
+                                return t1.getName().compareTo(t2.getName());
+                            }
+                        });
+                        long id = 0L;
+
+                        // Set the id and code
+                        for (Ta ta : tempTaList) {
+                            ta.setId(id);
+                            ta.setCode(String.valueOf(id));
+                            id++;
+                        }
+
+                        // Re-set the ta list
+                        taRoster.setTaList(tempTaList);
                         solutionBusiness.setSolution(solution);
                         JFrame frame = new JFrame();
                         Object result = JOptionPane.showInputDialog(frame, "Enter the schedule title");
-                        TaRoster taRoster = (TaRoster) solution;
                         taRoster.setCode(result.toString());
                         solutionBusiness.setSolutionFileName(result.toString());
                         setSolutionLoaded();
