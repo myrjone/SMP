@@ -18,21 +18,20 @@ package org.optaplanner.examples.tarostering.persistence;
 
 import java.io.IOException;
 import java.util.List;
-
 import org.optaplanner.core.api.domain.solution.Solution;
 import org.optaplanner.examples.common.persistence.AbstractTxtSolutionExporter;
 import org.optaplanner.examples.tarostering.domain.CourseAssignment;
 import org.optaplanner.examples.tarostering.domain.CourseType;
-import org.optaplanner.examples.tarostering.domain.TaRoster;
 import org.optaplanner.examples.tarostering.domain.Ta;
+import org.optaplanner.examples.tarostering.domain.TaRoster;
 
 public class TaRosteringExporter extends AbstractTxtSolutionExporter{
     public TaRosteringExporter() {
         super(new TaRosteringDao());
     }
-    
+
     private class SaveTxtOutputBuilder extends TxtOutputBuilder {
-        
+
         private TaRoster taRoster;
 
         @Override
@@ -52,26 +51,15 @@ public class TaRosteringExporter extends AbstractTxtSolutionExporter{
                 bufferedWriter.write(courseType.getDepartment() + ",");
                 bufferedWriter.write(courseType.getCourseNumber() + ",");
                 bufferedWriter.write(courseType.getSectionNumber() + ",");
-                bufferedWriter.write(ca.getCourseDay().getDayString() + ",");             
-                bufferedWriter.write(courseType.getStartTimeString() + ",");              
-                bufferedWriter.write(courseType.getEndTimeString() + ",");     
+                bufferedWriter.write(ca.getCourseDay().getDayString() + ",");
+                bufferedWriter.write(courseType.getStartTimeString() + ",");
+                bufferedWriter.write(courseType.getEndTimeString() + ",");
                 bufferedWriter.write(courseType.getBuilding() + ",");
                 bufferedWriter.write(courseType.getRoomNumber() + ",");
-                bufferedWriter.write(courseType.getCoordinatorName());
-
-//                List<Coordinator> coordinatorList = taRoster.getCoordinatorList();
-//                for (Coordinator coord : coordinatorList){
-//                    List<CourseType> coordCourseTypeList = coord.getCourseTypes();
-//                    for (CourseType ct : coordCourseTypeList){
-//                         if (Objects.equals(courseType.getId(), ct.getId())){
-//                             bufferedWriter.write(coord.getName() + ",");
-//                             break;
-//                        }
-//                    }
-//                }
-
+                bufferedWriter.write(courseType.getCoordinatorName() + ",");
+                
                 Ta ta = ca.getTa();
-                bufferedWriter.write(ta.getName() + ",");               
+                bufferedWriter.write(ta.getName() + ",");
                 bufferedWriter.write(ta.getEmail());
                 bufferedWriter.write(System.getProperty("line.separator"));
             }
@@ -82,5 +70,5 @@ public class TaRosteringExporter extends AbstractTxtSolutionExporter{
     public TxtOutputBuilder createTxtOutputBuilder() {
         SaveTxtOutputBuilder saveTextOutputBuilder = new SaveTxtOutputBuilder();
         return saveTextOutputBuilder;
-    }   
+    }
 }
