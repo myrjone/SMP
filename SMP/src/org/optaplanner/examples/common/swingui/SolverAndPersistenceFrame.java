@@ -354,6 +354,7 @@ public class SolverAndPersistenceFrame extends JFrame {
         exportAction.setEnabled(!solving && solutionBusiness.hasExporter());
         solveAction.setEnabled(!solving);
         solveButton.setVisible(!solving);
+        emailAction.setEnabled(!solving);
         terminateSolvingEarlyAction.setEnabled(solving);
         terminateSolvingEarlyButton.setVisible(solving);
         solutionPanel.setEnabled(!solving);
@@ -464,7 +465,6 @@ public class SolverAndPersistenceFrame extends JFrame {
             progressBar.setString("Terminating...");
             // This async, so it doesn't stop the solving immediately
             solutionBusiness.terminateSolvingEarly();
-            emailAction.setEnabled(true);
         }
 
     }

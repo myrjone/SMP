@@ -55,8 +55,7 @@ public abstract class AbstractSolutionExporter extends LoggingMain {
     public void convertAll() {
         File inputDir = getInputDir();
         if (!inputDir.exists()) {
-            throw new IllegalStateException("The directory inputDir (" + inputDir.getAbsolutePath()
-                    + ") does not exist.");
+            inputDir.mkdir();
         }
         File outputDir = getOutputDir();
         outputDir.mkdirs();

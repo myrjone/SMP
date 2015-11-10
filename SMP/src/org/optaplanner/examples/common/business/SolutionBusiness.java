@@ -116,25 +116,21 @@ public class SolutionBusiness {
         if (hasImporter()) {
             importDataDir = new File(dataDir, "import");
             if (!importDataDir.exists()) {
-                throw new IllegalStateException("The directory importDataDir (" + importDataDir.getAbsolutePath()
-                        + ") does not exist.");
+                importDataDir.mkdirs();
             }
         }
         unsolvedDataDir = new File(dataDir, "unsolved");
         if (!unsolvedDataDir.exists()) {
-            throw new IllegalStateException("The directory unsolvedDataDir (" + unsolvedDataDir.getAbsolutePath()
-                    + ") does not exist.");
+            unsolvedDataDir.mkdir();
         }
         solvedDataDir = new File(dataDir, "solved");
         if (!solvedDataDir.exists() && !solvedDataDir.mkdir()) {
-            throw new IllegalStateException("The directory solvedDataDir (" + solvedDataDir.getAbsolutePath()
-                    + ") does not exist and could not be created.");
+            solvedDataDir.mkdir();
         }
         if (hasExporter()) {
             exportDataDir = new File(dataDir, "export");
             if (!exportDataDir.exists() && !exportDataDir.mkdir()) {
-                throw new IllegalStateException("The directory exportDataDir (" + exportDataDir.getAbsolutePath()
-                        + ") does not exist and could not be created.");
+                exportDataDir.mkdir();
             }
         }
     }
