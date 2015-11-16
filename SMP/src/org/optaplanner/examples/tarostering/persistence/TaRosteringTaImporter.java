@@ -153,7 +153,7 @@ public class TaRosteringTaImporter extends AbstractTxtSolutionImporter {
                                 + "integer between 0 and 9");
                     }
                     String[] splitTimeString = timeString.split("-");
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm:ss");
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
                     Date parsedStartTime = dateFormat.parse(splitTimeString[0]);
                     Timestamp startTimeStamp = new java.sql.Timestamp(parsedStartTime.getTime());
                     Date parsedEndTime = dateFormat.parse(splitTimeString[1]);
@@ -175,7 +175,7 @@ public class TaRosteringTaImporter extends AbstractTxtSolutionImporter {
                     for (CourseType courseType : courseTypeList) {
                         String startString = courseType.getStartTimeString();
                         String endString = courseType.getEndTimeString();
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm:ss");
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
                         Date parsedStartTime = dateFormat.parse(courseType.getStartTimeString());
                         Timestamp startTimeStamp = new java.sql.Timestamp(parsedStartTime.getTime());
                         Date parsedEndTime = dateFormat.parse(courseType.getEndTimeString());
@@ -310,11 +310,11 @@ public class TaRosteringTaImporter extends AbstractTxtSolutionImporter {
             }
 
             List<String> availabilityList = new ArrayList<>();
-            for (int i = REQUIRED_COL_SIZE; i < numOfColumns; i++) {
+            for (int i = REQUIRED_COL_SIZE-1; i < numOfColumns; i++) {
                 if (Integer.parseInt(tokens[i]) == 1) {
                     String startString = columnToTimeStringMap.get(i).split("-")[0];
                     String endString = columnToTimeStringMap.get(i).split("-")[1];
-                    while (i < 10 && Integer.parseInt(tokens[i]) == 1) {
+                    while (i < numOfColumns && Integer.parseInt(tokens[i]) == 1) {
                         endString = columnToTimeStringMap.get(i).split("-")[1];
                         i++;
                     }
