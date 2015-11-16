@@ -686,6 +686,7 @@ public class SolverAndPersistenceFrame extends JFrame {
 
     private class ExportAction extends AbstractAction {
         private static final String NAME = "Export as...";
+        private static final String TA_DIR = "taSchedules";
         private final JFileChooser fileChooser;
 
         ExportAction() {
@@ -737,8 +738,17 @@ public class SolverAndPersistenceFrame extends JFrame {
                         solutionBusiness.exportSolution(fileChooser.getSelectedFile());
                     }
                     else if (fileExtension.equals("pdf")) {
-                        TaRosteringPdfExporter taRosteringPdfExporter = new TaRosteringPdfExporter((TaRoster) solutionBusiness.getSolution());
+                        TaRoster taRoster = (TaRoster) solutionBusiness.getSolution();
+                        TaRosteringPdfExporter taRosteringPdfExporter = new TaRosteringPdfExporter(taRoster);
                         taRosteringPdfExporter.ExportToPdf(path);
+                        List<Ta> taList = taRoster.getTaList();
+                        File taDir = new File(exportFile.getParent() + FileSystems.getDefault().getSeparator() + TA_DIR);
+                        if (!taDir.exists()) {
+                            taDir.mkdir();
+                        }
+                        for (Ta ta : taList) {
+                            taRosteringPdfExporter.ExportTaPdf(ta, taDir.getAbsolutePath());
+                        }
                     }
                 } finally {
                     setCursor(Cursor.getDefaultCursor());
