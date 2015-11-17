@@ -30,6 +30,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Pattern;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
@@ -343,7 +344,7 @@ public class EmailFrame extends JDialog {
                 try {
                     File exportFile = fileChooser.getSelectedFile();
                     String path = exportFile.getPath();
-                    String[] splitPath = path.split(FileSystems.getDefault().getSeparator());
+                    String[] splitPath = path.split(Pattern.quote(FileSystems.getDefault().getSeparator()));
                     String fileName = splitPath[splitPath.length-1];
 
                     String[] fileNameSplit = fileName.split("\\.");

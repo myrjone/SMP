@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.regex.Pattern;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -728,7 +729,7 @@ public class SolverAndPersistenceFrame extends JFrame {
                 try {
                     File exportFile = fileChooser.getSelectedFile();
                     String path = exportFile.getPath();
-                    String[] splitPath = path.split(FileSystems.getDefault().getSeparator());
+                    String[] splitPath = path.split(Pattern.quote(FileSystems.getDefault().getSeparator()));
                     String fileName = splitPath[splitPath.length-1];
 
                     String[] fileNameSplit = fileName.split("\\.");
