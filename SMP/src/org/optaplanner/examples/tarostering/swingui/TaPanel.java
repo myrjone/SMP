@@ -171,7 +171,7 @@ public class TaPanel extends JPanel {
                         String path = System.getProperty("user.dir");
                         TaRosteringPdfExporter taRosteringPdfExporter = new TaRosteringPdfExporter(taRoster);
                         String attachmentLoc = taRosteringPdfExporter.ExportTaPdf(ta, path);
-                        new EmailFrame(eidField.getText(), password, taRoster, taEmailList, attachmentLoc);
+                        new EmailFrame(eidField.getText(), password, taEmailList, attachmentLoc);
                         File taFile = new File(attachmentLoc);
                         taFile.delete();
                     }

@@ -25,6 +25,7 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.nio.file.FileSystems;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -56,13 +57,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import org.apache.commons.io.FilenameUtils;
-import org.optaplanner.examples.common.business.SolutionBusiness;
-import org.optaplanner.examples.tarostering.domain.TaRoster;
 
 public class EmailFrame extends JDialog {
-    private final SolutionBusiness solutionBusiness;
-    private final TaRoster taRoster;
     private static final int TEXT_WIDTH = 30;
     private static final String DEFAULT_BODY = "This is your assigned schedule for the upcoming semester.";
     private static final String DEFAULT_SUBJECT = "Chemistry TA schedule";
@@ -84,21 +80,10 @@ public class EmailFrame extends JDialog {
     protected final List<String> emailToList;
     private String pathToPdf = "";
 
-    public EmailFrame(String username, char[] password, SolutionBusiness solutionBusiness, List<String> emailToList) {
-        this.username = username + "@siue.edu";
-        this.password = password;
-        this.solutionBusiness = solutionBusiness;
-        this.taRoster = (TaRoster) solutionBusiness.getSolution();
-        this.emailToList = emailToList;
-        createUI();
-    }
-
-    public EmailFrame(String username, char[] password, TaRoster taRoster,
+    public EmailFrame(String username, char[] password,
             List<String> emailToList, String pathToPdf) {
         this.username = username + "@siue.edu";
         this.password = password;
-        this.solutionBusiness = null;
-        this.taRoster = taRoster;
         this.emailToList = emailToList;
         this.pathToPdf = pathToPdf;
         createUI();
@@ -107,8 +92,6 @@ public class EmailFrame extends JDialog {
     public EmailFrame(String username, char[] password) {
         this.username = username + "@siue.edu";
         this.password = password;
-        this.solutionBusiness = null;
-        this.taRoster = null;
         this.emailToList = null;
     }
 
@@ -343,22 +326,12 @@ public class EmailFrame extends JDialog {
         AttachAction(EmailFrame emailFrame) {
             super("", new ImageIcon(EmailFrame.class.getResource("attachment_icon_black.gif")));
             this.emailFrame = emailFrame;
-            if (solutionBusiness != null) {
-                fileChooser = new JFileChooser(solutionBusiness.getExportDataDir());
-            }
-            else {
-                fileChooser = new JFileChooser();
-            }
+            fileChooser = new JFileChooser();
             fileChooser.setDialogTitle(NAME);
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            fileChooser.setSelectedFile(new File(solutionBusiness.getExportDataDir(),
-                    FilenameUtils.getBaseName(solutionBusiness.getSolutionFileName())
-                            + ".pdf"
-            ));
-
             FileNameExtensionFilter pdfFilter = new FileNameExtensionFilter("PDF Files", "pdf");
             fileChooser.addChoosableFileFilter(pdfFilter);
             fileChooser.setFileFilter(pdfFilter);
@@ -370,7 +343,7 @@ public class EmailFrame extends JDialog {
                 try {
                     File exportFile = fileChooser.getSelectedFile();
                     String path = exportFile.getPath();
-                    String[] splitPath = path.split("\\\\");
+                    String[] splitPath = path.split(FileSystems.getDefault().getSeparator());
                     String fileName = splitPath[splitPath.length-1];
 
                     String[] fileNameSplit = fileName.split("\\.");
