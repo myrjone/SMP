@@ -405,6 +405,8 @@ public class SolverAndPersistenceFrame extends JFrame {
                 solutionBusiness.openSolution(file);
                 setSolutionLoaded();
                 TaRoster ta = (TaRoster)solutionBusiness.getSolution();
+                String[] splitFile = file.getName().split("\\.");
+                ta.setCode(splitFile[0]);
                 emailAction.setEnabled(true);
             } finally {
                 setCursor(Cursor.getDefaultCursor());
@@ -502,6 +504,9 @@ public class SolverAndPersistenceFrame extends JFrame {
                 try {
                     solutionBusiness.openSolution(fileChooser.getSelectedFile());
                     setSolutionLoaded();
+                    TaRoster taRoster = (TaRoster) solutionBusiness.getSolution();
+                    String[] splitFile = fileChooser.getSelectedFile().getName().split("\\.");
+                    taRoster.setCode(splitFile[0]);
                     emailAction.setEnabled(true);
                 } finally {
                     setCursor(Cursor.getDefaultCursor());
@@ -533,8 +538,9 @@ public class SolverAndPersistenceFrame extends JFrame {
         }
         @Override
         public void actionPerformed(ActionEvent e) {
+            TaRoster taRoster = (TaRoster) solutionBusiness.getSolution();
             fileChooser.setSelectedFile(new File(solutionBusiness.getSolvedDataDir(),
-                    FilenameUtils.getBaseName(solutionBusiness.getSolutionFileName()) + ".xml"));
+                    FilenameUtils.getBaseName(taRoster.getCode()) + ".xml"));
             int approved = fileChooser.showSaveDialog(SolverAndPersistenceFrame.this);
             if (approved == JFileChooser.APPROVE_OPTION) {
                 setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -701,28 +707,30 @@ public class SolverAndPersistenceFrame extends JFrame {
             fileChooser.setDialogTitle(NAME);
             FileNameExtensionFilter csvFilter = new FileNameExtensionFilter("CSV Files (.csv)", "csv");
             FileNameExtensionFilter pdfFilter = new FileNameExtensionFilter("PDF Files (.pdf)", "pdf");
-            fileChooser.addChoosableFileFilter(pdfFilter);
-            fileChooser.addChoosableFileFilter(csvFilter);
-            fileChooser.setFileFilter(pdfFilter);
+            fileChooser.setAcceptAllFileFilterUsed(false);
+            fileChooser.setFileFilter(pdfFilter);            
+            fileChooser.addChoosableFileFilter(csvFilter);                        
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            TaRoster taRoster = (TaRoster) solutionBusiness.getSolution();
             FileNameExtensionFilter selectedFilter = (FileNameExtensionFilter) fileChooser.getFileFilter();
             fileChooser.setSelectedFile(new File(solutionBusiness.getExportDataDir(),
-                    FilenameUtils.getBaseName(solutionBusiness.getSolutionFileName())
-            + "." + selectedFilter.getExtensions()[0]));
+                    FilenameUtils.getBaseName(taRoster.getCode())
+                    + "." + selectedFilter.getExtensions()[0]));
             fileChooser.addMouseListener(new MouseAdapter() {
+                TaRoster taRoster = (TaRoster) solutionBusiness.getSolution();
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     if (e.getClickCount() >= 1) {
                         FileNameExtensionFilter selectedFilter = (FileNameExtensionFilter) fileChooser.getFileFilter();
             fileChooser.setSelectedFile(new File(solutionBusiness.getExportDataDir(),
-                    FilenameUtils.getBaseName(solutionBusiness.getSolutionFileName())
-            + "." + selectedFilter.getExtensions()[0]));
+                    FilenameUtils.getBaseName(taRoster.getCode())
+                    + "." + selectedFilter.getExtensions()[0]));
                     }
                 }
-            });
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
+            });            
             int approved = fileChooser.showSaveDialog(SolverAndPersistenceFrame.this);
             if (approved == JFileChooser.APPROVE_OPTION) {
                 setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -735,11 +743,15 @@ public class SolverAndPersistenceFrame extends JFrame {
                     String[] fileNameSplit = fileName.split("\\.");
                     String fileExtension = fileNameSplit[fileNameSplit.length-1];
 
+                    if (!fileExtension.equals("csv") && !fileExtension.equals("txt") && !fileExtension.equals("pdf")) {
+                        fileExtension = selectedFilter.getExtensions()[0];
+                        path += "." + fileExtension;
+                    }
+                    
                     if (fileExtension.equals("csv") || fileExtension.equals("txt")) {
-                        solutionBusiness.exportSolution(fileChooser.getSelectedFile());
+                        solutionBusiness.exportSolution(new File(path));
                     }
                     else if (fileExtension.equals("pdf")) {
-                        TaRoster taRoster = (TaRoster) solutionBusiness.getSolution();
                         TaRosteringPdfExporter taRosteringPdfExporter = new TaRosteringPdfExporter(taRoster);
                         taRosteringPdfExporter.ExportToPdf(path);
                         List<Ta> taList = taRoster.getTaList();
