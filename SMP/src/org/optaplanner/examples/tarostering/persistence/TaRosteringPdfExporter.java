@@ -44,7 +44,7 @@ public class TaRosteringPdfExporter {
     protected TaRoster taRoster;
     public final int PAGE_SIZE = 54;
 
-    public TaRosteringPdfExporter(TaRoster taRoster) {
+    public TaRosteringPdfExporter(TaRoster taRoster) {        
         this.taRoster = taRoster;
     }
 
@@ -113,16 +113,15 @@ public class TaRosteringPdfExporter {
             Font cellFont = new Font(Font.FontFamily.HELVETICA, 8);
 
             List<CourseAssignment> list = taRoster.getCourseAssignmentList();
-
             for (CourseAssignment ca: list) {
-                if (ca.getTa().getId() != ta.getId()) continue;
+                if ( (ca.getTa() == null) || (ca.getTa().getId() != ta.getId())) continue;
 
                 CourseType course = ca.getCourseType();
                 CourseDay day = ca.getCourseDay();
 
                 AddTableRow(table, course, day, ta, cellFont);
             }
-
+            
             document.add(table);
 
             document.close();
@@ -146,8 +145,14 @@ public class TaRosteringPdfExporter {
         table.addCell(new Phrase(course.getBuilding(), font)); //BLDG
         table.addCell(new Phrase(course.getRoomNumber(), font)); //RM
         table.addCell(new Phrase(course.getCoordinatorName(), font)); //COORD
-        table.addCell(new Phrase(ta.getName(), font)); //TA
-        table.addCell(new Phrase(ta.getEmail(), font)); //EMAIL
+        if (ta != null) {
+            table.addCell(new Phrase(ta.getName(), font)); //TA
+            table.addCell(new Phrase(ta.getEmail(), font)); //EMAIL
+        }
+        else {
+            table.addCell(new Phrase("", font)); //TA
+            table.addCell(new Phrase("", font)); //EMAIL
+        }
     }
 
     private static PdfPTable AddPageHeader(Document document, int pageNumber, String scheduleName) throws DocumentException {
