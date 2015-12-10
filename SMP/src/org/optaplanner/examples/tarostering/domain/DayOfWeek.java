@@ -19,13 +19,13 @@ package org.optaplanner.examples.tarostering.domain;
 import java.util.Calendar;
 
 public enum DayOfWeek {
-    MONDAY("Monday"),
-    TUESDAY("Tuesday"),
-    WEDNESDAY("Wednesday"),
-    THURSDAY("Thursday"),
-    FRIDAY("Friday"),
-    SATURDAY("Saturday"),
-    SUNDAY("Sunday");
+    MONDAY("Monday","M"),
+    TUESDAY("Tuesday","T"),
+    WEDNESDAY("Wednesday","W"),
+    THURSDAY("Thursday","R"),
+    FRIDAY("Friday","F"),
+    SATURDAY("Saturday","S"),
+    SUNDAY("Sunday","U");
 
     public static DayOfWeek valueOfCalendar(int calendarDayInWeek) {
         switch (calendarDayInWeek) {
@@ -58,10 +58,25 @@ public enum DayOfWeek {
         return null;
     }
 
-    private final String code;
+    public static DayOfWeek valueOfAbbrev(String abbrev) {
+        for (DayOfWeek dayOfWeek : values()) {
+            if (abbrev.equalsIgnoreCase(dayOfWeek.getAbbrev())) {
+                return dayOfWeek;
+            }
+        }
+        return null;
+    }
 
-    private DayOfWeek(String code) {
+    private final String code;
+    private final String abbrev;
+
+    private DayOfWeek(String code, String abbrev) {
         this.code = code;
+        this.abbrev = abbrev;
+    }
+
+    public String getAbbrev() {
+        return abbrev;
     }
 
     public String getCode() {

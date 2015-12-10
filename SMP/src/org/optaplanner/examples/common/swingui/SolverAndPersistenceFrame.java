@@ -22,18 +22,28 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.nio.file.FileSystems;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.regex.Pattern;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -41,21 +51,33 @@ import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import org.apache.commons.io.FilenameUtils;
 import org.optaplanner.core.api.domain.solution.Solution;
 import org.optaplanner.core.api.score.FeasibilityScore;
 import org.optaplanner.core.api.score.Score;
 import org.optaplanner.examples.common.business.SolutionBusiness;
+import org.optaplanner.examples.common.persistence.AbstractTxtSolutionImporter;
+import org.optaplanner.examples.tarostering.domain.Ta;
+import org.optaplanner.examples.tarostering.domain.TaRoster;
+import org.optaplanner.examples.tarostering.domain.contract.MinMaxContractLine;
+import org.optaplanner.examples.tarostering.persistence.TaRosteringCourseImporter;
+import org.optaplanner.examples.tarostering.persistence.TaRosteringPdfExporter;
+import org.optaplanner.examples.tarostering.persistence.TaRosteringTaImporter;
+import org.optaplanner.examples.tarostering.swingui.ConstraintFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,9 +110,13 @@ public class SolverAndPersistenceFrame extends JFrame {
     private JProgressBar progressBar;
     private JTextField scoreField;
     private ShowConstraintMatchesDialogAction showConstraintMatchesDialogAction;
+    private Action constraintAction;
+    private JButton constraintButton;
+    private Action emailAction;
+    private JToggleButton homeButton;
 
     public SolverAndPersistenceFrame(SolutionBusiness solutionBusiness, SolutionPanel solutionPanel) {
-        super(solutionBusiness.getAppName() + " OptaPlanner example");
+        super(solutionBusiness.getAppName());
         this.solutionBusiness = solutionBusiness;
         this.solutionPanel = solutionPanel;
         setIconImage(OPTA_PLANNER_ICON.getImage());
@@ -219,6 +245,10 @@ public class SolverAndPersistenceFrame extends JFrame {
         exportAction.setEnabled(false);
         toolBar.add(new JButton(exportAction));
         toolBar.addSeparator();
+        emailAction = new EmailAction();
+        emailAction.setEnabled(false);
+        toolBar.add(new JButton(emailAction));
+        toolBar.addSeparator();
 
         progressBar = new JProgressBar(0, 100);
         progressBar.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
@@ -249,7 +279,7 @@ public class SolverAndPersistenceFrame extends JFrame {
         usageExplanationPanel.add(usageExplanationLabel, BorderLayout.CENTER);
         JPanel descriptionPanel = new JPanel(new BorderLayout(2, 2));
         descriptionPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        descriptionPanel.add(new JLabel("Example description"), BorderLayout.NORTH);
+        descriptionPanel.add(new JLabel("Description"), BorderLayout.NORTH);
         JTextArea descriptionTextArea = new JTextArea(8, 70);
         descriptionTextArea.setEditable(false);
         descriptionTextArea.setText(solutionBusiness.getAppDescription());
@@ -268,19 +298,39 @@ public class SolverAndPersistenceFrame extends JFrame {
     }
 
     private JPanel createScorePanel() {
-        JPanel scorePanel = new JPanel(new BorderLayout());
+        JPanel scorePanel = new JPanel();
+        GroupLayout layout = new GroupLayout(scorePanel);
+        scorePanel.setLayout(layout);
         scorePanel.setBorder(BorderFactory.createEtchedBorder());
         showConstraintMatchesDialogAction = new ShowConstraintMatchesDialogAction();
         showConstraintMatchesDialogAction.setEnabled(false);
-        scorePanel.add(new JButton(showConstraintMatchesDialogAction), BorderLayout.WEST);
+        JButton constraintMatchesButton = new JButton(showConstraintMatchesDialogAction);
+        constraintAction = new ConstraintAction();
+        constraintButton = new JButton(constraintAction);
+        constraintButton.setText("Edit Constraints");
+        constraintButton.setEnabled(false);
+        homeButton = new JToggleButton(new HomeAction());
+        homeButton.setSelected(true);
         scoreField = new JTextField("Score:");
         scoreField.setEditable(false);
         scoreField.setForeground(Color.BLACK);
         scoreField.setBorder(BorderFactory.createLoweredBevelBorder());
-        scorePanel.add(scoreField, BorderLayout.CENTER);
         refreshScreenDuringSolvingCheckBox = new JCheckBox("Refresh screen during solving",
                 solutionPanel.isRefreshScreenDuringSolving());
-        scorePanel.add(refreshScreenDuringSolvingCheckBox, BorderLayout.EAST);
+        layout.setHorizontalGroup(
+                layout.createSequentialGroup()
+                    .addComponent(constraintMatchesButton)
+                    .addComponent(constraintButton)
+                    .addComponent(scoreField)
+                    .addComponent(refreshScreenDuringSolvingCheckBox)
+                    .addComponent(homeButton));
+        layout.setVerticalGroup(
+                layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                        .addComponent(constraintMatchesButton)
+                        .addComponent(constraintButton)
+                        .addComponent(scoreField)
+                        .addComponent(refreshScreenDuringSolvingCheckBox)
+                        .addComponent(homeButton));
         return scorePanel;
     }
 
@@ -291,6 +341,8 @@ public class SolverAndPersistenceFrame extends JFrame {
         saveAction.setEnabled(true);
         exportAction.setEnabled(solutionBusiness.hasExporter());
         showConstraintMatchesDialogAction.setEnabled(true);
+        constraintButton.setEnabled(true);
+        homeButton.setSelected(false);
         resetScreen();
     }
 
@@ -307,6 +359,7 @@ public class SolverAndPersistenceFrame extends JFrame {
         exportAction.setEnabled(!solving && solutionBusiness.hasExporter());
         solveAction.setEnabled(!solving);
         solveButton.setVisible(!solving);
+        emailAction.setEnabled(!solving);
         terminateSolvingEarlyAction.setEnabled(solving);
         terminateSolvingEarlyButton.setVisible(solving);
         solutionPanel.setEnabled(!solving);
@@ -351,6 +404,10 @@ public class SolverAndPersistenceFrame extends JFrame {
             try {
                 solutionBusiness.openSolution(file);
                 setSolutionLoaded();
+                TaRoster ta = (TaRoster)solutionBusiness.getSolution();
+                String[] splitFile = file.getName().split("\\.");
+                ta.setCode(splitFile[0]);
+                emailAction.setEnabled(true);
             } finally {
                 setCursor(Cursor.getDefaultCursor());
             }
@@ -447,6 +504,10 @@ public class SolverAndPersistenceFrame extends JFrame {
                 try {
                     solutionBusiness.openSolution(fileChooser.getSelectedFile());
                     setSolutionLoaded();
+                    TaRoster taRoster = (TaRoster) solutionBusiness.getSolution();
+                    String[] splitFile = fileChooser.getSelectedFile().getName().split("\\.");
+                    taRoster.setCode(splitFile[0]);
+                    emailAction.setEnabled(true);
                 } finally {
                     setCursor(Cursor.getDefaultCursor());
                 }
@@ -477,8 +538,9 @@ public class SolverAndPersistenceFrame extends JFrame {
         }
         @Override
         public void actionPerformed(ActionEvent e) {
+            TaRoster taRoster = (TaRoster) solutionBusiness.getSolution();
             fileChooser.setSelectedFile(new File(solutionBusiness.getSolvedDataDir(),
-                    FilenameUtils.getBaseName(solutionBusiness.getSolutionFileName()) + ".xml"));
+                    FilenameUtils.getBaseName(taRoster.getCode()) + ".xml"));
             int approved = fileChooser.showSaveDialog(SolverAndPersistenceFrame.this);
             if (approved == JFileChooser.APPROVE_OPTION) {
                 setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -499,18 +561,20 @@ public class SolverAndPersistenceFrame extends JFrame {
 
     private class ImportAction extends AbstractAction {
         private static final String NAME = "Import...";
-        private JFileChooser fileChooser;
-        
+        private JFileChooser courseFileChooser;
+        private JFileChooser taFileChooser;
+        private Solution solution;
+
+
         ImportAction() {
             super(NAME, new ImageIcon(SolverAndPersistenceFrame.class.getResource("importAction.png")));
             if (!solutionBusiness.hasImporter()) {
-                fileChooser = null;
+                courseFileChooser = null;
                 return;
-            }
-            fileChooser = new JFileChooser(solutionBusiness.getImportDataDir());
-            FileFilter filter;
+            }            courseFileChooser = new JFileChooser(solutionBusiness.getImportDataDir());
+            FileFilter courseFilter;
             if (solutionBusiness.isImportFileDirectory()) {
-                filter = new FileFilter() {
+                courseFilter = new FileFilter() {
                     @Override
                     public boolean accept(File file) {
                         return file.isDirectory();
@@ -521,9 +585,9 @@ public class SolverAndPersistenceFrame extends JFrame {
                         return "Import directory";
                     }
                 };
-                fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                courseFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             } else {
-                filter = new FileFilter() {
+                courseFilter = new FileFilter() {
                     @Override
                     public boolean accept(File file) {
                         return file.isDirectory() || solutionBusiness.acceptImportFile(file);
@@ -535,17 +599,89 @@ public class SolverAndPersistenceFrame extends JFrame {
                     }
                 };
             }
-            fileChooser.setFileFilter(filter);
-            fileChooser.setDialogTitle(NAME);
+            courseFileChooser.setFileFilter(courseFilter);
+            courseFileChooser.setDialogTitle("Import Course List");
+
+            taFileChooser = new JFileChooser(solutionBusiness.getImportDataDir());
+            FileFilter taFilter;
+            if (solutionBusiness.isImportFileDirectory()) {
+                taFilter = new FileFilter() {
+                    @Override
+                    public boolean accept(File file) {
+                        return file.isDirectory();
+                    }
+
+                    @Override
+                    public String getDescription() {
+                        return "Import directory";
+                    }
+                };
+            } else {
+                taFilter = new FileFilter() {
+                    @Override
+                    public boolean accept(File file) {
+                        return file.isDirectory() || solutionBusiness.acceptImportFile(file);
+                    }
+
+                    @Override
+                    public String getDescription() {
+                        return "Import files (*." + solutionBusiness.getImportFileSuffix() + ")";
+                    }
+                };
+            }
+            taFileChooser.setFileFilter(taFilter);
+            taFileChooser.setDialogTitle("Import TA Directory");
+            taFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         }
         @Override
         public void actionPerformed(ActionEvent e) {
-            int approved = fileChooser.showOpenDialog(SolverAndPersistenceFrame.this);
+            int approved = courseFileChooser.showOpenDialog(SolverAndPersistenceFrame.this);
             if (approved == JFileChooser.APPROVE_OPTION) {
                 setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 try {
-                    solutionBusiness.importSolution(fileChooser.getSelectedFile());
-                    setSolutionLoaded();
+                    AbstractTxtSolutionImporter courseImporter = new TaRosteringCourseImporter();
+                    File courseFile = courseFileChooser.getSelectedFile();
+                    solution = courseImporter.readSolution(courseFile);
+                    int approved2 = taFileChooser.showOpenDialog(SolverAndPersistenceFrame.this);
+                    if (approved2 == JFileChooser.APPROVE_OPTION) {
+                        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                        AbstractTxtSolutionImporter taImporter = new TaRosteringTaImporter((TaRoster) solution);
+                        TaRoster taRoster = (TaRoster) solution;
+                        File directory = taFileChooser.getSelectedFile();
+                        String suffix = solutionBusiness.getImportFileSuffix();
+                        for (File file : directory.listFiles()) {
+                            String fileExtension = FilenameUtils.getExtension(file.getAbsolutePath());
+                            if (suffix.equals(fileExtension)) {
+                                solution = taImporter.readSolution(file);
+                            }
+                        }
+                        // Alphabetically sort the list
+                        List<Ta> tempTaList = taRoster.getTaList();
+                        Collections.sort(tempTaList, new Comparator<Ta>() {
+                            @Override
+                            public int compare(Ta t1, Ta t2) {
+                                return t1.getName().compareTo(t2.getName());
+                            }
+                        });
+                        long id = 0L;
+
+                        // Set the id and code
+                        for (Ta ta : tempTaList) {
+                            ta.setId(id);
+                            ta.setCode(String.valueOf(id));
+                            id++;
+                        }
+
+                        // Re-set the ta list
+                        taRoster.setTaList(tempTaList);
+                        solutionBusiness.setSolution(solution);
+                        JFrame frame = new JFrame();
+                        Object result = JOptionPane.showInputDialog(frame, "Enter the schedule title");
+                        taRoster.setCode(result.toString());
+                        solutionBusiness.setSolutionFileName(result.toString());
+                        setSolutionLoaded();
+                        emailAction.setEnabled(true);
+                    }
                 } finally {
                     setCursor(Cursor.getDefaultCursor());
                 }
@@ -554,11 +690,12 @@ public class SolverAndPersistenceFrame extends JFrame {
 
     }
 
-    
+
     private class ExportAction extends AbstractAction {
         private static final String NAME = "Export as...";
+        private static final String TA_DIR = "taSchedules";
         private final JFileChooser fileChooser;
-        
+
         ExportAction() {
             super(NAME, new ImageIcon(SolverAndPersistenceFrame.class.getResource("exportAction.png")));
             if (!solutionBusiness.hasExporter()) {
@@ -566,30 +703,66 @@ public class SolverAndPersistenceFrame extends JFrame {
                 return;
             }
             fileChooser = new JFileChooser(solutionBusiness.getExportDataDir());
-            fileChooser.setFileFilter(new FileFilter() {
-                @Override
-                public boolean accept(File file) {
-                    return file.isDirectory() || file.getName().endsWith("." + solutionBusiness.getExportFileSuffix());
-                }
 
-                @Override
-                public String getDescription() {
-                    return "Export files (*." + solutionBusiness.getExportFileSuffix() + ")";
-                }
-            });
             fileChooser.setDialogTitle(NAME);
+            FileNameExtensionFilter csvFilter = new FileNameExtensionFilter("CSV Files (.csv)", "csv");
+            FileNameExtensionFilter pdfFilter = new FileNameExtensionFilter("PDF Files (.pdf)", "pdf");
+            fileChooser.setAcceptAllFileFilterUsed(false);
+            fileChooser.setFileFilter(pdfFilter);
+            fileChooser.addChoosableFileFilter(csvFilter);
         }
+
         @Override
         public void actionPerformed(ActionEvent e) {
+            TaRoster taRoster = (TaRoster) solutionBusiness.getSolution();
+            FileNameExtensionFilter selectedFilter = (FileNameExtensionFilter) fileChooser.getFileFilter();
             fileChooser.setSelectedFile(new File(solutionBusiness.getExportDataDir(),
-                    FilenameUtils.getBaseName(solutionBusiness.getSolutionFileName())
-                            + "." + solutionBusiness.getExportFileSuffix()
-            ));
+                    FilenameUtils.getBaseName(taRoster.getCode())
+                    + "." + selectedFilter.getExtensions()[0]));
+            fileChooser.addMouseListener(new MouseAdapter() {
+                TaRoster taRoster = (TaRoster) solutionBusiness.getSolution();
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getClickCount() >= 1) {
+                        FileNameExtensionFilter selectedFilter = (FileNameExtensionFilter) fileChooser.getFileFilter();
+            fileChooser.setSelectedFile(new File(solutionBusiness.getExportDataDir(),
+                    FilenameUtils.getBaseName(taRoster.getCode())
+                    + "." + selectedFilter.getExtensions()[0]));
+                    }
+                }
+            });
             int approved = fileChooser.showSaveDialog(SolverAndPersistenceFrame.this);
             if (approved == JFileChooser.APPROVE_OPTION) {
                 setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 try {
-                    solutionBusiness.exportSolution(fileChooser.getSelectedFile());
+                    File exportFile = fileChooser.getSelectedFile();
+                    String path = exportFile.getPath();
+                    String[] splitPath = path.split(Pattern.quote(FileSystems.getDefault().getSeparator()));
+                    String fileName = splitPath[splitPath.length-1];
+
+                    String[] fileNameSplit = fileName.split("\\.");
+                    String fileExtension = fileNameSplit[fileNameSplit.length-1];
+
+                    if (!fileExtension.equals("csv") && !fileExtension.equals("txt") && !fileExtension.equals("pdf")) {
+                        fileExtension = selectedFilter.getExtensions()[0];
+                        path += "." + fileExtension;
+                    }
+
+                    if (fileExtension.equals("csv") || fileExtension.equals("txt")) {
+                        solutionBusiness.exportSolution(new File(path));
+                    }
+                    else if (fileExtension.equals("pdf")) {
+                        TaRosteringPdfExporter taRosteringPdfExporter = new TaRosteringPdfExporter(taRoster);
+                        taRosteringPdfExporter.ExportToPdf(path);
+                        List<Ta> taList = taRoster.getTaList();
+                        File taDir = new File(exportFile.getParent() + FileSystems.getDefault().getSeparator() + TA_DIR);
+                        if (!taDir.exists()) {
+                            taDir.mkdir();
+                        }
+                        for (Ta ta : taList) {
+                            taRosteringPdfExporter.ExportTaPdf(ta, taDir.getAbsolutePath());
+                        }
+                    }
                 } finally {
                     setCursor(Cursor.getDefaultCursor());
                 }
@@ -599,7 +772,7 @@ public class SolverAndPersistenceFrame extends JFrame {
     }
 
     private class ShowConstraintMatchesDialogAction extends AbstractAction {
-        
+
         ShowConstraintMatchesDialogAction() {
             super("Constraint matches", new ImageIcon(SolverAndPersistenceFrame.class.getResource("showConstraintMatchesDialogAction.png")));
         }
@@ -611,4 +784,70 @@ public class SolverAndPersistenceFrame extends JFrame {
         }
     }
 
+    private class ConstraintAction extends AbstractAction {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            TaRoster taRoster = (TaRoster) solutionBusiness.getSolution();
+            new ConstraintFrame((MinMaxContractLine) taRoster.getContractLineList().get(0));
+        }
+    }
+
+    private class EmailAction extends AbstractAction {
+        public EmailAction() {
+            super("Email All", new ImageIcon(SolverAndPersistenceFrame.class.getResource("mailIcon.jpg")));
+        }
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            TaRoster taRoster = (TaRoster) solutionBusiness.getSolution();
+            List<Ta> taList = taRoster.getTaList();
+            String taExportPath = solutionBusiness.getExportDataDir().getAbsoluteFile()
+                    + FileSystems.getDefault().getSeparator() + "TA_Files";
+            File taDirectory = new File(taExportPath);
+            if (!taDirectory.exists()) {
+                taDirectory.mkdir();
+            }
+
+            JPanel credentialPanel = new JPanel(new GridLayout(2,2));
+            JLabel eidLabel = new JLabel("Enter your E-ID: ");
+            JLabel passwordLabel = new JLabel("Enter your password: ");
+            JTextField eidField = new JTextField(20);
+            JPasswordField passField = new JPasswordField(20);
+            credentialPanel.add(eidLabel);
+            credentialPanel.add(eidField);
+            credentialPanel.add(passwordLabel);
+            credentialPanel.add(passField);
+            String[] options = new String[]{"OK", "Cancel"};
+            int option = JOptionPane.showOptionDialog(null, credentialPanel, "Email Credentials",
+                                     JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+                                     null, options, options[0]);
+            if(option == 0) // pressing OK button
+            {
+                char[] password = passField.getPassword();
+                TaRosteringPdfExporter taRosteringPdfExporter = new TaRosteringPdfExporter((TaRoster) solutionBusiness.getSolution());
+                Map<String, String> taToFileLocMap = new HashMap<>();
+                for (Ta ta : taList) {
+                   String taFilePath = taRosteringPdfExporter.ExportTaPdf(ta, taExportPath);
+                   taToFileLocMap.put(ta.getEmail(), taFilePath);
+                }
+                EmailAllFrame emailAllFrame = new EmailAllFrame(eidField.getText(), password, taToFileLocMap);
+            }
+        }
+    }
+
+    private class HomeAction extends AbstractAction {
+        public HomeAction() {
+            super("Home", new ImageIcon(SolverAndPersistenceFrame.class.getResource("home_icon.gif")));
+        }
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (!homeButton.isSelected()) {
+                ((CardLayout) middlePanel.getLayout()).show(middlePanel, "solutionPanel");
+                homeButton.setSelected(false);
+            }
+            else {
+                ((CardLayout) middlePanel.getLayout()).show(middlePanel, "usageExplanationPanel");
+                homeButton.setSelected(true);
+            }
+        }
+    }
 }

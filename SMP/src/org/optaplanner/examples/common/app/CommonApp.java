@@ -40,6 +40,7 @@ public abstract class CommonApp extends LoggingMain {
      */
     public static void prepareSwingEnvironment() {
         SwingUncaughtExceptionHandler.register();
+        //Thread.setDefaultUncaughtExceptionHandler(new CustomExceptionHandler());
         SwingUtils.fixateLookAndFeel();
     }
 

@@ -23,6 +23,10 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,11 +34,15 @@ import java.util.Map;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import org.optaplanner.examples.common.swingui.EmailFrame;
 import org.optaplanner.examples.common.swingui.TangoColorFactory;
 import org.optaplanner.examples.common.swingui.components.LabeledComboBoxRenderer;
 import org.optaplanner.examples.tarostering.domain.Course;
@@ -42,6 +50,9 @@ import org.optaplanner.examples.tarostering.domain.CourseAssignment;
 import org.optaplanner.examples.tarostering.domain.CourseDay;
 import org.optaplanner.examples.tarostering.domain.CourseType;
 import org.optaplanner.examples.tarostering.domain.Ta;
+import org.optaplanner.examples.tarostering.domain.TaRoster;
+import org.optaplanner.examples.tarostering.domain.contract.MinMaxContractLine;
+import org.optaplanner.examples.tarostering.persistence.TaRosteringPdfExporter;
 
 public class TaPanel extends JPanel {
 
@@ -55,16 +66,20 @@ public class TaPanel extends JPanel {
 
     private JLabel taLabel;
     private JButton deleteButton;
+    private JButton emailButton;
     private JPanel courseDayListPanel = null;
     private Map<CourseDay,JPanel> courseDayPanelMap;
     private Map<Course, JPanel> coursePanelMap;
     private JLabel numberOfCourseAssignmentsLabel;
 
+    private final TaRoster taRoster;
+
     private final Map<CourseAssignment, JButton> courseAssignmentButtonMap = new HashMap<> ();
 
     public TaPanel(TaRosteringPanel taRosteringPanel, List<CourseDay> courseDayList, List<Course> courseList,
-            Ta ta) {
+            Ta ta, TaRoster taRoster) {
         super(new BorderLayout());
+        this.taRoster = taRoster;
         this.taRosteringPanel = taRosteringPanel;
         this.courseDayList = courseDayList;
         this.courseList = courseList;
@@ -94,16 +109,32 @@ public class TaPanel extends JPanel {
     private void createUI() {
         JPanel labelAndDeletePanel = new JPanel(new BorderLayout(5, 0));
         if (ta != null) {
-            labelAndDeletePanel.add(new JLabel(taRosteringPanel.getTaIcon()), BorderLayout.WEST);
+            JLabel taJLabel = new JLabel(taRosteringPanel.getTaIcon());
+
+            taJLabel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    //String result = JOptionPane.showInputDialog(deleteButton, ta.getName());
+                    new ConstraintFrame((MinMaxContractLine) taRoster.getContractLineList().get(0));
+                }
+            });
+            labelAndDeletePanel.add(taJLabel, BorderLayout.WEST);
+
         }
         taLabel = new JLabel(getTaLabel());
-        taLabel.setEnabled(false);
+        taLabel.setEnabled(true);
         labelAndDeletePanel.add(taLabel, BorderLayout.CENTER);
         if (ta != null) {
             JPanel deletePanel = new JPanel(new BorderLayout());
+
+            taLabel.setToolTipText("<html>Name: " + ta.getName() + "<br/>"
+                    + "Email: " + ta.getEmail()
+                    + "</html>");
+
+
             deleteButton = new JButton(taRosteringPanel.getDeleteTaIcon());
             deleteButton.setToolTipText("Delete");
-            deleteButton.addActionListener(new ActionListener() {
+            deleteButton.addActionListener(new ActionListener(){
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     taRosteringPanel.deleteTa(ta);
@@ -111,6 +142,43 @@ public class TaPanel extends JPanel {
             });
             deleteButton.setMargin(new Insets(0, 0, 0, 0));
             deletePanel.add(deleteButton, BorderLayout.NORTH);
+
+            emailButton = new JButton(new ImageIcon(TaPanel.class.getResource("mailIcon.jpg")));
+            emailButton.setEnabled(true);
+            emailButton.setToolTipText("Email individual schedule to: " + ta.getEmail());
+
+            emailButton.addActionListener(new ActionListener(){
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    JPanel credentialPanel = new JPanel(new GridLayout(2,2));
+                    JLabel eidLabel = new JLabel("Enter your E-ID: ");
+                    JLabel passwordLabel = new JLabel("Enter your password: ");
+                    JTextField eidField = new JTextField(20);
+                    JPasswordField passField = new JPasswordField(20);
+                    credentialPanel.add(eidLabel);
+                    credentialPanel.add(eidField);
+                    credentialPanel.add(passwordLabel);
+                    credentialPanel.add(passField);
+                    String[] options = new String[]{"OK", "Cancel"};
+                    int option = JOptionPane.showOptionDialog(null, credentialPanel, "Email Credentials",
+                                             JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+                                             null, options, options[0]);
+                    if(option == 0) // pressing OK button
+                    {
+                        char[] password = passField.getPassword();
+                        List<String> taEmailList = new ArrayList<>();
+                        taEmailList.add(ta.getEmail());
+                        String path = System.getProperty("user.dir");
+                        TaRosteringPdfExporter taRosteringPdfExporter = new TaRosteringPdfExporter(taRoster);
+                        String attachmentLoc = taRosteringPdfExporter.ExportTaPdf(ta, path);
+                        new EmailFrame(eidField.getText(), password, taEmailList, attachmentLoc);
+                        File taFile = new File(attachmentLoc);
+                        taFile.delete();
+                    }
+                }
+            });
+            emailButton.setMargin(new Insets(0, 0, 0, 0));
+            deletePanel.add(emailButton, BorderLayout.SOUTH);
             labelAndDeletePanel.add(deletePanel, BorderLayout.EAST);
         }
         labelAndDeletePanel.setPreferredSize(new Dimension(WEST_HEADER_WIDTH,
@@ -130,7 +198,7 @@ public class TaPanel extends JPanel {
         courseDayListPanel = new JPanel(new GridLayout(1, 0));
         courseDayPanelMap = new LinkedHashMap<>(courseDayList.size());
         for (CourseDay courseDay : courseDayList) {
-            JPanel courseDayPanel = new JPanel(new GridLayout(1, 0));
+            JPanel courseDayPanel = new JPanel(new GridLayout(0, 2));
             Color backgroundColor = courseDayPanel.getBackground();
             courseDayPanel.setBackground(backgroundColor);
             courseDayPanel.setEnabled(true);
@@ -216,16 +284,24 @@ public class TaPanel extends JPanel {
         private final CourseAssignment courseAssignment;
 
         CourseAssignmentAction(CourseAssignment courseAssignment) {
-            super(courseAssignment.getCourse().getCourseType().getCode());
+            super(courseAssignment.getCourse().getCourseType().getCrn());
             this.courseAssignment = courseAssignment;
             Course course = courseAssignment.getCourse();
             CourseType courseType = course.getCourseType();
             // Tooltip
-            putValue(SHORT_DESCRIPTION, "<html>Day: " + course.getCourseDay().getLabel() + "<br/>"
-                    + "Course type: " + courseType.getLabel() + " (from " + courseType.getStartTimeString()
-                    + " to " + courseType.getEndTimeString() + ")<br/>"
+            putValue(SHORT_DESCRIPTION, "<html>CRN: " + courseType.getCrn() + "<br/>"
+                    + "Department: " + courseType.getDepartment() + "<br/>"
+                    + "Crs: " + courseType.getCourseNumber() + "<br/>"
+                    + "Section: " + courseType.getSectionNumber() + "<br/>"
+                    + "Day" + course.getCourseDay().getLabel() + "<br/>"
+                    + "Start Time: " + courseType.getStartTimeString() + "<br/>"
+                    + "End Time: " + courseType.getEndTimeString() + "<br/>"
+                    + "Building: " + courseType.getBuilding() + "<br/>"
+                    + "Room: " + courseType.getRoomNumber() + "<br/>"
+                    + "Coordinator: " + courseType.getCoordinatorName() + "<br/>"
                     + "Ta: " + (ta == null ? "unassigned" : ta.getLabel())
                     + "</html>");
+
         }
 
         @Override

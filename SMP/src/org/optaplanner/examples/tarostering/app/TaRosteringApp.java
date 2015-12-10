@@ -23,9 +23,9 @@ import org.optaplanner.examples.common.persistence.AbstractSolutionExporter;
 import org.optaplanner.examples.common.persistence.AbstractSolutionImporter;
 import org.optaplanner.examples.common.persistence.SolutionDao;
 import org.optaplanner.examples.common.swingui.SolutionPanel;
+import org.optaplanner.examples.tarostering.persistence.TaRosteringCourseImporter;
 import org.optaplanner.examples.tarostering.persistence.TaRosteringDao;
 import org.optaplanner.examples.tarostering.persistence.TaRosteringExporter;
-import org.optaplanner.examples.tarostering.persistence.TaRosteringImporter;
 import org.optaplanner.examples.tarostering.swingui.TaRosteringPanel;
 
 public class TaRosteringApp extends CommonApp {
@@ -39,10 +39,7 @@ public class TaRosteringApp extends CommonApp {
     }
 
     public TaRosteringApp() {
-        super("Ta rostering",
-                "Official competition name: INRC2010 - Ta rostering\n\n" +
-                        "Assign courses to tas.",
-                TaRosteringPanel.LOGO_PATH);
+        super("Schedule Maker Pro", "Assign courses to TAs.", TaRosteringPanel.LOGO_PATH);
     }
 
     @Override
@@ -63,7 +60,7 @@ public class TaRosteringApp extends CommonApp {
 
     @Override
     protected AbstractSolutionImporter createSolutionImporter() {
-        return new TaRosteringImporter();
+        return new TaRosteringCourseImporter();
     }
 
     @Override

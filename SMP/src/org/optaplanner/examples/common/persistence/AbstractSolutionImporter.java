@@ -44,8 +44,7 @@ public abstract class AbstractSolutionImporter extends LoggingMain {
         this.solutionDao = solutionDao;
         inputDir = new File(solutionDao.getDataDir(), "import");
         if (!inputDir.exists()) {
-            throw new IllegalStateException("The directory inputDir (" + inputDir.getAbsolutePath()
-                    + ") does not exist.");
+            inputDir.mkdir();
         }
         outputDir = new File(solutionDao.getDataDir(), "unsolved");
     }

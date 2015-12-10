@@ -19,12 +19,21 @@ package org.optaplanner.examples.tarostering.domain;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.optaplanner.examples.common.domain.AbstractPersistable;
 
+import java.util.UUID;
+
 @XStreamAlias("Course")
 public class Course extends AbstractPersistable {
 
     private CourseDay courseDay;
     private CourseType courseType;
     private int index;
+
+    public Course() {}
+
+    public Course (CourseType courseType, CourseDay courseDay) {
+        this.courseType = courseType;
+        this.courseDay = courseDay;
+    }
 
     private int requiredTaSize;
 

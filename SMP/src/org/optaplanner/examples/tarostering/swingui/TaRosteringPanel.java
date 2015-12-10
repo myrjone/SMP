@@ -38,8 +38,8 @@ import org.optaplanner.examples.common.swingui.SolutionPanel;
 import org.optaplanner.examples.tarostering.domain.Course;
 import org.optaplanner.examples.tarostering.domain.CourseAssignment;
 import org.optaplanner.examples.tarostering.domain.CourseDay;
-import org.optaplanner.examples.tarostering.domain.TaRoster;
 import org.optaplanner.examples.tarostering.domain.Ta;
+import org.optaplanner.examples.tarostering.domain.TaRoster;
 
 public class TaRosteringPanel extends SolutionPanel {
 
@@ -79,7 +79,7 @@ public class TaRosteringPanel extends SolutionPanel {
 
     private JPanel createHeaderPanel() {
         JPanel headerPanel = new JPanel(new BorderLayout(20, 0));
-        JLabel courseTypeExplanation = new JLabel("E = Early course, L = Late course, ...");
+        JLabel courseTypeExplanation = new JLabel("Hover over items to get more information");
         headerPanel.add(courseTypeExplanation, BorderLayout.CENTER);
         return headerPanel;
     }
@@ -88,7 +88,7 @@ public class TaRosteringPanel extends SolutionPanel {
         taListPanel = new JPanel();
         taListPanel.setLayout(new BoxLayout(taListPanel, BoxLayout.Y_AXIS));
         unassignedPanel = new TaPanel(this, Collections.<CourseDay>emptyList(), Collections.<Course>emptyList(),
-                null);
+                null, (TaRoster) null);
         taListPanel.add(unassignedPanel);
         taToPanelMap = new LinkedHashMap<>();
         taToPanelMap.put(null, unassignedPanel);
@@ -131,7 +131,7 @@ public class TaRosteringPanel extends SolutionPanel {
             deadTaSet.remove(ta);
             TaPanel taPanel = taToPanelMap.get(ta);
             if (taPanel == null) {
-                taPanel = new TaPanel(this, courseDayList, courseList, ta);
+                taPanel = new TaPanel(this, courseDayList, courseList, ta, (TaRoster) solutionBusiness.getSolution());
                 taListPanel.add(taPanel);
                 taToPanelMap.put(ta, taPanel);
             }

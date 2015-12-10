@@ -22,63 +22,100 @@ import org.optaplanner.examples.common.domain.AbstractPersistable;
 @XStreamAlias("CourseType")
 public class CourseType extends AbstractPersistable {
 
-    private String code;
+    private String crn;
     private int index;
     private String startTimeString;
     private String endTimeString;
-    private boolean night;
-    private String dept;
-    private String crs;
-    private String sec;
-    private String bldg;
-    private String rm;
+    private String department;
+    private String courseNumber;
+    private String sectionNumber;
+    private String building;
+    private String roomNumber;
+    private String coordinatorName;
 
-    public String getDept() {
-        return dept;
+    public CourseType() {}
+
+    /***
+     *
+     * @param index unique identifier
+     * @param crn CRN number for the course
+     * @param startTimeString
+     * @param endTimeString
+     * @param department
+     * @param courseNumber
+     * @param sectionNumber
+     * @param building
+     * @param roomNumber
+     * @param coordinatorName
+     */
+    public CourseType(int index, String crn, String startTimeString, String endTimeString, String department, String courseNumber,
+                      String sectionNumber, String building, String roomNumber, String coordinatorName) {
+        this.index = index;
+        this.crn = crn;
+        this.startTimeString = startTimeString;
+        this.endTimeString = endTimeString;
+        this.department = department;
+        this.courseNumber = courseNumber;
+        this.sectionNumber = sectionNumber;
+        this.building = building;
+        this.roomNumber = roomNumber;
+        this.coordinatorName = coordinatorName;
     }
 
-    public void setDept(String dept) {
-        this.dept = dept;
+    public String getCoordinatorName() {
+        return coordinatorName;
     }
 
-    public String getCrs() {
-        return crs;
+    public void setCoordinatorName(String coordinatorName) {
+        this.coordinatorName = coordinatorName;
     }
 
-    public void setCrs(String crs) {
-        this.crs = crs;
+    public String getDepartment() {
+        return department;
     }
 
-    public String getSec() {
-        return sec;
+    public void setDepartment(String department) {
+        this.department = department;
     }
 
-    public void setSec(String sec) {
-        this.sec = sec;
+    public String getCourseNumber() {
+        return courseNumber;
     }
 
-    public String getBldg() {
-        return bldg;
+    public void setCourseNumber(String courseNumber) {
+        this.courseNumber = courseNumber;
     }
 
-    public void setBldg(String bldg) {
-        this.bldg = bldg;
+    public String getSectionNumber() {
+        return sectionNumber;
     }
 
-    public String getRm() {
-        return rm;
+    public void setSectionNumber(String sectionNumber) {
+        this.sectionNumber = sectionNumber;
     }
 
-    public void setRm(String rm) {
-        this.rm = rm;
+    public String getBuilding() {
+        return building;
     }
 
-    public String getCode() {
-        return code;
+    public void setBuilding(String building) {
+        this.building = building;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public String getRoomNumber() {
+        return roomNumber;
+    }
+
+    public void setRoomNumber(String roomNumber) {
+        this.roomNumber = roomNumber;
+    }
+
+    public String getCrn() {
+        return crn;
+    }
+
+    public void setCrn(String crn) {
+        this.crn = crn;
     }
 
     public int getIndex() {
@@ -93,6 +130,11 @@ public class CourseType extends AbstractPersistable {
         return startTimeString;
     }
 
+    public String getStartTimeFormatted() {
+        String[] split = startTimeString.split(":");
+        return split[0] + split[1];
+    }
+
     public void setStartTimeString(String startTimeString) {
         this.startTimeString = startTimeString;
     }
@@ -101,25 +143,23 @@ public class CourseType extends AbstractPersistable {
         return endTimeString;
     }
 
+    public String getEndTimeFormatted() {
+        String[] split = endTimeString.split(":");
+        return split[0] + split[1];
+    }
+
+
     public void setEndTimeString(String endTimeString) {
         this.endTimeString = endTimeString;
     }
 
-    public boolean isNight() {
-        return night;
-    }
-
-    public void setNight(boolean night) {
-        this.night = night;
-    }
-
     public String getLabel() {
-        return code + " (" + dept + " " + crs + ")";
+        return crn + " (" + department + " " + courseNumber + ")";
     }
 
     @Override
     public String toString() {
-        return code;
+        return crn;
     }
 
 }
