@@ -708,8 +708,8 @@ public class SolverAndPersistenceFrame extends JFrame {
             FileNameExtensionFilter csvFilter = new FileNameExtensionFilter("CSV Files (.csv)", "csv");
             FileNameExtensionFilter pdfFilter = new FileNameExtensionFilter("PDF Files (.pdf)", "pdf");
             fileChooser.setAcceptAllFileFilterUsed(false);
-            fileChooser.setFileFilter(pdfFilter);            
-            fileChooser.addChoosableFileFilter(csvFilter);                        
+            fileChooser.setFileFilter(pdfFilter);
+            fileChooser.addChoosableFileFilter(csvFilter);
         }
 
         @Override
@@ -730,7 +730,7 @@ public class SolverAndPersistenceFrame extends JFrame {
                     + "." + selectedFilter.getExtensions()[0]));
                     }
                 }
-            });            
+            });
             int approved = fileChooser.showSaveDialog(SolverAndPersistenceFrame.this);
             if (approved == JFileChooser.APPROVE_OPTION) {
                 setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -747,7 +747,7 @@ public class SolverAndPersistenceFrame extends JFrame {
                         fileExtension = selectedFilter.getExtensions()[0];
                         path += "." + fileExtension;
                     }
-                    
+
                     if (fileExtension.equals("csv") || fileExtension.equals("txt")) {
                         solutionBusiness.exportSolution(new File(path));
                     }
@@ -823,15 +823,13 @@ public class SolverAndPersistenceFrame extends JFrame {
             if(option == 0) // pressing OK button
             {
                 char[] password = passField.getPassword();
-                EmailFrame emailFrame = new EmailFrame(eidField.getText(), password);
                 TaRosteringPdfExporter taRosteringPdfExporter = new TaRosteringPdfExporter((TaRoster) solutionBusiness.getSolution());
                 Map<String, String> taToFileLocMap = new HashMap<>();
                 for (Ta ta : taList) {
                    String taFilePath = taRosteringPdfExporter.ExportTaPdf(ta, taExportPath);
                    taToFileLocMap.put(ta.getEmail(), taFilePath);
                 }
-                emailFrame.emailAll(taToFileLocMap);
-                JOptionPane.showMessageDialog(new JFrame(), "Emails successfully sent.");
+                EmailAllFrame emailAllFrame = new EmailAllFrame(eidField.getText(), password, taToFileLocMap);
             }
         }
     }
